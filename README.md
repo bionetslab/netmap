@@ -10,11 +10,11 @@ This repository implements an iterative procedure to infer small explanatory GRN
 
 
 ## Abstract classes
-
 - InitializationWrapper; input: cell list, initial clustering or number of clusters k; output: cell clustering with k clusters
 - GRNInferenceWrapper; input: expression data, cell clustering, old GRNs; output: new GRNs (one for each of the k clusters)
 - CellEmbeddingWrapper; input: expression data, cluster-specific GRNs; output: low-dimensional embedding representing the GRNs (easy solution: expression of genes contained in GRNs, better solution: expressive power of GRN i yields z_i(c))
 - ClusteringUpdateWrapper: input: GRN-based cell embedding, old clustering; output: new cell clustering with k clusters
+- AlgorithmWrapper; meta object holding the data, Initialization wrapper, GRNInferenceWrapper, CellEmbeddingWrapper, ClusteringUpdateWrapper
 
 ## Basic implementations:
 - IntializationWrapper: either user-defined cell clustering or random split into k clusters with user-provided k
