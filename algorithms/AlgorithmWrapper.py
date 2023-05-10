@@ -56,10 +56,13 @@ class AlgorithmWrapper(ABC):
             label_convergence = self.clustering.run_clustering_step(tolerance=cluster_convergence_tolerance, 
                                                 embedding=self.cell_embedding)
             
+        self.write_results()
+        
+            
         
 
         
-    def save_results(self):
+    def write_results(self):
         """
         Implement some code to write the results
         """

@@ -5,7 +5,8 @@ class GRNInferenceFactory:
     def __init__(self) -> None:
         pass
 
-    def create_inference_wrapper(self, type:GRNInferrenceStrategy):
+    def create_inference_wrapper( self, type:GRNInferrenceStrategy):
         if type == GRNInferrenceStrategy.BASIC:
             return BasicGRNInference()
         
+    

@@ -17,7 +17,7 @@ class GRNInferrenceWrapper(ABC):
 
 
     @abstractmethod        
-    def _infer_cluster_specific_GRNS(expression_data, cluster_labels) -> None:
+    def _infer_cluster_specific_GRNS(self, cluster_labels) -> None:
         """
         This function returns a dictionary of GRNs, one for each label in cluster labels.
         The GRNs are not required to be a connected module. In general the GRN will be defined
@@ -91,6 +91,17 @@ class GRNInferrenceWrapper(ABC):
         pass
 
 
+    def run_GRN_inference(self, cluster_labels, tolerance):
+        self._infer_cluster_specific_GRNS(cluster_labels=cluster_labels)
+        return self._check_GRN_convergence(tolerance=tolerance)
 
 
 
+
+
+    @abstractmethod
+    def _write_results(self):
+        """
+        Write all required results to file.
+
+        """
