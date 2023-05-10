@@ -8,10 +8,12 @@ from algorithms.embedding.EmbeddingFactory import EmbeddingFactory
 from algorithms.inference.GRNInferenceFactory import GRNInferenceFactory
 from algorithms.initializers.InitializerFactory import InitializerFactory
 from algorithms.Strategy import InitializationStrategy
+import pandas as pd
+
 
 class AlgorithmWrapper(ABC):
     def __init__(self, 
-                 data,
+                 data:pd.DataFrame,
                cell_embedding_strategy: CellEmbeddingStrategy, 
                 clustering_strategy: ClusteringUpdateStategy, 
                grn_inference_strategy: GRNInferrenceStrategy,
@@ -34,6 +36,7 @@ class AlgorithmWrapper(ABC):
 
         self.initializer = InitializerFactory().create_initializer_wrapper(type=initialization_strategy)
     
+    
     def check_convergence(self, grn_convergence, label_convergence):
         """
         Require the labels and the GRNs to be converged.
@@ -41,7 +44,14 @@ class AlgorithmWrapper(ABC):
         return (grn_convergence and label_convergence)
     
 
-    def run(self, GRN_convergence_tolerance, cluster_convergence_tolerance):
+    def run(self, GRN_convergence_tolerance, cluster_convergence_tolerance) -> None:
+
+        """
+        Run method for an algorithm. This should wrap everything from initialization to 
+        results production.
+
+
+        """
         self.initializer.initialize_clustering()
         initial_clustering  = self.initializer.get_initial_clustering()
         
