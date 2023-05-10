@@ -20,7 +20,8 @@ The repository is structured in several subfolders according to the step in the 
 
 - [algorithms](./algorithms) Every algorithm configuration follows the same schema: Initialization, Iterative identification of the best cell partition based on GRNs, Finalization (save results, etc.) The AlgorithmsWrapper allows the developer to configure this process, by either chosing from existing stategies, or by implementing new components. Since it may be necessary to modify convergence criteria, or other components, the AlgorithmWrapper class can be extended, or modified to customize the algorithm.
 
-We expect different strategies to be implemented in the following repositories. To ensure that the components can be combined with better flexibility, there is a FactoryClass which takes care of the intantiation of the Strategy, and an Abstract class which needs to be extended to implement the strategy.
+We expect different strategies to be implemented in the following repositories. To ensure that the components can be combined with better flexibility, there is a FactoryClass which takes care of the instantiation of the Strategy, and an Abstract class which needs to be extended to implement the strategy. 
+
 - [clustering](./clustering) 
 - [embedding](./embedding)
 - [inference](./inference)
@@ -33,7 +34,8 @@ We expect different strategies to be implemented in the following repositories. 
 If a developer wants to implement a custom Strategy, the following steps are required:
 1. Create a derived class from the Abstract class and implement the abstract methods. For example, we can add a BasicClusteringStrategy by implementing the ClusteringUpdateWrapper.
 
-```
+**clustering/BasicClustering.py**
+```python
 from algorithms.clustering.AbstractClusteringUpdate import ClusteringUpdateWrapper
 
 class BasicClustering(ClusteringUpdateWrapper):
@@ -43,13 +45,17 @@ class BasicClustering(ClusteringUpdateWrapper):
 ```
 
 2. Add the Strategy name to the Stategy.py Enum. There is one enum per Step. E.g. We add the BASIC Stategy to the ClusteringUpdateStategy Enum.
-```
+
+**Strategy.py**
+```python
 class ClusteringUpdateStategy(Enum):
     BASIC  = 1    
 ```
 
-3. Add the strategy to the Factory class so that the Strategy object can be intiantiated. Eg. We add possibility to instantiate BasicClustering() in the ClusteringFactory.
-```
+3. Add the strategy to the Factory class so that the Strategy object can be intiantiated. Eg. We add possibility to instantiate BasicClustering() in the ClusteringFactory
+
+**clustering/ClusteringFactory.py**
+```python
 class ClusteringFactory:
     
     def create_clustering_wrapper(self, type: ClusteringUpdateStategy):
@@ -59,8 +65,8 @@ class ClusteringFactory:
 
 4. The Clustering strategy can then be used by passing it to the AlgorithmWrapper instance, or a derived class.
 
-
-```python [algorithms/AlgorithmWrapper.py](algorithms/AlgorithmWrapper.py)
+**algorithms/AlgorithmWrapper.py**
+```python
 class AlgorithmWrapper(ABC):
     def __init__(self, 
                   data,
@@ -90,6 +96,7 @@ class AlgorithmWrapper(ABC):
 
 5. Finally, the new Strategy can be used in the TestRunner class. (Here, we assume to have implemented a BasicStategy for all Steps in the algorithm)
 
+**TestRunner.py**
 ```
 def run_tests():
     ###
@@ -104,4 +111,6 @@ def run_tests():
                                     max_iterations= 12
                                     )
 ```
+
+That's it!
 
