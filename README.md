@@ -29,6 +29,29 @@ We expect different strategies to be implemented in the following repositories. 
 
 - [utils](./utils) Contains some utilities that are expected to be shared by all implementations, such as file saving etc. to enforce naming conventions etc.
 
+## Data structure
+The implementation requires a single strucutured data object of type [Anndata] (https://anndata.readthedocs.io/en/stable/index.html). Anndata allows the convienient storage of single cell experiment data, including strucutured and unstructured metadata. This allows all the algorithms componenets to use the same data structure, passing arround only one object. Additional required data elements can be stored in the metadata objects.
+The algorithm requires the following data stuctures. 
+```
+- adata.X, the data matrix
+- adata.var at least one annotation column
+- adata.obs at least one annotation per rom
+```
+The following variables may be set automatically by the algorithm and should be reserved.
+```python
+adata.obs['initial_clustering']
+adata.obs['current_clustering']
+adata.obs['previous_clustering']
+
+adata.uns['n_clusters'] -> n_clusters
+adata.uns['current_GRNs'] -> {<cluster_name>: GRN}
+adata.uns['previous_GRNs'] -> {<cluster_name>: GRN}
+```
+## Implementing a custom Intializer (e.g. BasicInitializer)
+The Initializer needs to load the data into an Anndata object and initialize an inital clustering. This can for instance be done from file.
+
+
+
 ## Implementing a custom Strategy. (e.g. A BasicClusteringStrategy)
 
 If a developer wants to implement a custom Strategy, the following steps are required:
