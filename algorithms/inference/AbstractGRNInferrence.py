@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 
-class GRNInferrenceWrapper(ABC):
+class AbstractGRNInferrence(ABC):
     def __init__(self,data) -> None:
 
         # The set of GRNs which have been infered in the previous iteration
@@ -39,7 +39,7 @@ class GRNInferrenceWrapper(ABC):
         4. edge_weight
 
         """
-        pass
+        print('Inferring clusters')
         
         
     @abstractmethod
@@ -67,7 +67,7 @@ class GRNInferrenceWrapper(ABC):
         4. edge_weight
         """
 
-        pass
+        print('Get top k edges')
 
 
     @abstractmethod
@@ -88,7 +88,7 @@ class GRNInferrenceWrapper(ABC):
         False, if convergence has not been reached.
         """
 
-        pass
+        print('Check GRN convergence')
 
 
     def run_GRN_inference(self, cluster_labels, tolerance):
@@ -105,3 +105,5 @@ class GRNInferrenceWrapper(ABC):
         Write all required results to file.
 
         """
+
+        print('Results')

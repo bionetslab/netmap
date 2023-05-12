@@ -3,10 +3,12 @@ from algorithms.Strategy import ClusteringUpdateStategy
 
 
 class ClusteringUpdateWrapper(ABC):
-    def __init__(self, data) -> None:
+    def __init__(self, data, n_clusters) -> None:
         self.previous_labels = {}
         self.current_labels = {}
         self.data = data
+        self.n_clusters = n_clusters
+
 
 
     def get_current_labels(self) -> dict:
@@ -34,6 +36,7 @@ class ClusteringUpdateWrapper(ABC):
         cluster_specific_GRNs: a dictionary of GRNS, one for each label
 
         """
+        print('Compute new clustering')
 
         pass
         
@@ -54,6 +57,7 @@ class ClusteringUpdateWrapper(ABC):
         False, if convergence has not been reached.
         """
 
+        print('Check label convergence')
         pass
     
 
@@ -83,3 +87,5 @@ class ClusteringUpdateWrapper(ABC):
         Write all required results to file.
         
         """
+
+        print('Writing results')

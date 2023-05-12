@@ -8,7 +8,7 @@ class AbstractInitializer(ABC):
     
 
     @abstractmethod
-    def initialize_clustering(self) -> None:
+    def _initialize_clustering(self) -> None:
         """
         This method defines how the intial clustering is obtained, e.g. read from file
         or random, ,.....
@@ -18,6 +18,8 @@ class AbstractInitializer(ABC):
         Returns: None (sets the clusterings)
 
         """
+
+        pass
 
 
 

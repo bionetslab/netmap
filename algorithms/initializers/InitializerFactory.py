@@ -6,6 +6,6 @@ class InitializerFactory:
         pass
 
 
-    def create_initializer_wrapper(self, type:InitializationStrategy):
+    def create_initializer_wrapper(self, type:InitializationStrategy, **kwargs):
         if type == InitializationStrategy.BASIC:
-            return BasicInitializer()
+            return BasicInitializer(**kwargs)

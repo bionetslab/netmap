@@ -9,3 +9,10 @@ class ColumnValidationError(Exception):
 
             
 
+class NotInitializerError(Exception):
+  """
+  Raise this exception, if a mandatory data element has not been intialized.
+
+  
+  """
+  pass
