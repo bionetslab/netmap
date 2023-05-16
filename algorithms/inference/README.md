@@ -66,7 +66,7 @@ AnnData object with n_obs × n_vars = 4906 × 1000
 ### Check GRN inference
 The consistency of the GRNs will be checked by comparing the old and new GRNs for each cluster. This function assumed that the cluster identity remains consistent over the iterations. Here, we implement a basic function that requires a certain fraction of edges to be consistent between the current and previous iteration.
 
-```
+```python
 def _check_GRN_convergence(self, consistency):
     """
     This method checks if the GRNs have converged by checking the edges. For each cluster, first, the overlap between the edges in the 
