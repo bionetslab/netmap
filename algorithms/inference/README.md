@@ -15,33 +15,33 @@ def _infer_cluster_specific_GRNS(self) -> None:
     if not 'GRNs' in self.data.uns.keys():
         self.data.uns['GRNs'] = {}
 
-    for i in range(self.data.uns['max_iterations']):
-        self.data.uns['GRNs']['iteration_'+str(i)] =  {}
-        for lab in range(self.data.uns['n_clusters']):
-            self.data.uns['GRNs'][f'iteration_{i!r}'][f'cluster_{lab!r}'] = f'iteration{i!r}_cluster{lab!r}'
-            index_of = np.random.choice(len(self.data.var.index), size=100, replace=False)
-            binomials = np.random.binomial(n = 1, p=0.2, size=100*99)
+    i = self.data.uns['current_iteration']
+    self.data.uns['GRNs']['iteration_'+str(i)] =  {}
+    for lab in range(self.data.uns['n_clusters']):
+        self.data.uns['GRNs'][f'iteration_{i!r}'][f'cluster_{lab!r}'] = f'iteration{i!r}_cluster{lab!r}'
+        index_of = np.random.choice(len(self.data.var.index), size=100, replace=False)
+        binomials = np.random.binomial(n = 1, p=0.2, size=100*99)
 
-            #initialize the sparse gene module as dok matrix and insert elements
-            obsp = scs.dok_array((self.data.shape[0], self.data.shape[0]))
-            for elem, bin in zip(itertools.product(index_of, index_of), binomials.astype(bool)):
-                if bin > 0:
-                    obsp[elem] = 1
-            # transform to csr and insert fo the current iteration.
-            obsp = scs.csr_matrix(obsp)
-            self.data.obsp[ f'iteration{i!r}_cluster{lab!r}'] = obsp
+        #initialize the sparse gene module as dok matrix and insert elements
+        obsp = scs.dok_array((self.data.shape[0], self.data.shape[0]))
+        for elem, bin in zip(itertools.product(index_of, index_of), binomials.astype(bool)):
+            if bin > 0:
+                obsp[elem] = 1
+        # transform to csr and insert fo the current iteration.
+        obsp = scs.csr_matrix(obsp)
+        self.data.obsp[ f'iteration{i!r}_cluster{lab!r}'] = obsp
 
 
-        if i>1:
-            im2 = i-2
-            for GRN in self.data.uns['GRNs'][f'iteration_{im2!r}']:
-                del self.data.obsp[self.data.uns['GRNs'][f'iteration_{im2!r}'][GRN]]
-            del self.data.uns['GRNs'][f'iteration_{im2!r}']
+    if i>1:
+        im2 = i-2
+        for GRN in self.data.uns['GRNs'][f'iteration_{im2!r}']:
+            del self.data.obsp[self.data.uns['GRNs'][f'iteration_{im2!r}'][GRN]]
+        del self.data.uns['GRNs'][f'iteration_{im2!r}']
 
 
 ```
 
-For an instance with 3 clusters would look like this. ```self.data``` contains ```self.data.uns['GRNs']``` and ```self.obsp``` contains the same keys in a flat hierarchy.
+For an instance with 3 clusters would look like this after 5 iterations. ```self.data``` contains ```self.data.uns['GRNs']``` and ```self.obsp``` contains the same keys in a flat hierarchy. Only the 4th and 5th iterations GRNs are stored in the data object.
 ```python
 >>> data
 AnnData object with n_obs × n_vars = 4906 × 1000
@@ -62,3 +62,40 @@ AnnData object with n_obs × n_vars = 4906 × 1000
       'cluster_1': 'iteration5_cluster1', 
       'cluster_2': 'iteration5_cluster2'}}
 ```
+
+### Check GRN inference
+The consistency of the GRNs will be checked by comparing the old and new GRNs for each cluster. This function assumed that the cluster identity remains consistent over the iterations. Here, we implement a basic function that requires a certain fraction of edges to be consistent between the current and previous iteration.
+
+```
+def _check_GRN_convergence(self, consistency):
+    """
+    This method checks if the GRNs have converged by checking the edges. For each cluster, first, the overlap between the edges in the 
+    new and the old GRN are computed. For convergence it is required that the consitent edges make up a certain percentage of
+    the old and the new GRN respectively. For example, the number of consitent edges is 75, and the consitency parameter is 0.75. 
+    A GRN would have converged, if the total number of edges in the old and the new GRNs are both smaller or equal
+    100, as 75% of the genes are identical. If the GRNs for all clusters have converged, the function returns True.
+
+    Arguments:
+    consistency: the required fraction of edges that have to be consitent between two GRNs for one cluster.
+    """
+
+    i = self.data.uns['current_iteration']
+    im1 = i-1
+    for GRN_old, GRN_new in zip(self.data.uns['GRNs'][f'iteration_{im1!r}']):
+        # multiply the matrices, which is basically an element wise and operation
+        number_of_consistent_edges = int(np.sum(self.data.obsp[self.data.uns['GRNs'][f'iteration_{im1!r}'][GRN_old]].multiply(
+            self.data.obsp[self.data.uns['GRNs'][f'iteration_{i!r}'][GRN_new]]
+            )))
+
+        if int(np.sum(self.data.obsp[self.data.uns['GRNs'][f'iteration_{im1!r}'][GRN_old]])) * consistency >= number_of_consistent_edges and
+            int(np.sum(self.data.obsp[self.data.uns['GRNs'][f'iteration_{i!r}'][GRN_new]])) * consistency >= number_of_consistent_edges:
+            number_of_converged_clusters = number_of_converged_clusters + 1
+
+    # Check of thr GRNs for all clusters have converged.
+    if number_of_converged_clusters == self.data.uns['n_clusters']:
+        return True
+    else:
+        return False
+
+```
+
