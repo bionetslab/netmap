@@ -1,0 +1,64 @@
+# AbstractGRNInference
+
+
+## Example implementation of BasicGRNInference
+
+To implement BasciGRNInference we need to implement all abstract methods from AbstractGRNInference. 
+
+### GRN inference
+Here, we simply sample some random graphs for each cluster we defined in the clustering step. We generate a number of nodes an insert an edge from A>B with probability p. This yields a directed graph for every cluster. The graphs are stored in the anndata object as a ```scipy.sparse.crs_array``` in the ```.obsp``` field of the ```AnnData``` object. ```.obsp``` has a flat hierarchy. To structure the information, additionally, the ```.uns``` field of the AnnData object contains a entry ```.uns['GRNs']```. For every iteration a dictionary is inserted, containing a dictionary of clusters.
+
+This is designed intentionally so the AnnData object contains the last two iterations of the GRNs for convenience. It is recommended to remove the previous GRNs for memory efficiency.
+
+```python
+def _infer_cluster_specific_GRNS(self) -> None:
+    if not 'GRNs' in self.data.uns.keys():
+        self.data.uns['GRNs'] = {}
+
+    for i in range(self.data.uns['max_iterations']):
+        self.data.uns['GRNs']['iteration_'+str(i)] =  {}
+        for lab in range(self.data.uns['n_clusters']):
+            self.data.uns['GRNs'][f'iteration_{i!r}'][f'cluster_{lab!r}'] = f'iteration{i!r}_cluster{lab!r}'
+            index_of = np.random.choice(len(self.data.var.index), size=100, replace=False)
+            binomials = np.random.binomial(n = 1, p=0.2, size=100*99)
+
+            #initialize the sparse gene module as dok matrix and insert elements
+            obsp = scs.dok_array((self.data.shape[0], self.data.shape[0]))
+            for elem, bin in zip(itertools.product(index_of, index_of), binomials.astype(bool)):
+                if bin > 0:
+                    obsp[elem] = 1
+            # transform to csr and insert fo the current iteration.
+            obsp = scs.csr_matrix(obsp)
+            self.data.obsp[ f'iteration{i!r}_cluster{lab!r}'] = obsp
+
+
+        if i>1:
+            im2 = i-2
+            for GRN in self.data.uns['GRNs'][f'iteration_{im2!r}']:
+                del self.data.obsp[self.data.uns['GRNs'][f'iteration_{im2!r}'][GRN]]
+            del self.data.uns['GRNs'][f'iteration_{im2!r}']
+
+
+```
+
+For an instance with 3 clusters would look like this. ```self.data``` contains ```self.data.uns['GRNs']``` and ```self.obsp``` contains the same keys in a flat hierarchy.
+```python
+>>> data
+AnnData object with n_obs × n_vars = 4906 × 1000
+    obs: 'dataset', 'initial_clustering', 'n_counts_all'
+    var: 'n_counts', 'mean', 'std'
+    uns: 'log1p', 'pca', 'neighbors', 'n_clusters', 'GRNs'
+    obsm: 'X_pca'
+    varm: 'PCs'
+    obsp: 'iteration4_cluster0', 'iteration4_cluster1', 'iteration4_cluster2', 'iteration5_cluster0', 'iteration5_cluster1', 'iteration5_cluster2'
+    
+>>> data.uns['GRNs']
+{'iteration_4': 
+      {'cluster_0': 'iteration4_cluster0', 
+      'cluster_1': 'iteration4_cluster1', 
+      'cluster_2': 'iteration4_cluster2'}, 
+ 'iteration_5': 
+      {'cluster_0': 'iteration5_cluster0',
+      'cluster_1': 'iteration5_cluster1', 
+      'cluster_2': 'iteration5_cluster2'}}
+```
