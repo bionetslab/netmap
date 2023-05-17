@@ -40,7 +40,7 @@ class AlgorithmWrapper(ABC):
         
         self.GRN_inferrence = GRNInferenceFactory().create_inference_wrapper(type=grn_inference_strategy, data =data)
         self.cell_embedding = EmbeddingFactory().create_embedding_wrapper(type=cell_embedding_strategy, data=data)
-        self.clustering = ClusteringFactory().create_clustering_wrapper(type=clustering_strategy, data=data, n_clusters=n_clusters)
+        self.clustering = ClusteringFactory().create_clustering_wrapper(type=clustering_strategy, data=data)
         
 
 

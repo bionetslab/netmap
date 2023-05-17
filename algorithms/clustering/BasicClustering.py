@@ -4,8 +4,8 @@ from sklearn.cluster import KMeans
 import pandas as pd
 
 class BasicClustering(ClusteringUpdateWrapper):
-    def __init__(self, data, n_clusters) -> None:
-        super().__init__(data=data, n_clusters=n_clusters)
+    def __init__(self, data) -> None:
+        super().__init__(data=data)
     
 
 

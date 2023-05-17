@@ -1,30 +1,52 @@
 from abc import ABC, abstractmethod
 from algorithms.Strategy import ClusteringUpdateStategy
+from sklearn.metrics.cluster import contingency_matrix
+from networkx.algorithms.matching import max_weight_matching
+import networkx as nx
+import itertools
+import numpy as np
 
 
 class ClusteringUpdateWrapper(ABC):
-    def __init__(self, data, n_clusters) -> None:
-        self.previous_labels = {}
-        self.current_labels = {}
+    def __init__(self, data) -> None:
         self.data = data
-        self.n_clusters = n_clusters
 
-
-
-    def get_current_labels(self) -> dict:
-        return self.current_labels
 
     def ensure_consistent_labelling(self) -> None:
         """
         This method ensures that the cluster ids remain the same during the iterations.
-        This is achieved using a ... matching.
-        The labels are modified internally
+        This is achieved using a maximum weight matching with the Hungarian algorithm
+        The labels are updated so that the clusters are aligned with the initial clustering.
+
+        1. Compute a contingency matrix.
+        2. find a maximum weight matching between the old labels and the new lables
+        3. Create a dictionary where the new label maps to the old label
+        4. Update the new labels to be consitent with the old labels
 
         """
+        cont = contingency_matrix(self.data.obs['previous_clustering'], 
+                                                     self.data.obs['current_clustering'])
+        
+        a = [(index[0], index[1], item) for index, item in zip(itertools.product(range(cont.shape[0]), range(cont.shape[0], 2* cont.shape[0])), cont.flatten())]
+        G = nx.Graph()
+        G.add_weighted_edges_from(a)
+        matching = list(max_weight_matching(G))
+        d = cont.shape[0]
+        label_matching = {}
+        
+        rownames = np.unique(self.data.obs['previous_clustering'])
+        colnames = np.unique(self.data.obs['current_clustering'])
+        for m in matching:
+            if m[0]> m[1]:
+                label_matching[rownames[m[0]-d]] = colnames[m[1]]
+            else:
+                label_matching[rownames[m[1]-d]] = colnames[m[0]]
 
-        #new_labels = 'magical new labels'
-        #self.current_labels = new_labels
-        pass
+        adjusted_cluster_labels = [label_matching[cl] for cl in self.data.obs['current_clustering']]
+        self.data.obs['current_clustering'] = adjusted_cluster_labels
+
+
+        
     
     @abstractmethod
     def _compute_new_clustering(self) -> None:
