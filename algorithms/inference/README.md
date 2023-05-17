@@ -6,14 +6,14 @@
 To implement BasciGRNInference we need to implement all abstract methods from AbstractGRNInference. 
 
 ### GRN inference
-Here, we simply sample some random graphs for each cluster we defined in the clustering step. We generate a number of nodes an insert an edge from A>B with probability p. This yields a directed graph for every cluster. The graphs are stored in the anndata object as a ```scipy.sparse.crs_array``` in the ```.obsp``` field of the ```AnnData``` object. ```.obsp``` has a flat hierarchy. To structure the information, additionally, the ```.uns``` field of the AnnData object contains a entry ```.uns['GRNs']```. For every iteration a dictionary is inserted, containing a dictionary of clusters.
+Here, we simply sample some random graphs for each cluster we defined in the clustering step. We generate a number of nodes an insert an edge from A>B with probability p. This yields a directed graph for every cluster. The graphs are stored in the anndata object as a ```scipy.sparse.crs_array``` in the ```.varp``` field of the ```AnnData``` object. ```.varp``` has a flat hierarchy. To structure the information, additionally, the ```.uns``` field of the AnnData object contains a entry ```.uns['GRNs']```. For every iteration a dictionary is inserted, containing a dictionary of clusters.
 
 This is designed intentionally so the AnnData object contains the last two iterations of the GRNs for convenience. It is recommended to remove the previous GRNs for memory efficiency.
 
 ```python
 def _infer_cluster_specific_GRNS(self) -> None:
     if not 'GRNs' in self.data.uns.keys():
-        self.data.uns['GRNs'] = {}
+            self.data.uns['GRNs'] = {}
 
     i = self.data.uns['current_iteration']
     self.data.uns['GRNs']['iteration_'+str(i)] =  {}
@@ -23,19 +23,20 @@ def _infer_cluster_specific_GRNS(self) -> None:
         binomials = np.random.binomial(n = 1, p=0.2, size=100*99)
 
         #initialize the sparse gene module as dok matrix and insert elements
-        obsp = scs.dok_array((self.data.shape[0], self.data.shape[0]))
+        varp = scs.dok_array((self.data.shape[1], self.data.shape[1]))
         for elem, bin in zip(itertools.product(index_of, index_of), binomials.astype(bool)):
             if bin > 0:
-                obsp[elem] = 1
+                print(elem)
+                varp[elem] = 1
         # transform to csr and insert fo the current iteration.
-        obsp = scs.csr_matrix(obsp)
-        self.data.obsp[ f'iteration{i!r}_cluster{lab!r}'] = obsp
+        varp = scs.csr_matrix(varp)
+        self.data.varp[ f'iteration{i!r}_cluster{lab!r}'] = varp
 
 
     if i>1:
         im2 = i-2
         for GRN in self.data.uns['GRNs'][f'iteration_{im2!r}']:
-            del self.data.obsp[self.data.uns['GRNs'][f'iteration_{im2!r}'][GRN]]
+            del self.data.varp[self.data.uns['GRNs'][f'iteration_{im2!r}'][GRN]]
         del self.data.uns['GRNs'][f'iteration_{im2!r}']
 
 
@@ -80,22 +81,23 @@ def _check_GRN_convergence(self, consistency):
     """
 
     i = self.data.uns['current_iteration']
-    im1 = i-1
-    for GRN_old, GRN_new in zip(self.data.uns['GRNs'][f'iteration_{im1!r}']):
-        # multiply the matrices, which is basically an element wise and operation
-        number_of_consistent_edges = int(np.sum(self.data.obsp[self.data.uns['GRNs'][f'iteration_{im1!r}'][GRN_old]].multiply(
-            self.data.obsp[self.data.uns['GRNs'][f'iteration_{i!r}'][GRN_new]]
-            )))
+    number_of_converged_clusters = 0
+    if i>=1:
+        im1 = i-1
+        for GRN_old, GRN_new in zip(self.data.uns['GRNs'][f'iteration_{im1!r}']):
+            # multiply the matrices, which is basically an element wise and operation
+            number_of_consistent_edges = int(np.sum(self.data.varp[self.data.uns['GRNs'][f'iteration_{im1!r}'][GRN_old]].multiply(
+                self.data.varp[self.data.uns['GRNs'][f'iteration_{i!r}'][GRN_new]]
+                )))
 
-        if int(np.sum(self.data.obsp[self.data.uns['GRNs'][f'iteration_{im1!r}'][GRN_old]])) * consistency >= number_of_consistent_edges and
-            int(np.sum(self.data.obsp[self.data.uns['GRNs'][f'iteration_{i!r}'][GRN_new]])) * consistency >= number_of_consistent_edges:
-            number_of_converged_clusters = number_of_converged_clusters + 1
+            if int(np.sum(self.data.varp[self.data.uns['GRNs'][f'iteration_{im1!r}'][GRN_old]])) * consistency >= number_of_consistent_edges \
+                    and int(np.sum(self.data.varp[self.data.uns['GRNs'][f'iteration_{i!r}'][GRN_new]])) * consistency >= number_of_consistent_edges:
+                number_of_converged_clusters = number_of_converged_clusters + 1
 
     # Check of thr GRNs for all clusters have converged.
     if number_of_converged_clusters == self.data.uns['n_clusters']:
         return True
     else:
         return False
-
 ```
 
