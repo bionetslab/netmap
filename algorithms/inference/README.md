@@ -51,7 +51,7 @@ AnnData object with n_obs × n_vars = 4906 × 1000
     uns: 'log1p', 'pca', 'neighbors', 'n_clusters', 'GRNs'
     obsm: 'X_pca'
     varm: 'PCs'
-    obsp: 'iteration4_cluster0', 'iteration4_cluster1', 'iteration4_cluster2', 'iteration5_cluster0', 'iteration5_cluster1', 'iteration5_cluster2'
+    varp: 'iteration4_cluster0', 'iteration4_cluster1', 'iteration4_cluster2', 'iteration5_cluster0', 'iteration5_cluster1', 'iteration5_cluster2'
     
 >>> data.uns['GRNs']
 {'iteration_4': 
