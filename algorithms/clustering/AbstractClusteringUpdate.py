@@ -22,12 +22,12 @@ class ClusteringUpdateWrapper(ABC):
 
         """
 
-        new_labels = 'magical new labels'
-        self.current_labels = new_labels
-
+        #new_labels = 'magical new labels'
+        #self.current_labels = new_labels
+        pass
     
     @abstractmethod
-    def _compute_new_clustering(self, embedding) -> None:
+    def _compute_new_clustering(self) -> None:
         """
         Compute a new partition (cell labels) based on the embedding computed in
         the previous algorithm step and store it in 'current_labels'
@@ -61,7 +61,7 @@ class ClusteringUpdateWrapper(ABC):
         pass
     
 
-    def run_clustering_step(self, embedding, tolerance):
+    def run_clustering_step(self, tolerance):
 
         """
         Wrap all necessary steps for the clustering step in one convenience function.
@@ -75,7 +75,7 @@ class ClusteringUpdateWrapper(ABC):
         True, if converged; else False
 
         """
-        self._compute_new_clustering(embedding=embedding)
+        self._compute_new_clustering()
         self.ensure_consistent_labelling()
         return self._check_label_convergence(tolerance=tolerance)
     

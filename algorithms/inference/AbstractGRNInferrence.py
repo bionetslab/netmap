@@ -6,9 +6,6 @@ class AbstractGRNInferrence(ABC):
     def __init__(self,data) -> None:
 
         # The set of GRNs which have been infered in the previous iteration
-        self.previous_grns = {}
-        # The set of GRNs 
-        self.current_grns = {}
         self.data = data 
 
 
@@ -19,29 +16,37 @@ class AbstractGRNInferrence(ABC):
     @abstractmethod        
     def _infer_cluster_specific_GRNS(self, cluster_labels) -> None:
         """
-        This function returns a dictionary of GRNs, one for each label in cluster labels.
+        This function infers the GRNs, one for each label in cluster labels.
         The GRNs are not required to be a connected module. In general the GRN will be defined
-        as the set of cluster specific edges (direction is important!) exluding the union of all
-        edges which are part of another GRN.
+        as the set of cluster specific edges exluding the union of all edges which are part of another GRN.
+
+        This method infers the new GRNs and stores them in the current GRN slot f the data.
+        The previous' iterations GRNs need to be pushed into the respective slot.
 
         Parameters:
-        ----------------
-        expression_data: The expression data set as a pandas data frame (numeric) of dimension
-            n * d where n is the number of samples and d is the number of features.
-        cluster_labels: The cluster labels as a numpy array of length n. The row ordering must correspond
-            to the orderin of the rows in the expression data set.
-        
-        The result will be stored in current_grns. 
-        A pandas data frame containing the mandatory four columns + additional columns if required. 
-        1. cluster_id
-        2. source_node
-        3. target_node
-        4. edge_weight
 
+        Returns:
+        ----------------
+        The result will be stored the data:AnnData object
+
+        AnnData object has allows the storage of Graph like data in obsp and varp, as well
+        as the storage of unstructured data in uns.
+
+        The following storage is expected: (This is similar to how scanpy stores it's umaps)
+
+        The keys for the GRNs should be stored in the .uns dictonary
+        the key follows the follwing convention.
+
+        
+        self.data.uns['GRNs'] = {cluster_id: {"GRN_key": <GRN_key>}}
+        self.data.uns['old_GRN'] = self.data.uns['new_GRNs'].copy()
+
+        # For each cluster a different sparse GRN 
+        self.data.obsp[<GRN_key>] = sc.sparse_crs(GRN)
         """
-        print('Inferring clusters')
-        
-        
+
+        pass
+
     @abstractmethod
     def _get_top_k_edges(self, k, cluster_labels, enforce_equal_k = False) -> pd.DataFrame:
         """
@@ -59,19 +64,14 @@ class AbstractGRNInferrence(ABC):
         -------
          Returns:
         ------------------------
-        A pandas data frame containing the top k edges for each cluster with the mandatory
-        four columns + additional columns if required. 
-        1. cluster_id
-        2. source_node
-        3. target_node
-        4. edge_weight
+        
         """
 
         print('Get top k edges')
 
 
     @abstractmethod
-    def _check_GRN_convergence(self, tolerance):
+    def _check_GRN_convergence(self, consistency):
         """
         Abstract method checking whether a GRN has converged. It is recommended to implement this
         function in such a way, that convergence takes into account the edges, 
@@ -79,7 +79,7 @@ class AbstractGRNInferrence(ABC):
 
         Parameters:
         -----------------
-        tolerance: a tolerance criterion specific for the convergence criterion. e.g. maximal
+        consistency: a tolerance criterion specific for the convergence criterion. e.g. maximal
             number of edges allowed to be different between previous_grns and current_grns.
 
         Returns: 
@@ -91,9 +91,9 @@ class AbstractGRNInferrence(ABC):
         print('Check GRN convergence')
 
 
-    def run_GRN_inference(self, cluster_labels, tolerance):
-        self._infer_cluster_specific_GRNS(cluster_labels=cluster_labels)
-        return self._check_GRN_convergence(tolerance=tolerance)
+    def run_GRN_inference(self, consistency):
+        self._infer_cluster_specific_GRNS()
+        return self._check_GRN_convergence(consistency=consistency)
 
 
 

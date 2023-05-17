@@ -27,8 +27,8 @@ class CellEmbeddingWrapper(ABC):
         return self.embedding
     
 
-    def run_embedding_step(self, cluster_specific_GRNs):
-        self._compute_new_cell_embedding(cluster_specific_GRNs)
+    def run_embedding_step(self):
+        self._compute_new_cell_embedding()
         return self.embedding
     
 
