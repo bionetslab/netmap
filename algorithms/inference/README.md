@@ -120,3 +120,11 @@ def _write_results(self):
         print('Results not initialized')
     
 ```
+
+### Get top k edges
+Technically, we should also return the top k edges for the graph. Since we do not have edge weights here, we omit the implementation out of laziness for now.
+```
+def _get_top_k_edges():
+    return 0
+    
+```
