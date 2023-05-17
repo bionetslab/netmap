@@ -5,7 +5,7 @@ The new cell embedding is the low dimensional representation of the expression m
 ## Compute new cell embedding
 In  this example, the low dimensional embedding of the gene expression matrix is the subset of the matrix containing only the genes that are contained in the GRNs.
 
-```
+```python
 def _compute_new_cell_embedding(self):
     """
     Computes a new cell embedding. 
@@ -33,7 +33,7 @@ def _compute_new_cell_embedding(self):
 ## Saving the results
 Here, we just save the embedding as a data frame. 
 
-```
+```python
   def _write_results(self):
       """
       Dummy write method. Probably useless as is.
