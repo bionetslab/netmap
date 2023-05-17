@@ -25,5 +25,22 @@ def _compute_new_clustering(self) -> None:
 Here, we define cluster convergence, when at least %p of the cells retain their cluster over the consecutive runs.
 
 
+### Saving the results.
+Here, we just save the cell-barcodes and the associated final clustering labels in a file.
+```
+def _write_results(self):
+    """
+
+    """
+    try:
+        pd.DataFrame(self.data.obs['current_clustering']).to_csv(op.join(self.data.uns['clustering_dir'], 'cluster_labels.tsv'), 
+                                                                 sep='\t', 
+                                                                 header=True, 
+                                                                 index=True)
+    except KeyError:
+        print('Result not initialized')
+```
+
 ## Ensure Clustering consistency.
-The superclass implements the Hungarian algorithm (maximum weight matching) to ensure the clusters are consistently labelled. This functionality can be overridden, but it is not necessary.
+The superclass implements the Hungarian algorithm (maximum weight matching) to ensure the clusters are consistently labelled. This functionality can be overridden, but it may not be necessary to do so. The procdure initially computes a contingency matrix for all clustering labels, then assigns the new clustering labels to the old clustering labels. The reference should always be the initial clustering.
+
