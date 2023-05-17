@@ -1,37 +1,39 @@
-# Installation instructions
-
-## Environment
-### Conda
-
-Some people are using conda/mamba as a package resolver, we assume you have conda installed. In the base environment intall mamba, the faster package resolver.
-```
-conda install mamba -n base -c conda-forge
-```
-
-The install the dependencies using the following command
-```
-mamba env create -f ../netmap.yml
-conda activate netmap
-```
-
+# Algorithms
 
 ## Repository structure
 The repository is structured in several subfolders according to the step in the algorithm:
 
-- [algorithms](./algorithms) Every algorithm configuration follows the same schema: Initialization, Iterative identification of the best cell partition based on GRNs, Finalization (save results, etc.) The AlgorithmsWrapper allows the developer to configure this process, by either chosing from existing stategies, or by implementing new components. Since it may be necessary to modify convergence criteria, or other components, the AlgorithmWrapper class can be extended, or modified to customize the algorithm.
+### [algorithms](./algorithms) 
+Every algorithm configuration follows the same schema: 
+1. Initialization: the initial cell label assignment, e.g. random, or based on marker genes
+2. Iterative identification of the best cell partition based on GRNs
+    - Identification of GRNs for each cell cluster
+    - Computation of Embedding based on the GRN
+    - COmputation of new labels for the cell using the new embedding
+3. Finalization (save results, etc.) 
 
-We expect different strategies to be implemented in the following repositories. To ensure that the components can be combined with better flexibility, there is a FactoryClass which takes care of the instantiation of the Strategy, and an Abstract class which needs to be extended to implement the strategy. 
+The AlgorithmsWrapper allows the developer to configure this process, by either chosing from existing stategies, or by implementing new components. Since it may be necessary to modify convergence criteria, or other components, the AlgorithmWrapper class can be extended, or modified to customize the algorithm. We expect different strategies to be implemented in the following repositories. To ensure that the components can be combined with better flexibility, there is a FactoryClass which takes care of the instantiation of the Strategy, and an Abstract class which needs to be extended to implement the strategy. 
 
-- [clustering](./clustering) 
-- [embedding](./embedding)
-- [inference](./inference)
-- [initializers](./initializers) 
+### [clustering](./clustering) 
+### [embedding](./embedding)
+### [inference](./inference)
+### [initializers](./initializers) 
+### [utils](./utils) 
 
-- [utils](./utils) Contains some utilities that are expected to be shared by all implementations, such as file saving etc. to enforce naming conventions etc.
+Contains some utilities that are expected to be shared by all implementations, such as file saving etc. to enforce naming conventions etc.
 
-## Implementing a custom Strategy. (e.g. A BasicClusteringStrategy)
 
-If a developer wants to implement a custom Strategy, the following steps are required:
+## Data structure
+Generally, all data should be passed along as a single Anndata object. The classes do not depend on any other variables. Parameters can be passed via the ```AnnData.uns``` field. This has the advantage, that the state of the object is preserved upon saving the Anndata object and the disadvantage that developers need to adhere to certain standards/ be careful when implemeting the classes, to be sure to use the correct fields in the Anndata object.
+
+The format for AnnData is described in the documentation of the [package](https://anndata.readthedocs.io/en/latest/index.html). Generally speaking AnnData allows us to store the data, column and row annotations in ```.obs`` and ```.var```, row-, and column-aligned matrix shaped data ```.obsm``` and ```.obsp``` as well as row and column aligned graph data ```.opsp``` and ```.varp```. Unstructured data can be stored as a dictionary in ```.uns``.  
+
+For this project, that means that Gene Regulatory Networks (GRNs) are stores in ```.varp``` as they represent feature associated graph data, the embeddings will be saved in ```obsm``` as they represent observation associated matrix shaped data, and the clustering labels will be saved in ```.obs``` as they represent vector shaped annotations of the observations. (More details on this will be added in the subdirectories for each stage of the algorithm.)
+
+
+## Implementing a custom Strategy -- top level view (e.g. A BasicClusteringStrategy)
+If a developer wants to implement a custom Strategy, for example a Custom Clustering Strategy, they need to follow the steps below. Details on how to implement the custom strategies for each step can be found in the respective subfolders.
+
 1. Create a derived class from the Abstract class and implement the abstract methods. For example, we can add a BasicClusteringStrategy by implementing the ClusteringUpdateWrapper.
 
 **clustering/BasicClustering.py**
@@ -112,7 +114,6 @@ def run_tests():
                                     )
 ```
 
-That's it!
 
 
 
