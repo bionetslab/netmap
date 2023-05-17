@@ -64,7 +64,7 @@ AnnData object with n_obs × n_vars = 4906 × 1000
       'cluster_2': 'iteration5_cluster2'}}
 ```
 
-### Check GRN inference
+### Check GRN convergence
 The consistency of the GRNs will be checked by comparing the old and new GRNs for each cluster. This function assumed that the cluster identity remains consistent over the iterations. Here, we implement a basic function that requires a certain fraction of edges to be consistent between the current and previous iteration.
 
 ```python
@@ -101,3 +101,22 @@ def _check_GRN_convergence(self, consistency):
         return False
 ```
 
+### Write custom results
+In this case we save the final GRNs for each cluster in an ```.npz``` file.
+
+```
+def _write_results(self):
+
+    """ 
+    Write the last GNRs to file in a sparse matrix format. One file per GRN.
+    """
+    try:
+        i = self.data.uns['current_iteration']-1
+        for GRN in self.data.uns['GRNs'][f'iteration_{i!r}'].values():
+            print(GRN)
+            filename = op.join(self.data.uns['GNR_dir'], f'{GRN}.npz')
+            scs.save_npz(file=filename, matrix=self.data.varp[GRN])
+    except KeyError:
+        print('Results not initialized')
+    
+```
