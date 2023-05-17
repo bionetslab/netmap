@@ -3,21 +3,30 @@ import anndata as ad
 import numpy as np
 import scipy.sparse as scs
 import os.path as op
+import pandas as pd
+
 
 class BasicCellEmbedding(CellEmbeddingWrapper):
     def __init__(self, data:ad.AnnData) -> None:
         super().__init__(data=data)
 
-    def _write_results(self, directory):
+    def _write_results(self):
         """
         Dummy write method. Probably useless as is.
         """
-        # try:
-        #     file_path = op.join(directory, 'embedding.tsv')
-        #     self.data.obsm['embedding'].X.to_csv(file_path, sep = '\t')
-        # except KeyError:
-        #     print('Results not initialized.')
-        pass
+        try:
+            file_path = op.join(self.data.uns['embedding_dir'], 'embedding.tsv')
+            if scs.issparse(self.data.obsm['embedding']):
+                saveme = self.data.obsm['embedding'].toarray()
+            else:
+                saveme = self.data.obsm['embedding']
+            saveme = pd.DataFrame(saveme)
+            saveme.index = self.data.obs.index
+            saveme.to_csv(file_path, sep = '\t', index=True)
+        
+        except KeyError:
+            print('Results not initialized.')
+
 
 
     def _compute_new_cell_embedding(self):

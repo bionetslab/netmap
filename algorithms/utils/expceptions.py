@@ -16,3 +16,12 @@ class NotInitializerError(Exception):
   
   """
   pass
+
+class InconsistenClusterExpection(Exception):
+  """
+  
+  This exception is raised if the clusters are not consistent between several
+  runs.
+  """
+
+  pass

@@ -36,7 +36,10 @@ class AlgorithmWrapper(ABC):
 
         # initialize 
 
-        self.initializer = InitializerFactory().create_initializer_wrapper(type=initialization_strategy, data = data, n_clusters=n_clusters, max_iterations=max_iterations)
+        self.initializer = InitializerFactory().create_initializer_wrapper(type=initialization_strategy, 
+                                                                           data = data, 
+                                                                           n_clusters=n_clusters, 
+                                                                           max_iterations=max_iterations)
         
         self.GRN_inferrence = GRNInferenceFactory().create_inference_wrapper(type=grn_inference_strategy, data =data)
         self.cell_embedding = EmbeddingFactory().create_embedding_wrapper(type=cell_embedding_strategy, data=data)
@@ -70,7 +73,7 @@ class AlgorithmWrapper(ABC):
         label_convergence = False
         grn_convergence = False
         iterations = 0
-        while not self.check_convergence(grn_convergence, label_convergence) and iterations<self.max_iterations:
+        while not self.check_convergence(grn_convergence, label_convergence) and self.data.uns['current_iteration']<self.data.uns['max_iterations']:
             print('GRN inferrence')
             grn_convergence = self.GRN_inferrence.run_GRN_inference(consistency=GRN_convergence_tolerance)
             print('Embedding')
@@ -78,6 +81,9 @@ class AlgorithmWrapper(ABC):
             print('Clustering')
             label_convergence = self.clustering.run_clustering_step(tolerance=cluster_convergence_tolerance)
             iterations = iterations+1
+
+            self.data.uns['current_iteration'] = self.data.uns['current_iteration'] +1
+
         print('Finished inference')
         
         print('Writing results to file')
@@ -98,6 +104,6 @@ class AlgorithmWrapper(ABC):
         filename = op.join(self.output_directory, 'clustered_result.h5ad')
         self.data.write_h5ad(filename=filename)
         
-        #self.GRN_inferrence._write_results(self.output_directory)
-        #self.cell_embedding._write_results(self.output_directory)
-        #self.clustering._write_results(self.output_directory)
+        self.GRN_inferrence._write_results()
+        self.cell_embedding._write_results()
+        self.clustering._write_results()

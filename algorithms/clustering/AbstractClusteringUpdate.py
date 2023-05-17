@@ -5,7 +5,7 @@ from networkx.algorithms.matching import max_weight_matching
 import networkx as nx
 import itertools
 import numpy as np
-
+from algorithms.utils.expceptions import InconsistenClusterExpection
 
 class ClusteringUpdateWrapper(ABC):
     def __init__(self, data) -> None:
@@ -41,6 +41,12 @@ class ClusteringUpdateWrapper(ABC):
                 label_matching[rownames[m[0]-d]] = colnames[m[1]]
             else:
                 label_matching[rownames[m[1]-d]] = colnames[m[0]]
+        
+        
+        # Fallback if there is not an optimal cluster correspondence
+        for c in colnames:
+            if c not in label_matching.keys():
+                raise InconsistenClusterExpection("Number of clusters changes")
 
         adjusted_cluster_labels = [label_matching[cl] for cl in self.data.obs['current_clustering']]
         self.data.obs['current_clustering'] = adjusted_cluster_labels

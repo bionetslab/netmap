@@ -18,7 +18,6 @@ class BasicGRNInference(AbstractGRNInferrence):
 
     def __init__(self, data:ad.AnnData) -> None:
         super().__init__(data)
-        self.data = data
 
     def _get_top_k_edges():
         return 0
@@ -53,15 +52,16 @@ class BasicGRNInference(AbstractGRNInferrence):
             del self.data.uns['GRNs'][f'iteration_{im2!r}']
 
 
-    def _write_results(self, directory):
+    def _write_results(self):
          
         """ 
         Write the last GNRs to file in a sparse matrix format. One file per GRN.
         """
         try:
-            i = self.data.uns['current_iteration']
-            for GRN in self.data.uns['GRNs'][f'iteration_{i!r}']:
-                filename = op.join(directory, f'GRN_cluster{i!r}.npz')
+            i = self.data.uns['current_iteration']-1
+            for GRN in self.data.uns['GRNs'][f'iteration_{i!r}'].values():
+                print(GRN)
+                filename = op.join(self.data.uns['GNR_dir'], f'{GRN}.npz')
                 scs.save_npz(file=filename, matrix=self.data.varp[GRN])
         except KeyError:
             print('Results not initialized')

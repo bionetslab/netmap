@@ -7,9 +7,7 @@ import numpy as np
 
 class BasicInitializer(AbstractInitializer):
     def __init__(self, data:ad.AnnData, n_clusters:int, max_iterations:int) -> None:
-        super().__init__()
-        self.data = data # This is initialized in a second step.
-        
+        super().__init__(data)        
         # These are some house keeping variables that are required for the 
         # entire algorithms. 
         self.data.uns['n_clusters'] = n_clusters

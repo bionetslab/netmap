@@ -1,6 +1,6 @@
 from algorithms.clustering.AbstractClusteringUpdate import ClusteringUpdateWrapper
 from sklearn.cluster import KMeans
-
+import os.path as op
 import pandas as pd
 
 class BasicClustering(ClusteringUpdateWrapper):
@@ -25,6 +25,14 @@ class BasicClustering(ClusteringUpdateWrapper):
         return super()._check_label_convergence(tolerance)
     
 
-    def _write_results(self, directory):
+    def _write_results(self):
+        """
         
-        print("Pass")
+        """
+        try:
+            pd.DataFrame(self.data.obs['current_clustering']).to_csv(op.join(self.data.uns['clustering_dir'], 'cluster_labels.tsv'), 
+                                                                     sep='\t', 
+                                                                     header=True, 
+                                                                     index=True)
+        except KeyError:
+            print('Result not initialized')

@@ -4,8 +4,8 @@ import os
 import time
 
 class AbstractInitializer(ABC):
-    def __init__(self) -> None:
-        pass
+    def __init__(self, data) -> None:
+        self.data = data
 
     @abstractmethod
     def _initialize_clustering(self) -> None:
@@ -47,4 +47,7 @@ class AbstractInitializer(ABC):
         os.makedirs(op.join(output_directory, 'embedding'))
         os.makedirs(op.join(output_directory, 'clustering'))
         
+        self.data.uns['GNR_dir'] = op.join(output_directory, 'GRNs')
+        self.data.uns['embedding_dir'] = op.join(output_directory, 'embedding')
+        self.data.uns['clustering_dir'] = op.join(output_directory, 'clustering')
         return output_directory
