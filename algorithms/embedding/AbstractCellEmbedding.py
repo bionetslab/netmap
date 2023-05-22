@@ -8,11 +8,9 @@ import scipy as sc
 class CellEmbeddingWrapper(ABC):
     def __init__(self, data) -> None:
         self.data = data
-        self.embedding = None
-
 
     @abstractmethod
-    def _compute_new_cell_embedding(self, cluster_specific_GRNs):
+    def _compute_new_cell_embedding(self) -> None:
         """
         Abstract method computing the new embedding of the data given the GRNs
 
@@ -23,22 +21,15 @@ class CellEmbeddingWrapper(ABC):
         """
 
 
-    def get_embedding(self):
-        return self.embedding
-    
-
-    def run_embedding_step(self):
+    def run_embedding_step(self) -> None:
         self._compute_new_cell_embedding()
-        return self.embedding
-    
-
+        
 
     @abstractmethod
-    def _write_results(self):
+    def _write_results(self) -> None:
         """
         Write all required results to file.
-        
+
         """
 
         pass
-
