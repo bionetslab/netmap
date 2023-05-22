@@ -134,7 +134,7 @@ input:
 output:
   directory: /home/anne/Documents/netmap/temp-res/initial_results
 ```
-7. Lastly, when implementing a new strategy, the developer will add documentation on the newly implemented module in the newly implemented class, as well as a documentation file for the overall stategy, in the documentation folder. This includes a description of the strategies for Initialization, GRN Inferrence, Embedding, and Clustering. Users should be able to run the strategy based on the documentation, including the installation and execution of external tools. The documentation should link the the configuration file.
+7. Lastly, when implementing a new strategy, the developer will add documentation on the newly implemented module in the newly implemented class, as well as a documentation file for the overall stategy, in the documentation folder. This includes a description of the strategies for Initialization, GRN Inferrence, Embedding, and Clustering. Users should be able to run the strategy based on the documentation, including the installation and execution of external tools. The documentation should link the the configuration file. See [BASIC.md](../documentation/BASIC.md) as an example.
 
 ## Abstract classes
 - InitializationWrapper; input: cell list, initial clustering or number of clusters k; output: cell clustering with k clusters
