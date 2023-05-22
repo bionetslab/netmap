@@ -115,8 +115,26 @@ def run_tests():
 ```
 
 
+6. We recommend adding a configuration file instead of parsing the parameters via the command line, to increase reproducibility and readibility. We use ```.yaml``` files to define the parameters. The utils folder contains a basic yaml parser.
 
-
+```python
+strategy:
+  InitializationStrategy: BASIC
+  GRNInferrenceStrategy: BASIC
+  ClusteringUpdateStategy: BASIC 
+  CellEmbeddingStrategy: BASIC
+algorithm:
+  max_iterations: 1
+  clustering_tolerance: 0.75
+  grn_consistency: 0.75
+input:
+  directory: '/home/anne/Documents/netmap/data/tox-cd8'
+  filename: 
+  prefix: ['GSM3568585_scRNA_D4.5_P14_Arm_1_']
+output:
+  directory: /home/anne/Documents/netmap/temp-res/initial_results
+```
+7. Lastly, when implementing a new strategy, the developer will add documentation on the newly implemented module in the newly implemented class, as well as a documentation file for the overall stategy, in the documentation folder. This includes a description of the strategies for Initialization, GRN Inferrence, Embedding, and Clustering. Users should be able to run the strategy based on the documentation, including the installation and execution of external tools. The documentation should link the the configuration file.
 
 ## Abstract classes
 - InitializationWrapper; input: cell list, initial clustering or number of clusters k; output: cell clustering with k clusters
