@@ -28,7 +28,7 @@ class BasicGRNInference(AbstractGRNInferrence):
 
         i = self.data.uns["current_iteration"]
         self.data.uns["GRNs"]["iteration_" + str(i)] = {}
-        for lab in range(self.data.uns["n_clusters"]):
+        for lab in range(self.data.uns["algorithm.n_clusters"]):
             self.data.uns["GRNs"][f"iteration_{i!r}"][f"cluster_{lab!r}"] = f"iteration{i!r}_cluster{lab!r}"
             index_of = np.random.choice(len(self.data.var.index), size=100, replace=False)
             binomials = np.random.binomial(n=1, p=0.2, size=100 * 99)
@@ -49,7 +49,7 @@ class BasicGRNInference(AbstractGRNInferrence):
                 del self.data.varp[self.data.uns["GRNs"][f"iteration_{im2!r}"][GRN]]
             del self.data.uns["GRNs"][f"iteration_{im2!r}"]
 
-    def _write_results(self):
+    def _write_results(self) -> None:
 
         """
         Write the last GNRs to file in a sparse matrix format. One file per GRN.
@@ -63,7 +63,7 @@ class BasicGRNInference(AbstractGRNInferrence):
         except KeyError:
             print("Results not initialized")
 
-    def _check_GRN_convergence(self, consistency):
+    def _check_GRN_convergence(self, consistency) -> bool:
         """
         This method checks if the GRNs have converged by checking the edges. For each cluster, first, the overlap between the edges in the
         new and the old GRN are computed. For convergence it is required that the consitent edges make up a certain percentage of
@@ -98,7 +98,7 @@ class BasicGRNInference(AbstractGRNInferrence):
                     number_of_converged_clusters = number_of_converged_clusters + 1
 
         # Check of thr GRNs for all clusters have converged.
-        if number_of_converged_clusters == self.data.uns["n_clusters"]:
+        if number_of_converged_clusters == self.data.uns["algorithm.n_clusters"]:
             return True
         else:
             return False

@@ -19,40 +19,21 @@ class AlgorithmWrapper(ABC):
     def __init__(
         self,
         data: ad.AnnData,
-        cell_embedding_strategy: CellEmbeddingStrategy,
-        clustering_strategy: ClusteringUpdateStategy,
-        grn_inference_strategy: GRNInferrenceStrategy,
-        initialization_strategy: InitializationStrategy,
-        max_iterations=100,
-        n_clusters=12,
-        output_directory="/tmp/netmap",
+        configuration:dict
     ) -> None:
 
         self.data = data
-        self.max_iterations = max_iterations
-        self.n_cluster = n_clusters
-        self.output_directory = output_directory
-
-        # save the variables
-        self.cell_embedding_strategy = cell_embedding_strategy
-        self.clustering_strategy = clustering_strategy
-        self.grn_inference_strategy = grn_inference_strategy
-        self.initialization_strategy = initialization_strategy
-
-        # initialize
 
         self.initializer = InitializerFactory().create_initializer_wrapper(
-            type=initialization_strategy,
+            type=InitializationStrategy[configuration['strategy.InitializationStrategy']],
             data=data,
-            n_clusters=n_clusters,
-            max_iterations=max_iterations,
-        )
+            configuration=configuration)
 
-        self.GRN_inferrence = GRNInferenceFactory().create_inference_wrapper(type=grn_inference_strategy, data=data)
-        self.cell_embedding = EmbeddingFactory().create_embedding_wrapper(type=cell_embedding_strategy, data=data)
-        self.clustering = ClusteringFactory().create_clustering_wrapper(type=clustering_strategy, data=data)
+        self.GRN_inferrence = GRNInferenceFactory().create_inference_wrapper(type=GRNInferrenceStrategy[configuration['strategy.GRNInferrenceStrategy']], data=data)
+        self.cell_embedding = EmbeddingFactory().create_embedding_wrapper(type=CellEmbeddingStrategy[configuration['strategy.CellEmbeddingStrategy']], data=data)
+        self.clustering = ClusteringFactory().create_clustering_wrapper(type=ClusteringUpdateStategy[configuration['strategy.ClusteringUpdateStategy']], data=data)
 
-    def check_convergence(self, grn_convergence, label_convergence):
+    def check_convergence(self, grn_convergence, label_convergence) -> bool:
         """
         Require the labels and the GRNs to be converged.
         """
@@ -68,8 +49,10 @@ class AlgorithmWrapper(ABC):
         """
         print("Running algorithm")
         print("Initializing Algorithm")
-        self.output_directory = self.initializer.initialize_result_directory(self.output_directory)
         self.initializer._initialize_clustering()
+        self.initializer.initialize_result_directory()
+
+        print(self.data.uns)
         print("Finshed setting up")
 
         print("Start inference")
@@ -78,7 +61,7 @@ class AlgorithmWrapper(ABC):
         iterations = 0
         while (
             not self.check_convergence(grn_convergence, label_convergence)
-            and self.data.uns["current_iteration"] < self.data.uns["max_iterations"]
+            and self.data.uns["current_iteration"] < self.data.uns["algorithm.max_iterations"]
         ):
             print("GRN inferrence")
             grn_convergence = self.GRN_inferrence.run_GRN_inference(consistency=GRN_convergence_tolerance)
@@ -87,7 +70,6 @@ class AlgorithmWrapper(ABC):
             print("Clustering")
             label_convergence = self.clustering.run_clustering_step(tolerance=cluster_convergence_tolerance)
             iterations = iterations + 1
-
             self.data.uns["current_iteration"] = self.data.uns["current_iteration"] + 1
 
         print("Finished inference")
@@ -96,14 +78,14 @@ class AlgorithmWrapper(ABC):
         self.write_results()
         print("Finished")
 
-    def write_results(self):
+    def write_results(self) -> None:
         """
         Implement some code to write the results.
         By default the h5ad formatted Anndata is stored. Additional functionalities can
         be implemented for each component.
         """
 
-        filename = op.join(self.output_directory, "clustered_result.h5ad")
+        filename = op.join(self.data.uns['output.directory'], "clustered_result.h5ad")
         self.data.write_h5ad(filename=filename)
 
         self.GRN_inferrence._write_results()

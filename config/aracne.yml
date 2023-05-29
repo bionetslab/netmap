@@ -1,10 +1,10 @@
 strategy:
   InitializationStrategy: BASIC
-  GRNInferrenceStrategy: BASIC
+  GRNInferrenceStrategy: ARACNE
   ClusteringUpdateStategy: BASIC 
   CellEmbeddingStrategy: BASIC
 algorithm:
-  n_clusters: 12
+  n_clusters: 2
   max_iterations: 1
   clustering_tolerance: 0.75
   grn_consistency: 0.75
@@ -12,6 +12,7 @@ input:
   directory: '/home/bionets-og86asub/Documents/netmap/data/tox-cd8'
   filename: 
   prefix: ['GSM3568585_scRNA_D4.5_P14_Arm_1_']
+  TF_file: /home/bionets-og86asub/Documents/netmap/netmap-basic/data/tfdb/dorothea.tsv
 output:
   directory: /home/bionets-og86asub/Documents/netmap/temp-res/initial_results
 external:

@@ -17,7 +17,7 @@ def _infer_cluster_specific_GRNS(self) -> None:
 
     i = self.data.uns['current_iteration']
     self.data.uns['GRNs']['iteration_'+str(i)] =  {}
-    for lab in range(self.data.uns['n_clusters']):
+    for lab in range(self.data.uns['algorithm.n_clusters']):
         self.data.uns['GRNs'][f'iteration_{i!r}'][f'cluster_{lab!r}'] = f'iteration{i!r}_cluster{lab!r}'
         index_of = np.random.choice(len(self.data.var.index), size=100, replace=False)
         binomials = np.random.binomial(n = 1, p=0.2, size=100*99)
@@ -95,7 +95,7 @@ def _check_GRN_convergence(self, consistency):
                 number_of_converged_clusters = number_of_converged_clusters + 1
 
     # Check of thr GRNs for all clusters have converged.
-    if number_of_converged_clusters == self.data.uns['n_clusters']:
+    if number_of_converged_clusters == self.data.uns['algorithm.n_clusters']:
         return True
     else:
         return False

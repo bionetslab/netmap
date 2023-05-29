@@ -3,6 +3,7 @@ from enum import Enum
 
 class GRNInferrenceStrategy(Enum):
     BASIC = 1
+    ARACNE = 2
 
 
 class CellEmbeddingStrategy(Enum):

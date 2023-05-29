@@ -1,6 +1,6 @@
 import yaml
 from algorithms.utils.expceptions import ConfigValidationError
-
+import pandas as pd
 
 def parse_configuration_file(yml_config):
 
@@ -14,4 +14,10 @@ def parse_configuration_file(yml_config):
     if len(set(['InitializationStrategy', 'GRNInferrenceStrategy', 'ClusteringUpdateStategy', 'CellEmbeddingStrategy']).intersection(set(config['strategy'].keys())))<4:
         raise ConfigValidationError('Missing mandatory configuration options')
     
-    return config
+    configuration = pd.json_normalize(config)
+    configuration_dict = {}
+    for col in configuration.columns:
+        configuration_dict[col] = configuration.loc[0,col]
+    configuration_dict
+
+    return configuration_dict

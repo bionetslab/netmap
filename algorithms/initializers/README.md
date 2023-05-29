@@ -5,8 +5,8 @@ The initializer takes care of setting all parameters, and the initial clustering
 By default, the initializer sets a number of parameters in the AnnData object.
 
 ```python
-self.data.uns['n_clusters'] = n_clusters
-self.data.uns['max_iterations'] = max_iterations
+self.data.uns['algorithm.n_clusters'] = n_clusters
+self.data.uns['algorithm.max_iterations'] = max_iterations
 self.data.uns['current_iteration']  = 0
 data.uns['GRNs'] = {}
 
@@ -31,7 +31,7 @@ def _initialize_clustering(self):
         raise NotInitializerError("Data object not initialized")
 
     # sample uniformly at random from the number of clusters
-    random_clusters = np.random.choice(self.data.uns['n_clusters'], self.data.X.shape[0])
+    random_clusters = np.random.choice(self.data.uns['algorithm.n_clusters'], self.data.X.shape[0])
     # add a column with the initial clustering
     self.data.obs['initial_clustering'] = random_clusters
     self.data.obs['current_clustering'] = random_clusters

@@ -22,7 +22,7 @@ class AbstractInitializer(ABC):
 
         pass
 
-    def initialize_result_directory(self, output_directory:str) -> str:
+    def initialize_result_directory(self) -> None:
         """
         Initialize the result directory structure and automatically rename
         the directory if there is already a directory of the same name
@@ -35,18 +35,19 @@ class AbstractInitializer(ABC):
         output_directory: The name of the created directory.
         """
 
-        if op.exists(output_directory):
+        print('Initializing result directory')
+        if op.exists(self.data.uns['output.directory']):
             # if the directory exists create a time stamped directory
             # and return it
             timestamp = str(time.time())
-            output_directory = f"{output_directory}_{timestamp}"
+            output_directory = f"{self.data.uns['output.directory']}_{timestamp}"
+            self.data.uns['output.directory'] = output_directory
 
-        os.makedirs(output_directory, exist_ok=True)
-        os.makedirs(op.join(output_directory, "GRNs"))
-        os.makedirs(op.join(output_directory, "embedding"))
-        os.makedirs(op.join(output_directory, "clustering"))
+        os.makedirs(self.data.uns['output.directory'], exist_ok=True)
+        os.makedirs(op.join(self.data.uns['output.directory'], "GRNs"))
+        os.makedirs(op.join(self.data.uns['output.directory'], "embedding"))
+        os.makedirs(op.join(self.data.uns['output.directory'], "clustering"))
 
-        self.data.uns["GNR_dir"] = op.join(output_directory, "GRNs")
-        self.data.uns["embedding_dir"] = op.join(output_directory, "embedding")
-        self.data.uns["clustering_dir"] = op.join(output_directory, "clustering")
-        return output_directory
+        self.data.uns["GRN_dir"] = op.join(self.data.uns['output.directory'], "GRNs")
+        self.data.uns["embedding_dir"] = op.join(self.data.uns['output.directory'], "embedding")
+        self.data.uns["clustering_dir"] = op.join(self.data.uns['output.directory'], "clustering")

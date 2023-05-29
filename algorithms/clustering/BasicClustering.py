@@ -15,7 +15,7 @@ class BasicClustering(ClusteringUpdateWrapper):
 
         # store the old clustering
         self.data.obs["previous_clustering"] = self.data.obs["current_clustering"].copy()
-        model = KMeans(n_clusters=self.data.uns["n_clusters"], random_state=0, max_iter=2)
+        model = KMeans(n_clusters=self.data.uns["algorithm.n_clusters"], random_state=0, max_iter=2)
         model.fit(self.data.obsm["embedding"])
         self.data.obs["current_clustering"] = model.labels_
 

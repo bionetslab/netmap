@@ -5,7 +5,7 @@ import scanpy as sp
 import anndata as ad
 
 
-def generate_random_pandas_data_frame(n, m):
+def generate_random_pandas_data_frame(n, m) -> pd.DataFrame:
     """
     Generates a random data frame of dimensions nxm with column names
     """
@@ -14,6 +14,9 @@ def generate_random_pandas_data_frame(n, m):
     data.colums = ["column_" + str(i) for i in range(data.shape[1])]
     return data
 
+def generate_random_adata():
+    data = generate_random_adata()
+    
 
 def create_anndata_from_prefixes(data_directory: str, prefix: list) -> ad.AnnData:
     """
