@@ -4,6 +4,13 @@ import pandas as pd
 
 def parse_configuration_file(yml_config):
 
+    """
+    Parse configuration file, ensure that strategy has been configured. Returns the configuration
+    as a flattened dictionary.
+
+    :y
+    """
+
     with open(yml_config, "r") as stream:
         try:
             config = yaml.safe_load(stream)

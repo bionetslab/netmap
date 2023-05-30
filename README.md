@@ -42,6 +42,9 @@ The repository is structured in several subfolders as shown below. Every folder 
 
 ```
 
+## Documentation 
+The documentation is created using Sphinx and hosted on the ...
+
 ## Using the code
 
 Our code is available as ...

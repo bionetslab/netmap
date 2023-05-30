@@ -42,7 +42,7 @@ def _infer_cluster_specific_GRNS(self) -> None:
 
 ```
 
-For an instance with 3 clusters would look like this after 5 iterations. ```self.data``` contains ```self.data.uns['GRNs']``` and ```self.obsp``` contains the same keys in a flat hierarchy. Only the 4th and 5th iterations GRNs are stored in the data object.
+For an instance with 3 clusters would look like this after 5 iterations. ```self.data``` contains ```self.data.uns['GRNs']``` and ```self.varp``` contains the same keys in a flat hierarchy. Only the 4th and 5th iterations GRNs are stored in the data object.
 ```python
 >>> data
 AnnData object with n_obs × n_vars = 4906 × 1000

@@ -41,12 +41,12 @@ If a developer wants to implement a custom Strategy, for example a Custom Cluste
 from algorithms.clustering.AbstractClusteringUpdate import ClusteringUpdateWrapper
 
 class BasicClustering(ClusteringUpdateWrapper):
-    def __init__(self) -> None:
-        super().__init__()
-        pass
+    def __init__(self, data) -> None:
+        super().__init__(data=data)
+
 ```
 
-2. Add the Strategy name to the Stategy.py Enum. There is one enum per Step. E.g. We add the BASIC Stategy to the ClusteringUpdateStategy Enum.
+2. Add the Strategy name to the Stategy.py Enum. There is one enum per Step. E.g. We add the BASIC Strategy to the ClusteringUpdateStategy Enum.
 
 **Strategy.py**
 ```python
@@ -60,70 +60,54 @@ class ClusteringUpdateStategy(Enum):
 ```python
 class ClusteringFactory:
     
-    def create_clustering_wrapper(self, type: ClusteringUpdateStategy):
+    def create_clustering_wrapper(self, type: ClusteringUpdateStategy, **kwargs) -> ClusteringUpdateWrapper:
+        """
+        Instantiates the correct Clustering Strategy based on the paramters.
+        
+        """
         if type == ClusteringUpdateStategy.BASIC:
-            return BasicClustering()     
+            return BasicClustering(**kwargs)
+      
+     
 ```
 
-4. The Clustering strategy can then be used by passing it to the AlgorithmWrapper instance, or a derived class.
+4. The Clustering strategy can then be used by passing it to the AlgorithmWrapper instance, or a derived class. 
 
 **algorithms/AlgorithmWrapper.py**
 ```python
 class AlgorithmWrapper(ABC):
-    def __init__(self, 
-                  data,
-                  cell_embedding_strategy: CellEmbeddingStrategy, 
-                  clustering_strategy: ClusteringUpdateStategy, 
-                  grn_inference_strategy: GRNInferrenceStrategy,
-                  initialization_strategy: InitializationStrategy,
-                  max_iterations = 100) -> None:
-        
-        
+    def __init__(
+        self,
+        data: ad.AnnData,
+        configuration:dict
+    ) -> None:
+
         self.data = data
-        self.max_iterations = max_iterations
 
-        # save the variables
-        self.cell_embedding_strategy = cell_embedding_strategy
-        self.clustering_strategy = clustering_strategy
-        self.grn_inference_strategy = grn_inference_strategy
+        self.initializer = InitializerFactory().create_initializer_wrapper(
+            type=InitializationStrategy[configuration['strategy.InitializationStrategy']],
+            data=data,
+            configuration=configuration)
 
-        # initialize 
-        self.GRN_inferrence = GRNInferenceFactory().create_inference_wrapper(type=grn_inference_strategy)
-        self.cell_embedding = EmbeddingFactory().create_embedding_wrapper(type=cell_embedding_strategy)
-        self.clustering = ClusteringFactory().create_clustering_wrapper(type=clustering_strategy)
+        self.GRN_inferrence = GRNInferenceFactory().create_inference_wrapper(type=GRNInferrenceStrategy[configuration['strategy.GRNInferrenceStrategy']], data=data)
+        self.cell_embedding = EmbeddingFactory().create_embedding_wrapper(type=CellEmbeddingStrategy[configuration['strategy.CellEmbeddingStrategy']], data=data)
+        self.clustering = ClusteringFactory().create_clustering_wrapper(type=ClusteringUpdateStategy[configuration['strategy.ClusteringUpdateStategy']], data=data)
 
-        self.initializer = InitializerFactory().create_initializer_wrapper(type=initialization_strategy)
-    
+  ##  Implement remaining methods
+
 ```
 
-5. Finally, the new Strategy can be used in the TestRunner class. (Here, we assume to have implemented a BasicStategy for all Steps in the algorithm)
+5. Finally, the new Strategy can be used in the TestRunner class. The data is read before creating the object and the configuration
+file needs to be parsed and passed as the a flattened dictionary. Below is an example for a yaml configuration file. This can be configured depending on the algorithm configuration. Developers should supply an example configuration file.
 
-**TestRunner.py**
-```
-def run_tests():
-    ###
-    data = np.random.random((2000,39))
-    data = pd.DataFrame(data)
-
-    my_algorithm = AlgorithmWrapper(data,
-                                    cell_embedding_strategy=CellEmbeddingStrategy.BASIC,
-                                    clustering_strategy=ClusteringUpdateStategy.BASIC,
-                                    grn_inference_strategy=GRNInferrenceStrategy.BASIC,
-                                    initialization_strategy=InitializationStrategy.BASIC,
-                                    max_iterations= 12
-                                    )
-```
-
-
-6. We recommend adding a configuration file instead of parsing the parameters via the command line, to increase reproducibility and readibility. We use ```.yaml``` files to define the parameters. The utils folder contains a basic yaml parser.
-
-```python
+```yaml
 strategy:
   InitializationStrategy: BASIC
   GRNInferrenceStrategy: BASIC
   ClusteringUpdateStategy: BASIC 
   CellEmbeddingStrategy: BASIC
 algorithm:
+  n_clusters: 12
   max_iterations: 1
   clustering_tolerance: 0.75
   grn_consistency: 0.75
@@ -133,8 +117,39 @@ input:
   prefix: ['GSM3568585_scRNA_D4.5_P14_Arm_1_']
 output:
   directory: /home/anne/Documents/netmap/temp-res/initial_results
+external:
+  directory: /home/anne/Documents/netmap/netmap-basic/external
+
 ```
-7. Lastly, when implementing a new strategy, the developer will add documentation on the newly implemented module in the newly implemented class, as well as a documentation file for the overall stategy, in the documentation folder. This includes a description of the strategies for Initialization, GRN Inferrence, Embedding, and Clustering. Users should be able to run the strategy based on the documentation, including the installation and execution of external tools. The documentation should link the the configuration file.
+**TestRunner.py**
+```python
+class TestRunner:
+    def __init__(self) -> None:
+        pass
+    
+    def run_tests(self, data, configuration) -> AlgorithmWrapper:
+
+        my_algorithm = AlgorithmWrapper(data, configuration)
+        my_algorithm.run(GRN_convergence_tolerance=1, cluster_convergence_tolerance=1)
+
+        return my_algorithm
+     
+if __name__ == '__main__':   
+    yml_config = '/home/bionets-og86asub/Documents/netmap/netmap-basic/config/aracne.yml'
+    # Read the configuration file
+    configuration = parse_configuration_file(yml_config)
+    print(configuration)
+    # Read the data
+    data = create_anndata_from_prefixes(data_directory = configuration['input.directory'], prefix=configuration['input.prefix'])
+    # create and run the test
+    test_runner = TestRunner()
+    my_result = test_runner.run_tests(data=data, configuration=configuration)
+    # retrieve the result Anndata object,
+    results_anndata = my_result.data
+
+```
+
+6. Lastly, when implementing a new strategy, the developer will add documentation on the newly implemented module in the newly implemented class, as well as a documentation file for the overall stategy, in the documentation folder. This includes a description of the strategies for Initialization, GRN Inferrence, Embedding, and Clustering. Users should be able to run the strategy based on the documentation, including the installation and execution of external tools. The documentation should link the the configuration file.
 
 ## Abstract classes
 - InitializationWrapper; input: cell list, initial clustering or number of clusters k; output: cell clustering with k clusters

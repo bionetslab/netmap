@@ -55,8 +55,7 @@ class AbstractGRNInferrence(ABC):
         enforce_equal_k: Require the number of edges k in each partition to be equal.
             If set to True, the function must return k edges for each cluster. If this is not possible,
             k must be set to the maximal k of the smallest edge set.
-        Returns
-        -------
+
          Returns:
         ------------------------
 

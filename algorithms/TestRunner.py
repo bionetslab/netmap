@@ -27,11 +27,7 @@ if __name__ == '__main__':
     configuration = parse_configuration_file(yml_config)
     print(configuration)
     data = create_anndata_from_prefixes(data_directory = configuration['input.directory'], prefix=configuration['input.prefix'])
+    
     test_runner = TestRunner()
     my_result = test_runner.run_tests(data=data, configuration=configuration)
-
-
-    myexp = pd.DataFrame(my_result.data.X[my_result.data.obs['current_clustering'] == 11].toarray().T)
-    myexp.index = my_result.data.var.index
-    myexp.columns = my_result.data.obs[my_result.data.obs['current_clustering'] == 11].index
 
