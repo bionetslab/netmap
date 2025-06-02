@@ -2,7 +2,7 @@ import anndata
 import os
 import os.path as op
 
-def attribution_to_anndata(attribution_list, varnames = None, obs = None)-> anndata.AnnData:
+def attribution_to_anndata(attribution_list, var = None, obs = None)-> anndata.AnnData:
 
     """
     Transform attribution data frame into an anndata object
@@ -13,11 +13,12 @@ def attribution_to_anndata(attribution_list, varnames = None, obs = None)-> annd
     returns: 
     Anndata object with attribution values in X.
     """
+    print('Creating anndata')
     adata = anndata.AnnData(attribution_list)
     adata.raw = adata
-    if varnames is not None:
-        adata.var.index = varnames
-        adata.raw.var.index = varnames
+    if var is not None:
+        print('Setting vars')
+        adata.var = var
     if obs is not None:
         adata.obs = obs
     return adata

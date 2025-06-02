@@ -1,29 +1,11 @@
-import sys
-  
-# append the path of the parent directory
-sys.path.append("..")
-
-import captum
-from datetime import datetime
-import os
-import shutil
 import pandas as pd
 import numpy as np
-import scanpy as sc
-import time
 import torch
 import torch.nn as nn
-import torch.optim as optim
-from captum.attr import LRP
-from tqdm import tqdm
+
 import warnings
 warnings.filterwarnings("ignore")
-import os.path as op
 
-
-from utils.tf_utils import *
-import models.model as m
-from models.model import train_multi_task_model
 
 from torch.utils.data import DataLoader, TensorDataset
 

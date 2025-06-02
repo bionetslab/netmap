@@ -3,7 +3,8 @@ import scanpy as sc
 import logging
 from typing import Optional, Dict
 import pandas as pd
-import omnipath as op
+import numpy
+#import omnipath as op
 import scipy.sparse as sp
 import rpy2.robjects as ro
 import rpy2.robjects.pandas2ri as pandas2ri
