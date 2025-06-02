@@ -1,10 +1,6 @@
 
 import pandas as pd
 import numpy as np
-from models.filtering_strategies import filtering_strategy, get_top_k_values_and_threshold, filter_edges_threshold
-import models.loss as l
-
-from data_loader.scaling import *
 from tqdm import tqdm
 from numpy import hstack
 
@@ -29,13 +25,19 @@ def inference_complete(lrp, data, gene_names, background, xai_type= 'lrp-like', 
     ### This is currentlyWednesday unlikely due to random sampling
     top_values = None
     attribution_list =  []
+    target_names = []
     for g in tqdm(range(data.shape[1])):
         attribution_all, names = inference_one_target(g, lrp, data, gene_names, background, 
                                                         xai_type=xai_type, n_top_genes = n_top_genes, num_iterations=num_iterations)
         attribution_list.append(attribution_all)
         name_list = name_list + names
+        target_names = target_names+[gene_names[g]]* (attribution_all.shape[1])
     attribution_list = hstack( attribution_list)
-    return attribution_list, name_list
+
+    index_list = [f"{s}_{t}" for (s, t) in zip(name_list, target_names)]
+    cou = pd.DataFrame({'index': index_list, 'source':name_list, 'target':target_names})
+    cou = cou.set_index('index')
+    return attribution_list, cou
 
 def inference_one_target(
     target_gene,
