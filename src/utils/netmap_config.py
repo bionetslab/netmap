@@ -7,6 +7,7 @@ import yaml
 @dataclass
 class NetmapConfig:
     input_data: str =  "data.h5ad"
+    layer: str = 'counts'
     output_directory: str =  "netmap"
     transcription_factors: str =  "/data_nfs/datasets/SCENIC_DB/tf_lists/allTFs_hg38.txt"
     tf_only: bool = True

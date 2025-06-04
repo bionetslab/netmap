@@ -14,7 +14,6 @@ import time
 from captum.attr import GradientShap
 from netmap.src.model.inferrence_simple import *
 from netmap.src.utils.data_utils import attribution_to_anndata
-import netmap.src.downstream.downstreammain as d
 from netmap.src.model.pipeline import *
 import numpy as np
 
@@ -234,10 +233,16 @@ def run_netmap(config, dataset_config):
     ## Get the data matrix from the CustumAnndata obeject
     gene_names = np.array(adata.var.index)
     model_start = time.monotonic()
-    if scs.issparse(adata.X):
-        data_tensor = torch.tensor(adata.X.todense(), dtype=torch.float32)
+
+    if config.layer == 'counts':
+        data_tensor = adata.layers['counts']
     else:
-        data_tensor = torch.tensor(adata.X, dtype=torch.float32)
+        data_tensor = adata.X
+
+    if scs.issparse(data_tensor):
+        data_tensor = torch.tensor(data_tensor.todense(), dtype=torch.float32)
+    else:
+        data_tensor = torch.tensor(data_tensor.X, dtype=torch.float32)
 
 
     print(data_tensor.shape)
