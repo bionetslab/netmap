@@ -28,7 +28,7 @@ def create_model_zoo(data_tensor, n_models = 4, n_epochs = 500):
     model_zoo = []
     for _ in range(n_models):
 
-        data_train2, data_test2 = train_test_split(data_tensor,test_size=0.95, shuffle=True)
+        data_train2, data_test2 = train_test_split(data_tensor,test_size=0.0, shuffle=True)
 
         trained_model2 = NegativeBinomialAutoencoder(input_dim=data_tensor.shape[1], latent_dim=10, dropout_rate = 0.25)
         trained_model2 = trained_model2.cuda()
