@@ -7,7 +7,7 @@ import yaml
 @dataclass
 class NetmapConfig:
     input_data: str =  "data.h5ad"
-    layer: str = 'counts'
+    layer: str = 'X'
     output_directory: str =  "netmap"
     transcription_factors: str =  "/data_nfs/datasets/SCENIC_DB/tf_lists/allTFs_hg38.txt"
     tf_only: bool = True
@@ -21,11 +21,20 @@ class NetmapConfig:
     learning_rate: float = 0.005
     epochs: int = 150
     overwrite: bool = True
-    n_models: int = 10
+    n_models: int = 2
     n_top_edges: int =  100
-
     test_size: float  = 0.3
     edge_count:int = 10000
+    model:str =  "standard"
+    loss_fn:str =  "LogCoshLoss"
+    xai_method:str =  "GradientShap"
+    top_perc:bool =  False
+    percentile:int =  10
+    penalty:str =  'pingouin.pcor'
+    raw_attribution:bool = False
+    aggregation_strategy:str = 'mean'
+    use_differential:bool = True
+
 
 
     @classmethod
