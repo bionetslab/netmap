@@ -28,9 +28,9 @@ def create_model_zoo(data_tensor, n_models = 4, n_epochs = 500):
     model_zoo = []
     for _ in range(n_models):
 
-        data_train2, data_test2 = train_test_split(data_tensor,test_size=0.0, shuffle=True)
+        data_train2, data_test2 = train_test_split(data_tensor,test_size=0.01, shuffle=True)
 
-        trained_model2 = NegativeBinomialAutoencoder(input_dim=data_tensor.shape[1], latent_dim=10, dropout_rate = 0.25)
+        trained_model2 = NegativeBinomialAutoencoder(input_dim=data_tensor.shape[1], latent_dim=10, dropout_rate = 0.02)
         trained_model2 = trained_model2.cuda()
 
         optimizer2 = torch.optim.Adam(trained_model2.parameters(), lr=1e-4)
@@ -200,7 +200,7 @@ def generate_background_data(model_zoo, data_tensor, latent):
 
 
 def compute_attributions(model_zoo, data_tensor, latent, gene_names, backgrounds, adata, n_top = 250):
-    myexplainers = [GradientShap(mo) for mo in model_zoo]
+    myexplainers = [GradientShap(mo, multiply_by_inputs=False) for mo in model_zoo]
     attributions = []
     for b in backgrounds.keys():
         aggregated_attribution, cou = inference_complete(myexplainers, data_tensor[latent.obs['consensus'] == b].cuda(), gene_names, backgrounds[b], xai_type='shap-like', num_iterations=5,n_top_genes=n_top )
@@ -242,12 +242,12 @@ def run_netmap(config, dataset_config):
     if scs.issparse(data_tensor):
         data_tensor = torch.tensor(data_tensor.todense(), dtype=torch.float32)
     else:
-        data_tensor = torch.tensor(data_tensor.X, dtype=torch.float32)
+        data_tensor = torch.tensor(data_tensor, dtype=torch.float32)
 
 
     print(data_tensor.shape)
 
-    model_zoo = create_model_zoo(data_tensor, n_models=config.n_models, n_epochs=1500)
+    model_zoo = create_model_zoo(data_tensor, n_models=config.n_models, n_epochs=500)
 
     latent = compute_consensus_clustering(model_zoo, data_tensor, adata)
     backgrounds = generate_background_data(model_zoo, data_tensor, latent)

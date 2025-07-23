@@ -74,7 +74,7 @@ class NegativeBinomialAutoencoder(nn.Module):
             nn.ReLU(),
             nn.Dropout(dropout_rate),  # Dropout after activation
             nn.Linear(hidden_dim, input_dim),
-            nn.Softplus()  # Ensure non-negative dispersion
+            nn.Softplus()  
         )
         
         self.decoder_data = nn.Sequential(
