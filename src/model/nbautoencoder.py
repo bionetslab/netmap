@@ -118,39 +118,6 @@ class NegativeBinomialAutoencoder(nn.Module):
        
 
 
-def train_autoencoder(
-    model,
-    data_train,
-    optimizer,
-    batch_size=32,  # Minibatch size
-    num_epochs=100,
-):
-    # Prepare DataLoader for training
-    train_dataset = TensorDataset(data_train)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-
-    for epoch in range(num_epochs):
-        model.train()
-        epoch_loss = 0  # Track loss for the epoch
-
-        for batch in train_loader:
-            data_batch = batch[0]  # Unpack the single-element tuple from TensorDataset
-            # Forward pass
-            optimizer.zero_grad()
-            loss = model.compute_loss(data_batch)
-
-            # Compute total loss
-            loss.backward()
-            optimizer.step()
-
-            epoch_loss += loss.item()  # Accumulate loss for the epoch
-
-        # Print progress
-        if epoch % 10 == 0:
-            print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(train_loader):.4f}")
-
-    return model
-
 
     
 def get_thetas(model, data_tensor):

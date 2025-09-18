@@ -6,15 +6,14 @@ import time
 
 from netmap.src.utils.misc import write_config
 
-from netmap.src.model.negbinautoencoder import *
+from netmap.src.model.nbautoencoder import *
 import scanpy as sc
 
 from sklearn.model_selection import train_test_split
 import time
 from captum.attr import GradientShap
-from netmap.src.model.inferrence_simple import *
+from netmap.src.old.inferrence_simple import *
 from netmap.src.utils.data_utils import attribution_to_anndata
-from netmap.src.model.pipeline import *
 import numpy as np
 
 

@@ -14,26 +14,16 @@ class NetmapConfig:
     penalize_error: bool = True
     adata_filename: str =  "grn_lrp.h5ad"
     grn: str = "grn_lrp.tsv"
-    masking_percentage: float = 0.3
-    masking_value: int = 0
+    masking_percentage: float = 0.1
     print_every: int = 100
     optimizer: str = 'Adam'
     learning_rate: float = 0.005
-    epochs: int = 150
-    overwrite: bool = True
-    n_models: int = 2
-    n_top_edges: int =  100
-    test_size: float  = 0.3
-    edge_count:int = 10000
-    model:str =  "standard"
-    loss_fn:str =  "LogCoshLoss"
+    epochs: int = 10000 
+    n_models: int = 20
+    validation_size: float  = 0.2
+    model:str =  "NegativeBinomialAutoencoder"
     xai_method:str =  "GradientShap"
-    top_perc:bool =  False
-    percentile:int =  10
-    penalty:str =  'pingouin.pcor'
-    raw_attribution:bool = False
     aggregation_strategy:str = 'mean'
-    use_differential:bool = True
 
 
 
