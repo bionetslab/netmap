@@ -1,0 +1,47 @@
+import pandas as pd
+import numpy as np
+
+def create_edge_mask_from_GRN(grn_df, gene_list):
+    """
+    Create flat vector mask for TF target interactions based on literature GRN and 
+    gene list.
+    
+    Args:
+        grn_df (pd.DataFrame): A DataFrame representing the GRN with columns 'source',
+                               'target', and 'weight'.
+        gene_list (list): A list of gene names to be included in the matrix. (should be the gene in the study)
+
+    Returns:
+        flat_vector: numpy.ndarray: numeric mask containing the value of the GRN
+        names: numpy.ndarray: edge name vector (GeneA_GeneB)
+
+    """
+    # Create a mapping from gene names to their matrix indices for efficient look-up.
+    gene_to_index = {gene: i for i, gene in enumerate(gene_list)}
+    num_genes = len(gene_list)
+
+    matrix = np.zeros((num_genes, num_genes))
+
+    # Iterate through each row of the GRN DataFrame and populate the matrix.
+    for _, row in grn_df.iterrows():
+        tf = row['source']
+        target = row['target']
+        weight = row['weight']
+
+        # Check if both the TF and target are in our target gene list.
+        if tf in gene_to_index and target in gene_to_index:
+            tf_index = gene_to_index[tf]
+            target_index = gene_to_index[target]
+            
+            # Populate the matrix with the corresponding weight.
+            matrix[tf_index, target_index] = weight
+
+    # Create edge names
+    edge_names = []
+    for gene_A in gene_list:
+        for gene_B in gene_list:
+            edge_names.append(f'{gene_A}_{gene_B}')
+
+
+    return matrix.flatten(), edge_names
+
