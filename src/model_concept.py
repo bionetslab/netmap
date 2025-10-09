@@ -66,21 +66,22 @@ def run_netmap(config, dataset_config):
         data_tensor = torch.tensor(data_tensor, dtype=torch.float32)
 
 
-    print(data_tensor.shape)
 
-    model_zoo = create_model_zoo(data_tensor,  n_models=config.n_models, n_epochs=config.epochs, model_type=config.model)
+
+    model_zoo = create_model_zoo(data_tensor,  n_models=config.n_models, n_epochs=config.epochs, model_type=config.model, dropout_rate=config.masking_percentage)
 
     grn_adata = inferrence(model_zoo, data_tensor.cuda(), gene_names,  config, use_raw_attribution=False)
     grn_adata_raw = inferrence(model_zoo, data_tensor.cuda(), gene_names,  config, use_raw_attribution=True)
+    
     if config.xai_method == 'GradientShap':
         grn_adata.layers['raw_attribution'] = grn_adata_raw.X
         grn_adata.layers['raw_attribution_quantile_count'] = grn_adata_raw.layers['quantile_count']
 
     grn_adata = add_neighbourhood_expression_mask(adata,grn_adata)
 
-    adob = adata.obs.reset_index()
-    grn_adata.obs['cell_id'] = np.array(adob['cell_id'])
-    grn_adata.obs['grn'] = np.array(adob['grn'])
+    #adob = adata.obs.reset_index()
+    #grn_adata.obs['cell_id'] = np.array(adob['cell_id'])
+    #grn_adata.obs['grn'] = np.array(adob['grn'])
 
     
     model_elapsed = time.monotonic()-model_start

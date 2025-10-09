@@ -4,33 +4,35 @@ from netmap.src.model.zinbautoencoder import ZINBAutoencoder
 
 
 
-def create_model_zoo(data_tensor, n_models = 4, n_epochs = 500, model_type = 'ZINBAutoencoder'):
+def create_model_zoo(data_tensor, n_models = 4, n_epochs = 500, model_type = 'ZINBAutoencoder', dropout_rate = 0.02, latent_dim=10):
     model_zoo = []
 
     for _ in range(n_models):
+        try:
+            data_train2, data_test2 = train_test_split(data_tensor, test_size=0.2, shuffle=True)
 
-        data_train2, data_test2 = train_test_split(data_tensor,test_size=0.2, shuffle=True)
+            if model_type == 'ZINBAutoencoder':
+                trained_model2 = ZINBAutoencoder(input_dim=data_tensor.shape[1], latent_dim=latent_dim, dropout_rate = dropout_rate)
+            elif model_type == 'NegativeBinomialAutoencoder':
+                trained_model2 = NegativeBinomialAutoencoder(input_dim=data_tensor.shape[1], latent_dim=latent_dim, dropout_rate = dropout_rate)
+            else:
+                trained_model2 = NegativeBinomialAutoencoder(input_dim=data_tensor.shape[1], latent_dim=latent_dim, dropout_rate = dropout_rate)
 
-        if model_type == 'ZINBAutoencoder':
-            trained_model2 = ZINBAutoencoder(input_dim=data_tensor.shape[1], latent_dim=10, dropout_rate = 0.02)
-        elif model_type == 'NegativeBinomialAutoencoder':
-            trained_model2 = NegativeBinomialAutoencoder(input_dim=data_tensor.shape[1], latent_dim=10, dropout_rate = 0.02)
-        else:
-            trained_model2 = NegativeBinomialAutoencoder(input_dim=data_tensor.shape[1], latent_dim=10, dropout_rate = 0.02)
+            trained_model2 = trained_model2.cuda()
 
-        trained_model2 = trained_model2.cuda()
+            optimizer2 = torch.optim.Adam(trained_model2.parameters(), lr=1e-4)
 
-        optimizer2 = torch.optim.Adam(trained_model2.parameters(), lr=1e-4)
+            trained_model2 = train_autoencoder_early_stopping(
+                    trained_model2,
+                    data_train2.cuda(),
+                    data_test2.cuda(),
+                    optimizer2,
+                    num_epochs=n_epochs
 
-        trained_model2 = train_autoencoder_early_stopping(
-                trained_model2,
-                data_train2.cuda(),
-                data_test2.cuda(),
-                optimizer2,
-                num_epochs=n_epochs
-
-            )
-        model_zoo.append(trained_model2)
+                )
+            model_zoo.append(trained_model2)
+        except:
+            continue
     return model_zoo
 
 

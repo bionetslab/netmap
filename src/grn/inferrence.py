@@ -215,13 +215,14 @@ def inferrence(models, data_train_full_tensor, gene_names, config, use_raw_attri
         attributions.append(attributions_list)
 
 
+    
     quantiles = []
     for i in range(len(attributions)):
         current_quantiles = []
         for j in range(len(attributions[i])):
             current_quantiles.append(quantile_partitioning_2d(attributions[i][j], q = 10))
         quantiles.append(current_quantiles)
-    
+
 
     ## AGGREGATION: REPLACE LIST BY AGGREGATED DATA
     for i in range(len(attributions)):
@@ -231,6 +232,7 @@ def inferrence(models, data_train_full_tensor, gene_names, config, use_raw_attri
         ## Create name vector
         name_list = name_list + list(gene_names)
         target_names = target_names+[gene_names[i]] *len(gene_names)
+
 
 
     attributions = np.hstack(attributions)
