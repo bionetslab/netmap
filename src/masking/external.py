@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def create_edge_mask_from_GRN(grn_df, gene_list):
+def _create_edge_mask_from_GRN(grn_df, gene_list, name_grn='external_grn'):
     """
     Create flat vector mask for TF target interactions based on literature GRN and 
     gene list.
@@ -42,6 +42,35 @@ def create_edge_mask_from_GRN(grn_df, gene_list):
         for gene_B in gene_list:
             edge_names.append(f'{gene_A}_{gene_B}')
 
+    edge_mask = matrix.flatten()
+    edge_mask = pd.DataFrame({'index': edge_names, f'edge_in_{name_grn}': edge_mask})
+    edge_mask =edge_mask.set_index('index')
+    
+    return edge_mask
 
-    return matrix.flatten(), edge_names
+
+
+def _get_all_genes_in_grn_object(grnad):
+    all_sources = np.unique(grnad.var.source)
+    all_targets = np.unique(grnad.var.target)
+    all_genes = np.unique(np.concatenate([all_sources, all_targets]))
+    return all_genes
+
+
+def add_external_grn(grn_ad, external_grn, name_grn = 'external_grn'):
+    
+    """
+    Adds three columns to a anndate GRN object. 
+    is_target
+    is_source
+    is_egde
+    
+    """
+
+    all_my_genes = _get_all_genes_in_grn_object(grn_ad)
+    edge_mask = create_edge_mask_from_GRN(external_grn, all_my_genes, name_grn = name_grn)
+    grn_ad.var = grn_ad.var.merge(edge_mask, left_index=True, right_index=True)
+    grn_ad.var[f'is_target_{name_grn}'] = grn_ad.var.target.isin(external_grn.target)
+    grn_ad.var[f'is_source_{name_grn}'] = grn_ad.var.source.isin(external_grn.source)
+    return grn_ad
 
