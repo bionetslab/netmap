@@ -67,21 +67,16 @@ def run_netmap(config, dataset_config):
 
 
 
-
+    ##MAIN NETMAP PIPELINE:
+    # Create a bunch of models
     model_zoo = create_model_zoo(data_tensor,  n_models=config.n_models, n_epochs=config.epochs, model_type=config.model, dropout_rate=config.masking_percentage)
 
+    # Run gradient-shap on the models
     grn_adata = inferrence(model_zoo, data_tensor.cuda(), gene_names,  config, use_raw_attribution=False)
-    grn_adata_raw = inferrence(model_zoo, data_tensor.cuda(), gene_names,  config, use_raw_attribution=True)
-    
-    if config.xai_method == 'GradientShap':
-        grn_adata.layers['raw_attribution'] = grn_adata_raw.X
-        grn_adata.layers['raw_attribution_quantile_count'] = grn_adata_raw.layers['quantile_count']
 
+    # add a bunch of masks to the final network to improve the interpretability of the result.
     grn_adata = add_neighbourhood_expression_mask(adata,grn_adata)
 
-    #adob = adata.obs.reset_index()
-    #grn_adata.obs['cell_id'] = np.array(adob['cell_id'])
-    #grn_adata.obs['grn'] = np.array(adob['grn'])
 
     
     model_elapsed = time.monotonic()-model_start
