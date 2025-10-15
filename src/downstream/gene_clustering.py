@@ -6,10 +6,9 @@ from scipy.stats import spearmanr
 from statsmodels.formula.api import quantreg
 import anndata as ad
 
-def get_hierarchical_clustering(adata, tree_threshold, correlation_threshold=0.6, quantile=0.1, genes=None, cluster_var = 'target_cluster'):
+def get_hierarchical_clustering(adata, genes=None):
     """
-    Performs hierarchical clustering, determines an optimal cutoff based on a
-    quantile regression, and adds cluster information to adata.var.
+    Performs hierarchical clustering
 
     Args:
         adata (ad.AnnData): The input AnnData object.
@@ -39,8 +38,38 @@ def get_hierarchical_clustering(adata, tree_threshold, correlation_threshold=0.6
         'corr': flatten_upper_triangular_excluding_diagonal(corr_matrix)
     })
     
+
+    return df, dist_linkage
+
+
+
+def add_clusters_to_adata(adata, dist_linkage, cutoff_distance, cluster_var = 'correlation_cluster', genes=None):
+
+    if genes is not None:
+        adata_sub = adata_sub[:, adata.var.index.isin(genes)]
+    else:
+        adata_sub = adata
+
+    if cutoff_distance is not None:
+        # Cut the dendrogram and get cluster IDs
+        clusters = hierarchy.fcluster(dist_linkage, t=cutoff_distance, criterion='distance')
+        
+        dfclu = pd.DataFrame({'index':adata_sub.var.index, cluster_var : clusters})
+        dfclu = dfclu.set_index('index')
+        
+        adata.var = adata.var.merge(dfclu, left_index=True, right_index=True, how='outer')
+
+    else:
+        print("Clustering was not performed due to an invalid cutoff.")
+        adata.var['cluster_id'] = pd.Categorical([-1] * adata.n_vars)
+    
+    return adata
+
+
+def compute_regression(df, cophenet_threshold, dist_linkage, correlation_threshold = 0.6, quantile = 0.1):
+
     # Filter the data based on the tree_threshold for the regression fit
-    df_filtered = df[df.cophenet < tree_threshold]
+    df_filtered = df[df.cophenet < cophenet_threshold]
     
     # Fit the quantile regression model
     low_quantile_model = quantreg('corr ~ cophenet', df_filtered).fit(q=quantile)
@@ -59,21 +88,9 @@ def get_hierarchical_clustering(adata, tree_threshold, correlation_threshold=0.6
     # Plot the regression and dendrogram for visual validation
     plot_regression_and_dendrogram(df_filtered, low_quantile_model, cutoff_distance, correlation_threshold, dist_linkage)
     
-    if cutoff_distance is not None:
-        # Cut the dendrogram and get cluster IDs
-        clusters = hierarchy.fcluster(dist_linkage, t=cutoff_distance, criterion='distance')
-        
-        dfclu = pd.DataFrame({'index':adata_sub.var.index, cluster_var : clusters})
-        dfclu = dfclu.set_index('index')
-        print(adata.var.merge(dfclu, left_index=True, right_index=True, how='outer'))
-        adata.var = adata.var.merge(dfclu, left_index=True, right_index=True, how='outer')
+    return cutoff_distance
 
 
-    else:
-        print("Clustering was not performed due to an invalid cutoff.")
-        adata.var['cluster_id'] = pd.Categorical([-1] * adata.n_vars)
-    
-    return adata
 
 def plot_regression_and_dendrogram(df, model, cutoff_distance, correlation_threshold, dist_linkage):
     """
@@ -110,4 +127,26 @@ def plot_regression_and_dendrogram(df, model, cutoff_distance, correlation_thres
     
     plt.tight_layout()
     plt.show()
+
+
+def plot_scatter_plot(df):
+    """
+    Plots the data points, to find the cutoff for which a linear model can be fit.
+    """
+    fig, ax2 = plt.subplots(1, 1, figsize=(6, 4))
+
+
+    # Right Plot: Quantile Regression
+    ax2.scatter(df['cophenet'], df['corr'], alpha=0.7, label='Data Points')
+    
+
+    ax2.set_title('Cophenet Correlation Scatter plot')
+    ax2.set_xlabel('Cophenet')
+    ax2.set_ylabel('Correlation')
+    ax2.legend()
+    ax2.grid(True)
+    
+    plt.tight_layout()
+    plt.show()
+
 

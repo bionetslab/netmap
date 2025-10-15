@@ -68,7 +68,7 @@ def add_external_grn(grn_ad, external_grn, name_grn = 'external_grn'):
     """
 
     all_my_genes = _get_all_genes_in_grn_object(grn_ad)
-    edge_mask = create_edge_mask_from_GRN(external_grn, all_my_genes, name_grn = name_grn)
+    edge_mask = _create_edge_mask_from_GRN(external_grn, all_my_genes, name_grn = name_grn)
     grn_ad.var = grn_ad.var.merge(edge_mask, left_index=True, right_index=True)
     grn_ad.var[f'is_target_{name_grn}'] = grn_ad.var.target.isin(external_grn.target)
     grn_ad.var[f'is_source_{name_grn}'] = grn_ad.var.source.isin(external_grn.source)
