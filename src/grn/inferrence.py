@@ -188,7 +188,7 @@ def attribution_one_target(
     return attributions_list
 
 
-def inferrence(models, data_train_full_tensor, gene_names, config, use_raw_attribution=False):
+def inferrence(models, data_train_full_tensor, gene_names, config, use_raw_attribution=False, use_quantiles = False):
 
     tms = []
     name_list = []
@@ -215,19 +215,20 @@ def inferrence(models, data_train_full_tensor, gene_names, config, use_raw_attri
         attributions.append(attributions_list)
 
 
-    
-    quantiles = []
-    for i in range(len(attributions)):
-        current_quantiles = []
-        for j in range(len(attributions[i])):
-            current_quantiles.append(quantile_partitioning_2d(attributions[i][j], q = 10))
-        quantiles.append(current_quantiles)
+    if use_quantiles:
+        quantiles = []
+        for i in range(len(attributions)):
+            current_quantiles = []
+            for j in range(len(attributions[i])):
+                current_quantiles.append(quantile_partitioning_2d(attributions[i][j], q = 10))
+            quantiles.append(current_quantiles)
 
 
     ## AGGREGATION: REPLACE LIST BY AGGREGATED DATA
     for i in range(len(attributions)):
         attributions[i] = aggregate_attributions(attributions[i], strategy=config.aggregation_strategy)
-        quantiles[i] = aggregate_attributions(quantiles[i], strategy='sum')
+        if use_quantiles:
+            quantiles[i] = aggregate_attributions(quantiles[i], strategy='sum')
 
         ## Create name vector
         name_list = name_list + list(gene_names)
@@ -236,13 +237,16 @@ def inferrence(models, data_train_full_tensor, gene_names, config, use_raw_attri
 
 
     attributions = np.hstack(attributions)
-    counter = np.hstack(quantiles)
+    
+    if use_quantiles:
+        counter = np.hstack(quantiles)
     
     index_list = [f"{s}_{t}" for (s, t) in zip(name_list, target_names)]
     cou = pd.DataFrame({'index': index_list, 'source':name_list, 'target':target_names})
     cou = cou.set_index('index')
 
     grn_adata = attribution_to_anndata(attributions, var=cou)
-    grn_adata.layers['quantile_count'] = counter
+    if use_quantiles:
+        grn_adata.layers['quantile_count'] = counter
 
     return grn_adata
