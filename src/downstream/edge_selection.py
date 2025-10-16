@@ -63,7 +63,7 @@ def _get_top_edges_per_cell(grn_adata, top_idx_for_t, top_edges_val):
 
 
 
-def add_top_edge_annotation_cluster(grn_adata, top_edges = [0.1], nan_fill = 0):
+def add_top_edge_annotation_cluster(grn_adata, top_edges = [0.1], nan_fill = 0, cluster_var = 'spectral'):
     var = grn_adata.var
     if var.index.name is None or var.index.name == 'index':
         var = var.reset_index()
@@ -71,7 +71,7 @@ def add_top_edge_annotation_cluster(grn_adata, top_edges = [0.1], nan_fill = 0):
     else:
         var = var.reset_index()
         
-    for clu in grn_adata.obs['spectral'].unique():
+    for clu in grn_adata.obs[cluster_var].unique():
         grn_adata_sub = grn_adata[grn_adata.obs['spectral'] == clu]
         top_edges_per_cell = _get_top_edges_global(grn_adata_sub,  top_edges, layer='X')
 
