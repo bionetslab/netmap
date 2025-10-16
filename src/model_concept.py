@@ -78,22 +78,22 @@ def run_netmap(config, dataset_config):
     model_zoo = create_model_zoo(data_tensor,  n_models=config.n_models, n_epochs=config.epochs, model_type=config.model, dropout_rate=config.masking_percentage)
 
     # Run gradient-shap on the models
-    grn_adata = inferrence(model_zoo, data_tensor.cuda(), gene_names,  config, use_raw_attribution=False)
+    grn_adata = inferrence(model_zoo, data_tensor.cuda(), gene_names,  config)
 
     # Add a mask for the top edges.
 
-    # add a bunch of masks to the final network to improve the interpretability of the result.
-    grn_adata = add_neighbourhood_expression_mask(adata,grn_adata)
+    # # add a bunch of masks to the final network to improve the interpretability of the result.
+    # grn_adata = add_neighbourhood_expression_mask(adata, grn_adata)
 
-    #
+    # #
 
-    # Add mask showing an existing netw
-    try:
-        collectri = dc.op.collectri()
-        collectri = collectri.loc[:, ['source', 'target', 'weight']]
-        grn_adata = add_external_grn(netmap_ad, collectri, 'collectri')
-    except:
-        print('Error while adding external database: Collectri')
+    # # Add mask showing an existing netw
+    # try:
+    #     collectri = dc.op.collectri()
+    #     collectri = collectri.loc[:, ['source', 'target', 'weight']]
+    #     grn_adata = add_external_grn(netmap_ad, collectri, 'collectri')
+    # except:
+    #     print('Error while adding external database: Collectri')
 
 
     
