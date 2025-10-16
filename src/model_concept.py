@@ -27,6 +27,12 @@ from src.data_simulation.data_simulation_config import DataSimulationConfig
 from netmap.src.masking.internal import *
 from netmap.src.masking.external import *
 
+import decoupler as dc
+from netmap.src.masking.external import *
+
+
+
+
 def read_config(file):
     with open(file, "r") as f:
         config = yaml.safe_load(f)
@@ -74,8 +80,20 @@ def run_netmap(config, dataset_config):
     # Run gradient-shap on the models
     grn_adata = inferrence(model_zoo, data_tensor.cuda(), gene_names,  config, use_raw_attribution=False)
 
+    # Add a mask for the top edges.
+
     # add a bunch of masks to the final network to improve the interpretability of the result.
     grn_adata = add_neighbourhood_expression_mask(adata,grn_adata)
+
+    #
+
+    # Add mask showing an existing netw
+    try:
+        collectri = dc.op.collectri()
+        collectri = collectri.loc[:, ['source', 'target', 'weight']]
+        grn_adata = add_external_grn(netmap_ad, collectri, 'collectri')
+    except:
+        print('Error while adding external database: Collectri')
 
 
     
