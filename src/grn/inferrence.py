@@ -197,7 +197,7 @@ def inferrence(models, data_train_full_tensor, gene_names, config):
     
     for trained_model in models:        
         trained_model.forward_mu_only = True
-        explainer, xai_type = get_explainer(trained_model, config.xai_method, use_raw_attribution)
+        explainer, xai_type = get_explainer(trained_model, config.xai_method)
         tms.append(explainer)
 
     attributions = []
