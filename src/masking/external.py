@@ -43,8 +43,8 @@ def _create_edge_mask_from_GRN(grn_df, gene_list, name_grn='external_grn'):
             edge_names.append(f'{gene_A}_{gene_B}')
 
     edge_mask = matrix.flatten()
-    edge_mask = pd.DataFrame({'index': edge_names, f'edge_in_{name_grn}': edge_mask})
-    edge_mask =edge_mask.set_index('index')
+    edge_mask = pd.DataFrame({'edge_key': edge_names, f'edge_in_{name_grn}': edge_mask})
+    edge_mask =edge_mask.set_index('edge_key')
     
     return edge_mask
 
