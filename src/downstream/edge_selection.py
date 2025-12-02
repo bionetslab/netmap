@@ -2,6 +2,17 @@ import numpy as np
 import pandas as pd
 
 def _get_top_edges_global(grn_adata, top_edges: int, layer = 'X'):
+    """
+
+    Args:
+        grn_adata (anndata.AnnData): GRN anndata object
+        top_edges (list, int): fraction of top edges to retrieve per cell
+        layer (str, optional): grn_adata.layers key. Defaults to 'X', which is stored in grn_adata.X
+
+    Returns:
+        pd.DataFrame pandas DataFrame with the top edges and the associated cell numbers.
+    """
+    
     # Select the correct data based on the layer
     if layer == 'X':
         data = grn_adata.X
@@ -13,7 +24,6 @@ def _get_top_edges_global(grn_adata, top_edges: int, layer = 'X'):
     top_edges_data_list = [int(np.round(grn_adata.shape[1] * t)) for t in top_edges]
     partition_indices = [grn_adata.shape[1] - n for n in top_edges_data_list]
     
-    print(top_edges)
     top = []
     
     for t_val, part_idx in zip(top_edges, partition_indices):
