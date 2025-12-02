@@ -27,7 +27,6 @@ from src.data_simulation.data_simulation_config import DataSimulationConfig
 from netmap.src.masking.internal import *
 from netmap.src.masking.external import *
 
-import decoupler as dc
 from netmap.src.masking.external import *
 
 
@@ -43,6 +42,9 @@ def read_config(file):
 
 
 def run_netmap(config, dataset_config):
+    """
+    
+    """
 
     print('Version 2')
     start_total = time.monotonic()
