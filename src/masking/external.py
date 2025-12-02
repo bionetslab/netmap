@@ -1,6 +1,11 @@
 import pandas as pd
 import numpy as np
 
+import pandas as pd
+from gtfparse import read_gtf
+from sklearn.cluster import DBSCAN
+from collections import defaultdict
+
 def _create_edge_mask_from_GRN(grn_df, gene_list, name_grn='external_grn'):
     """
     Create flat vector mask for TF target interactions based on literature GRN and 
@@ -74,3 +79,59 @@ def add_external_grn(grn_ad, external_grn, name_grn = 'external_grn'):
     grn_ad.var[f'is_source_{name_grn}'] = grn_ad.var.source.isin(external_grn.source)
     return grn_ad
 
+
+
+def get_genome_annotation_from_gtf(gtf_df):
+    genes = gtf_df.filter(feature="gene")
+    genes = pd.DataFrame(genes)
+    genes.columns = gtf_df.columns
+    genes = genes.loc[:, ['seqname', 'source', 'feature', 'start', 'end', 'score', 'strand',
+            'frame', 'gene_id', 'gene_version', 'gene_name', 'gene_source',
+            'gene_biotype']]
+    genes = genes[genes["gene_name"]!='']
+    genes['chr'] = 'chr'+genes['seqname']
+    return genes
+
+
+def preprocess_bed_file(bed_file, gtf_df):
+    ## ALL cis regulatory motifs
+    crm_df = pd.read_csv(bed_file, sep="\t", header=None)
+    crm_df.columns = ['chr', 'start', 'end', 'TF_list','TF_number', 'strand', 'number1', 'number2', 'large_number']
+    crm_by_chr = {chr_: df for chr_, df in crm_df.groupby("chr")}
+    crm_df['TF_list_list'] = crm_df['TF_list'].str.split(",")
+    return crm_df
+
+        
+
+def get_regulators(crm_df, genes, window):
+    gene_to_tfs = defaultdict(set)
+
+    crm_by_chr = {chr_: df for chr_, df in crm_df.groupby("chr")}
+
+    for idx, gene in genes.iterrows():
+        chrom = gene["chr"]
+        tss = gene["start"]
+        gene_name = gene["gene_name"]
+
+        if chrom not in crm_by_chr:
+            continue
+
+        crms = crm_by_chr[chrom]
+        nearby_crms = crms[(crms["end"] >= tss - window) & (crms["start"] <= tss + window)]
+
+        for _, crm in nearby_crms.iterrows():
+            gene_to_tfs[gene_name].update(crm["TF_list_list"])
+            
+
+
+    results = pd.DataFrame([
+        {"gene": gene, "TFs": sorted(list(tfs))}
+        for gene, tfs in gene_to_tfs.items()
+    ])
+
+    results['nTFs'] = results['TFs'].apply(len)
+    results = results.explode('TFs')
+    results['edge'] = results['TFs'] + '_' + results['gene']
+    
+    results['regulator'] = True
+    return results
