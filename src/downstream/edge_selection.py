@@ -1,75 +1,83 @@
 import numpy as np
 import pandas as pd
+import numpy as np
+from collections import Counter
 
 def _get_top_edges_global(grn_adata, top_edges: int, layer = 'X'):
-    """
 
-    Args:
-        grn_adata (anndata.AnnData): GRN anndata object
-        top_edges (list, int): fraction of top edges to retrieve per cell
-        layer (str, optional): grn_adata.layers key. Defaults to 'X', which is stored in grn_adata.X
-
-    Returns:
-        pd.DataFrame pandas DataFrame with the top edges and the associated cell numbers.
-    """
-    
-    # Select the correct data based on the layer
-    if layer == 'X':
-        data = grn_adata.X
-    else:
-        data = grn_adata.layers[layer]
-     
-    b = np.argsort(data, axis=1)
+    b = grn_adata.layers['sorted']
     # Calculate partition indices for all top_edges values
     top_edges_data_list = [int(np.round(grn_adata.shape[1] * t)) for t in top_edges]
-    partition_indices = [grn_adata.shape[1] - n for n in top_edges_data_list]
+    partition_indices = [grn_adata.shape[1]]+[grn_adata.shape[1] - n for n in top_edges_data_list]
     
     top = []
-    
-    for t_val, part_idx in zip(top_edges, partition_indices):
-        # Subset the argsorted array *once* for each t_val
-        top_idx = b[:, part_idx:]
-        
-        top.append(_get_top_edges_per_cell(grn_adata, top_idx, t_val))
-
-    top = pd.concat(top, ignore_index=True)
-    return top
-
-
-def _get_top_edges_per_cell(grn_adata, top_idx_for_t, top_edges_val):
-    """
-    Calculates the number of cells that contain each unique top edge using 
-    NumPy's vectorized unique counting, which is faster than Pandas groupby 
-    on Python objects (tuples).
-    """
-    
-    # 1. Gene pair metadata is constant
-    # Ensure this is a NumPy array for fast indexing
     edge_metadata_np = grn_adata.var.index.to_numpy()
-  
-    top_edges_metadata = edge_metadata_np[top_idx_for_t.ravel()]
+
+    for i in range(len(partition_indices)-1):
+        
+        # part index is running backwards
+        end_idx = partition_indices[i]
+        start_index = partition_indices[i+1]
+        top_idx = b[:, start_index:end_idx]
+        print(start_index)
+        print(end_idx)
+        
+        t_val = top_edges[i]
+
+        top_edges_metadata = edge_metadata_np[top_idx.ravel()]
+        edge_counts_map = Counter(top_edges_metadata.tolist())
+
+        #top.append(get_top_edges_per_cell(grn_adata, top_idx, t_val))
+        top.append(edge_counts_map)
 
 
-    # 4. Count unique rows (edges) in the structured array
-    unique_edges_structured, cell_counts = np.unique(
-        top_edges_metadata,
-        return_counts=True
-    )
+    global_counter = top[0]
+    final_df = [data_preprr(global_counter, edge_metadata_np, top_edges[0])]
+    for i in range(1, len(top)):
+        global_counter = global_counter + top[i]
+        t_val = top_edges[i]
+        final_df.append(data_preprr(global_counter, edge_metadata_np, t_val))
     
-    # 5. Extract results and create the DataFrame directly
-    summary_df = pd.DataFrame({
-        'edge_key': unique_edges_structured,
-        'cell_count': cell_counts
-    })
-    
-    # 6. Add the constant metadata
-    summary_df['top_edges'] = top_edges_val
-    
-    # 7. Select and reorder final columns:
-    final_cols = ['edge_key', 'top_edges', 'cell_count']
+    final_df = np.concatenate(final_df)
+    final_df = pd.DataFrame(final_df)
+    return final_df
 
+def data_preprr(global_counter, edge_metadata_np, top_edges_val):
+    
+    edge_keys_list = []
+    cell_counts_list = []
 
-    return summary_df[final_cols]
+    # Iterating over items() is generally faster than two separate list comprehensions
+    for key, count in global_counter.items():
+        edge_keys_list.append(key)
+        cell_counts_list.append(count)
+
+    # Convert to NumPy arrays
+    edge_keys_np = np.array(edge_keys_list, dtype=edge_metadata_np.dtype)
+    cell_counts_np = np.array(cell_counts_list, dtype=np.int32)
+
+    # Get the size of the result
+    N = len(edge_keys_np)
+
+    # Define dtype_final using the *full* index data type
+    dtype_final = np.dtype([
+        # Use the dtype of the original index, which is now the complete index
+        ('edge_key', edge_metadata_np.dtype),
+        ('top_edges', np.float16),
+        ('cell_count', np.int32)
+    ])
+
+    # Create the empty structured array
+    final_summary_result = np.empty(N, dtype=dtype_final)
+
+    # Populate the structured array fields
+    # The index is now final_edge_keys
+    final_summary_result['edge_key'] = edge_keys_np
+    # The counts array is now cell_counts_reindexed
+    final_summary_result['cell_count'] = cell_counts_np
+    final_summary_result['top_edges'] = top_edges_val
+
+    return final_summary_result
 
 
 
