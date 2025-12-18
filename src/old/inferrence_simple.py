@@ -105,8 +105,7 @@ def draw_neg_binomial(mu, theta, size=1):
 
   Args:
     mu (float): The mean of the negative binomial distribution.
-    theta (float): The dispersion parameter (often denoted as 'alpha' in some contexts,
-                   related to the number of successes).
+    theta (float): The dispersion parameter
     size (int or tuple of ints, optional): The number of samples to draw.
                                            Default is 1.
 
@@ -117,9 +116,8 @@ def draw_neg_binomial(mu, theta, size=1):
     raise ValueError("mu and theta must be positive.")
 
   p = theta / (mu + theta)
-  n = theta  # theta in this parameterization corresponds to 'n' in scipy
+  n = theta 
 
-  # scipy.stats.nbinom uses 'n' (number of successes) and 'p' (probability of success)
   samples = nbinom.rvs(n, p, size=size)
   return samples
 

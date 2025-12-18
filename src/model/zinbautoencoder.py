@@ -69,42 +69,134 @@ class ZINBLoss(nn.Module):
 
 
 class ZINBAutoencoder(nn.Module):
-    def __init__(self, input_dim, latent_dim, dropout_rate=0.0, hidden_dim = 128):
+    def __init__(self, input_dim, latent_dim, dropout_rate=0.0, hidden_dims = [64]):
         super(ZINBAutoencoder, self).__init__()
+
+        # --- ENCODER ---
+        encoder_layers = []
         
-        self.encoder = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout_rate),  # Dropout after activation
-            nn.Linear(hidden_dim, latent_dim)
-        )
+        # 1. Input layer (from input_dim to the first hidden layer)
+        current_dim = input_dim
         
-        # Decoder for mean (mu)
-        self.decoder_mu = nn.Sequential(
-            nn.Linear(latent_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout_rate),  # Dropout after activation
-            nn.Linear(hidden_dim, input_dim),
-            nn.Softplus()  # Ensure non-negative predictions
-        )
+        # 2. Hidden layers (Loop through the specified dimensions)
+        for h_dim in hidden_dims:
+            encoder_layers.extend([
+                nn.Linear(current_dim, h_dim),
+                nn.ReLU(),
+                nn.Dropout(dropout_rate)
+            ])
+            current_dim = h_dim # Update current dimension for the next layer
+            
+        # 3. Output layer (from the last hidden layer to latent_dim)
+        # The input to this layer is the last element of hidden_dims
+        final_hidden_dim = hidden_dims[-1] if hidden_dims else input_dim
+        encoder_layers.append(nn.Linear(final_hidden_dim, latent_dim))
+
+        self.encoder = nn.Sequential(*encoder_layers)
+            
+        current_dim = latent_dim
+        decoder_layers = []
         
-        # Decoder for dispersion (theta)
-        self.decoder_theta = nn.Sequential(
-            nn.Linear(latent_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout_rate),  # Dropout after activation
-            nn.Linear(hidden_dim, input_dim),
-            nn.Softplus()  # Ensure non-negative dispersion
-        )
+        # 1. Hidden layers (Loop through reversed hidden dimensions)
+        # Use reversed(hidden_dims) to go from latent_dim back up
+        for h_dim in reversed(hidden_dims):
+            decoder_layers.extend([
+                nn.Linear(current_dim, h_dim),
+                nn.ReLU(),
+                nn.Dropout(dropout_rate)
+            ])
+            current_dim = h_dim # Update current dimension
+
+        # 2. Output layer (from the first hidden layer back to input_dim)
+        # The output of this layer is the original input_dim
+        final_decode_dim = input_dim
+        decoder_layers.extend([
+            nn.Linear(current_dim, final_decode_dim),
+            nn.Softplus() # Final activation
+        ])
         
-        # Decoder for zero-inflation probability (pi)
-        self.decoder_pi = nn.Sequential(
-            nn.Linear(latent_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout_rate),  # Dropout after activation
-            nn.Linear(hidden_dim, input_dim),
-            nn.Sigmoid()  # Ensure probability values between 0 and 1
-        )
+        self.decoder_mu = nn.Sequential(*decoder_layers)
+
+        current_dim = latent_dim
+        decoder_layers = []
+        
+        # 1. Hidden layers (Loop through reversed hidden dimensions)
+        # Use reversed(hidden_dims) to go from latent_dim back up
+        for h_dim in reversed(hidden_dims):
+            decoder_layers.extend([
+                nn.Linear(current_dim, h_dim),
+                nn.ReLU(),
+                nn.Dropout(dropout_rate)
+            ])
+            current_dim = h_dim # Update current dimension
+
+        # 2. Output layer (from the first hidden layer back to input_dim)
+        # The output of this layer is the original input_dim
+        final_decode_dim = input_dim
+        decoder_layers.extend([
+            nn.Linear(current_dim, final_decode_dim),
+            nn.Softplus() # Final activation
+        ])
+        
+        self.decoder_theta = nn.Sequential(*decoder_layers)
+
+
+        current_dim = latent_dim
+        decoder_layers = []
+        
+        # 1. Hidden layers (Loop through reversed hidden dimensions)
+        # Use reversed(hidden_dims) to go from latent_dim back up
+        for h_dim in reversed(hidden_dims):
+            decoder_layers.extend([
+                nn.Linear(current_dim, h_dim),
+                nn.ReLU(),
+                nn.Dropout(dropout_rate)
+            ])
+            current_dim = h_dim # Update current dimension
+
+        # 2. Output layer (from the first hidden layer back to input_dim)
+        # The output of this layer is the original input_dim
+        final_decode_dim = input_dim
+        decoder_layers.extend([
+            nn.Linear(current_dim, final_decode_dim),
+            nn.Softplus() # Final activation
+        ])
+        
+        self.decoder_pi = nn.Sequential(*decoder_layers)
+        
+        # self.encoder = nn.Sequential(
+        #     nn.Linear(input_dim, hidden_dim),
+        #     nn.ReLU(),
+        #     nn.Dropout(dropout_rate),  # Dropout after activation
+        #     nn.Linear(hidden_dim, latent_dim)
+        # )
+        
+        # # Decoder for mean (mu)
+        # self.decoder_mu = nn.Sequential(
+        #     nn.Linear(latent_dim, hidden_dim),
+        #     nn.ReLU(),
+        #     nn.Dropout(dropout_rate),  # Dropout after activation
+        #     nn.Linear(hidden_dim, input_dim),
+        #     nn.Softplus()  # Ensure non-negative predictions
+        # )
+        
+        # # Decoder for dispersion (theta)
+        # self.decoder_theta = nn.Sequential(
+        #     nn.Linear(latent_dim, hidden_dim),
+        #     nn.ReLU(),
+        #     nn.Dropout(dropout_rate),  # Dropout after activation
+        #     nn.Linear(hidden_dim, input_dim),
+        #     nn.Softplus()  # Ensure non-negative dispersion
+        # )
+        
+        # # Decoder for zero-inflation probability (pi)
+        # self.decoder_pi = nn.Sequential(
+        #     nn.Linear(latent_dim, hidden_dim),
+        #     nn.ReLU(),
+        #     nn.Dropout(dropout_rate),  # Dropout after activation
+        #     nn.Linear(hidden_dim, input_dim),
+        #     nn.Sigmoid()  # Ensure probability values between 0 and 1
+        # )
         
         self.zinb_loss = ZINBLoss()  # Use ZINBLoss for the computation
         self.forward_mu_only = False
