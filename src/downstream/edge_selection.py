@@ -19,9 +19,6 @@ def _get_top_edges_global(grn_adata, top_edges: int, layer = 'X'):
         end_idx = partition_indices[i]
         start_index = partition_indices[i+1]
         top_idx = b[:, start_index:end_idx]
-        print(start_index)
-        print(end_idx)
-        
         t_val = top_edges[i]
 
         top_edges_metadata = edge_metadata_np[top_idx.ravel()]
@@ -105,7 +102,7 @@ def add_top_edge_annotation_cluster(grn_adata, top_edges = [0.1], nan_fill = 0, 
     return grn_adata
 
 
-def add_top_edge_annotation_global(grn_adata, top_edges = [0.1], nan_fill = 0):
+def add_top_edge_annotation_global(grn_adata, top_edges = [0.1], nan_fill = 0, key_name = 'global'):
 
     var = grn_adata.var
     if var.index.name is None or var.index.name == 'index':
@@ -116,10 +113,10 @@ def add_top_edge_annotation_global(grn_adata, top_edges = [0.1], nan_fill = 0):
         
     top_edges_per_cell = _get_top_edges_global(grn_adata,  top_edges, layer='X')
     for te in top_edges:
-        if f'global_cell_count_{te}' in var.columns:
+        if f'{key_name}_cell_count_{te}' in var.columns:
             continue
-        var = var.merge(top_edges_per_cell.loc[top_edges_per_cell.top_edges==te, ['edge_key', 'cell_count']].rename(columns = {'cell_count': f'global_cell_count_{te}'}), left_on = 'edge_key', right_on='edge_key', how='outer')
-        var[f'global_cell_count_{te}']= var[f'global_cell_count_{te}'].fillna(nan_fill)
+        var = var.merge(top_edges_per_cell.loc[top_edges_per_cell.top_edges==te, ['edge_key', 'cell_count']].rename(columns = {'cell_count': f'{key_name}_cell_count_{te}'}), left_on = 'edge_key', right_on='edge_key', how='outer')
+        var[f'{key_name}_cell_count_{te}']= var[f'{key_name}_cell_count_{te}'].fillna(nan_fill)
 
     var = var.set_index('edge_key')
     grn_adata.var = var

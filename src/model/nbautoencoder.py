@@ -48,116 +48,71 @@ class NegativeBinomialLoss(nn.Module):
         loss = t1 + t2
         return torch.mean(loss)  # Return mean loss over the batch
     
- 
 class NegativeBinomialAutoencoder(nn.Module):
-    def __init__(self, input_dim, latent_dim, dropout_rate=0.0, hidden_dims = [64,64,64]):
+    def __init__(self, input_dim, latent_dim, dropout_rate=0.0, hidden_dims=[64, 64, 64], activation='relu'):
         super(NegativeBinomialAutoencoder, self).__init__()
         
+        # Mapping for the requested activation functions
+        acts = {'relu': nn.ReLU, 'leaky_relu': nn.LeakyReLU, 'elu': nn.ELU, 'sigmoid': nn.Sigmoid}
+        activation_layer = acts.get(activation.lower(), nn.ReLU)
+
         # --- ENCODER ---
         encoder_layers = []
-        
-        # 1. Input layer (from input_dim to the first hidden layer)
         current_dim = input_dim
-        
-        # 2. Hidden layers (Loop through the specified dimensions)
         for h_dim in hidden_dims:
             encoder_layers.extend([
                 nn.Linear(current_dim, h_dim),
-                nn.ReLU(),
+                activation_layer(), # Changed from nn.ReLU()
                 nn.Dropout(dropout_rate)
             ])
-            current_dim = h_dim # Update current dimension for the next layer
+            current_dim = h_dim
             
-        # 3. Output layer (from the last hidden layer to latent_dim)
-        # The input to this layer is the last element of hidden_dims
         final_hidden_dim = hidden_dims[-1] if hidden_dims else input_dim
         encoder_layers.append(nn.Linear(final_hidden_dim, latent_dim))
-
         self.encoder = nn.Sequential(*encoder_layers)
             
+        # --- DECODER MU ---
         current_dim = latent_dim
-        decoder_layers = []
-        
-        # 1. Hidden layers (Loop through reversed hidden dimensions)
-        # Use reversed(hidden_dims) to go from latent_dim back up
+        decoder_layers_mu = []
         for h_dim in reversed(hidden_dims):
-            decoder_layers.extend([
+            decoder_layers_mu.extend([
                 nn.Linear(current_dim, h_dim),
-                nn.ReLU(),
+                activation_layer(), # Changed from nn.ReLU()
                 nn.Dropout(dropout_rate)
             ])
-            current_dim = h_dim # Update current dimension
+            current_dim = h_dim
 
-        # 2. Output layer (from the first hidden layer back to input_dim)
-        # The output of this layer is the original input_dim
-        final_decode_dim = input_dim
-        decoder_layers.extend([
-            nn.Linear(current_dim, final_decode_dim),
-            nn.Softplus() # Final activation
+        decoder_layers_mu.extend([
+            nn.Linear(current_dim, input_dim),
+            nn.Softplus()
         ])
-        
-        self.decoder_mu = nn.Sequential(*decoder_layers)
+        self.decoder_mu = nn.Sequential(*decoder_layers_mu)
 
+        # --- DECODER THETA ---
         current_dim = latent_dim
-        decoder_layers = []
-        
-        # 1. Hidden layers (Loop through reversed hidden dimensions)
-        # Use reversed(hidden_dims) to go from latent_dim back up
+        decoder_layers_theta = []
         for h_dim in reversed(hidden_dims):
-            decoder_layers.extend([
+            decoder_layers_theta.extend([
                 nn.Linear(current_dim, h_dim),
-                nn.ReLU(),
+                activation_layer(), # Changed from nn.ReLU()
                 nn.Dropout(dropout_rate)
             ])
-            current_dim = h_dim # Update current dimension
+            current_dim = h_dim
 
-        # 2. Output layer (from the first hidden layer back to input_dim)
-        # The output of this layer is the original input_dim
-        final_decode_dim = input_dim
-        decoder_layers.extend([
-            nn.Linear(current_dim, final_decode_dim),
-            nn.Softplus() # Final activation
+        decoder_layers_theta.extend([
+            nn.Linear(current_dim, input_dim),
+            nn.Softplus()
         ])
-        
-        self.decoder_theta = nn.Sequential(*decoder_layers)
-        
-        # self.encoder = nn.Sequential(
-        #     # Dropout after activation
-        #     nn.Linear(input_dim, hidden_dim),
-        #     nn.ReLU(),
-        #     nn.Dropout(dropout_rate),  
-        #     nn.Linear(hidden_dim, latent_dim)
-        # )
-        
-        # self.decoder_mu = nn.Sequential(
-        #     nn.Linear(latent_dim, hidden_dim),
-        #     nn.ReLU(),
-        #     nn.Dropout(dropout_rate),  
-        #     nn.Linear(hidden_dim, input_dim),
-        #     nn.Softplus()  
-        # )
-        
-        # self.decoder_theta = nn.Sequential(
-        #     nn.Linear(latent_dim, hidden_dim),
-        #     nn.ReLU(),
-        #     nn.Dropout(dropout_rate),  # Dropout after activation
-        #     nn.Linear(hidden_dim, input_dim),
-        #     nn.Softplus()  
-        # )
-        
-        # self.decoder_data = nn.Sequential(
-        #     nn.Linear(latent_dim, hidden_dim),
-        #     nn.ReLU(),
-        #     nn.Dropout(dropout_rate),  # Dropout after activation
-        #     nn.Linear(hidden_dim, input_dim),
-        #     nn.ReLU()
-        # )
-        
-        self.nb_loss =  NegativeBinomialLoss()
+
+        self.decoder_theta = nn.Sequential(*decoder_layers_theta)
+    
+        # Loss and flags
+        self.nb_loss = NegativeBinomialLoss()
         self.mse_loss = nn.MSELoss()
         self.forward_mu_only = False
         self.forward_theta_only = False
         self.latent_only = False
+        
 
     def forward(self, x):
         

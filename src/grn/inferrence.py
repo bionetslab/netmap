@@ -7,7 +7,10 @@ from tqdm import tqdm
 import pandas as pd
 
 from netmap.src.utils.data_utils import attribution_to_anndata
-
+import itertools
+from netmap.src.downstream import edge_selection
+from scipy import integrate
+import scipy.stats
 
 
 def quantile_partitioning(data: np.ndarray, q: int) -> np.ndarray:
@@ -177,8 +180,6 @@ def attribution_one_target(
         model = lrp_model[m]
         #for _ in range(num_iterations):
         if xai_type == 'lrp-like':
-            #print(input_data)
-            #print(target_gene)
             attribution = model.attribute(input_data, target=target_gene)
                 
         elif xai_type == 'shap-like':
@@ -202,14 +203,13 @@ def inferrence(models, data_train_full_tensor, gene_names, config):
 
     attributions = []
 
-    ## ATTRIBUTIONS
     for g in tqdm(range(data_train_full_tensor.shape[1])):
 
         attributions_list = attribution_one_target(
             g,
             tms,
             data_train_full_tensor,
-            data_train_full_tensor, #background data
+            data_train_full_tensor, 
             xai_type=xai_type,
             randomize_background = True)
 
@@ -234,4 +234,121 @@ def inferrence(models, data_train_full_tensor, gene_names, config):
 
     grn_adata = attribution_to_anndata(attributions, var=cou)
 
+    return grn_adata
+
+
+def attribution_one_model( 
+        lrp_model,
+        input_data,
+        xai_type='lrp-like',
+        background_type = 'randomize'):
+    
+    attributions_list = []
+    
+    # Randomize backgorund for each round
+    if background_type == 'randomize':
+        background = shuffle_each_column_independently(input_data)
+    elif background_type == 'zeros':
+        background = torch.zeros((1, input_data.shape[1]))
+        background = background.cuda()
+    elif background_type == 'data':
+        background = input_data
+    else:
+        background = torch.zeros((1, input_data.shape[1]))
+        background = background.cuda()
+
+
+    for target_gene in tqdm(range(input_data.shape[1])):
+
+        #for _ in range(num_iterations):
+        if xai_type == 'lrp-like':
+            attribution = lrp_model.attribute(input_data, target=target_gene)
+
+                
+        elif xai_type == 'shap-like':
+            attribution = lrp_model.attribute(input_data, baselines = background, target = target_gene)
+
+        attributions_list.append(attribution.detach().cpu().numpy())
+    
+    attributions = np.hstack(attributions_list)
+    return attributions
+
+
+def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method, n_models = [10, 25, 50], background_type = 'zeros'):
+
+    tms = []
+    name_list = []
+    target_names = []
+    
+    cou  = [[f'{tup[0]}_{tup[1]}', tup[0], tup[1]] for tup in itertools.product(gene_names, gene_names)]
+    cou = pd.DataFrame(cou)
+    cou.columns = ['index', 'source', 'target']
+    cou = cou.set_index('index')
+
+    
+    for trained_model in models:        
+        trained_model.forward_mu_only = True
+        explainer, xai_type = get_explainer(trained_model, xai_method)
+        tms.append(explainer)
+
+
+    thresholds = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+    attributions = {}
+    attribution_collector = None
+    keynames = []
+    top_egde_collector = {}
+
+
+    for m in range(len(tms)):
+        
+        # get one complete attribution
+        current_attribution = attribution_one_model(
+            tms[m],
+            data_train_full_tensor,
+            xai_type=xai_type,
+            background_type = background_type)
+
+
+        grn_adata_eph = attribution_to_anndata(current_attribution, var=cou)
+        b = np.argsort(grn_adata_eph.X, axis=1)
+        grn_adata_eph.layers['sorted'] = b
+        grn_adata_eph = edge_selection.add_top_edge_annotation_global(grn_adata=grn_adata_eph, top_edges = thresholds, key_name=f'agg_{m}')
+        df_subset = grn_adata_eph.var.iloc[:, 2:]
+        integral_results = df_subset.apply(
+            lambda row: np.sum(integrate.cumulative_trapezoid(row, thresholds )), 
+            axis=1,
+            )
+        integral_results = integral_results/1000
+        top_egde_collector[f'agg_{m}'] = integral_results
+
+
+        if attribution_collector is not None:
+            # add current attribution to the collector
+            attribution_collector =  aggregate_attributions([attribution_collector, current_attribution], strategy='sum')
+
+
+        else:
+            attribution_collector = current_attribution
+
+
+        
+        if (m+1) in n_models:
+            # dont reset, just save the correct matrix
+            attributions[f'aggregated_{(m+1)}'] = attribution_collector/(m+1)
+            keynames.append(f'aggregated_{(m+1)}')
+
+
+    top_egde_collector = pd.DataFrame(top_egde_collector)
+    top_egde_collector['variance_area'] = top_egde_collector.iloc[:, 0:10].var(axis=1)
+    top_egde_collector['mean_area'] = top_egde_collector.iloc[:, 0:10].mean(axis=1)
+    top_egde_collector['zscore'] = scipy.stats.zscore(top_egde_collector['mean_area'])
+
+    cou = cou.merge(top_egde_collector, left_index = True, right_on='edge_key')
+
+    grn_adata = attribution_to_anndata(attributions[keynames[0]], var=cou)
+    
+    for k in keynames[1:len(keynames)]:
+        # add remaining versions as masks
+        grn_adata.layers[k] = attributions[k]
     return grn_adata
