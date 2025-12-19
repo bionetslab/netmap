@@ -53,188 +53,22 @@ from typing import List, Optional, Tuple, Union
 import networkx as nx
 import pandas as pd
 from pandas import DataFrame
+import pyucell as ucell
 from pyvis.network import Network
 
-# R integration
-import rpy2.robjects as ro
-import rpy2.robjects.pandas2ri as pandas2ri
-pandas2ri.activate()
-
 # Omnipath API
-import omnipath as opath
-import omnipath as op
+#import omnipath as opath
+#import omnipath as op
 
 # Miscellaneous
 warnings.filterwarnings("ignore")
 
-# Append project-specific paths
-sys.path.append('/home/baz8031/NetMap/2025/Evaluation/Final/')
-
-# Optional: Manual reload for development
-# import importlib
-# import netmap.src.downstream.downstream as downstream
-# importlib.reload(downstream)
+from netmap.src.downstream.clustering import process, spectral_clustering, downstream_recipe
+from netmap.src.downstream.edge_selection import add_top_edge_annotation_global
 
 
-
-
-def add_top_edge_annotation_global(grn_adata, top_edges=[0.1], nan_fill=0):
-    """
-    Annotates the `var` attribute of a GRN (Gene Regulatory Network) AnnData object 
-    with the number of cells in which the top edges appear globally.
-
-    Parameters
-    ----------
-    grn_adata : AnnData
-        An AnnData object containing the gene regulatory network with edge information in `.var`.
-    top_edges : list of float, optional
-        A list of thresholds specifying the top edges to annotate (default is [0.1]).
-    nan_fill : numeric, optional
-        Value to fill in for edges that do not appear in the top set for a given threshold (default is 0).
-
-    Returns
-    -------
-    AnnData
-        The same AnnData object with new columns added to `.var` representing global cell counts 
-        for each specified top edge threshold.
-    """
-    var = grn_adata.var
-    if 'edge_key' not in var.columns:
-        var = var.reset_index().rename(columns={'index': 'edge_key'})
-    else:
-        var = var.copy()
     
-    top_edges_per_cell = _get_top_edges_global(grn_adata, top_edges, layer='X')
-    
-    for te in top_edges:
-        key = f'global_cell_count_{te}'
-        if key in var.columns:
-            continue
-        
-        counts_to_merge = top_edges_per_cell.loc[
-            top_edges_per_cell.top_edges == te,
-            ['edge_key', 'cell_count']
-        ].rename(columns={'cell_count': key})
-        
-        var = var.merge(counts_to_merge, on='edge_key', how='left')
-        var[key] = var[key].fillna(nan_fill)
 
-    var = var.set_index('edge_key')
-    grn_adata.var = var
-    
-    return grn_adata
-
-def spectral_clustering(adata, n_clu = 2, key_added = 'spectral'):
-    """
-    Run sklearn spectral clustering on the neighbour matrix in the anndata object.
-
-    Args:
-    adata: Anndata object
-    n_clu: Number of clusters to compute
-    key_added: The key to add the new labelling to [Default: spectral]
-    """
-    sc.pp.neighbors(adata)
-    ssc = SpectralClustering(n_clusters=n_clu,assign_labels='discretize',random_state=0, affinity= 'precomputed_nearest_neighbors').fit(adata.obsp['distances'])
-    counter = 0
-    key_added_t = key_added
-    while key_added_t in adata.obs.columns:
-        counter = counter + 1
-        key_added_t = f'{key_added}_{counter}'
-    adata.obs[key_added_t] = ssc.labels_
-    adata.obs[key_added_t] = pd.Categorical(adata.obs[key_added_t])
-    return adata
-
-
-def process(grn_adata, n_clu=2, cluster_var = 'spectral'):
-    if not scs.issparse(grn_adata.X):
-        grn_adata.X[np.isnan(grn_adata.X) ] = 0
-    grn_adata = downstream_recipe(grn_adata)
-    print(f'clustering: {n_clu} clusters')
-    grn_adata = spectral_clustering(grn_adata, n_clu=n_clu, key_added = 'spectral')
-    return grn_adata
-
-def clustring_comabitiblity_score(adata, grn_adata, col_adata, col_grn_adata, return_mapping=False):
-    
-    """
-    Adjust group labelling such that grn_adata has the same group label than the 
-    corresponding column in adata based on the grn column.
-
-    Returns the data objects and a score of the matching as the cost of the matching
-    divided by the number of cells.
-    """
-
-    cm = contingency_matrix(adata.obs[col_adata], grn_adata.obs[col_grn_adata])
-    row_ind, col_ind = linear_sum_assignment(cm, maximize = True)
-    
-    names_ad = np.unique(adata.obs[col_adata])
-    names_grn = np.unique(grn_adata.obs[col_grn_adata])
-    mapping = {}
-    reverse_mapping = {}
-    for i in range(len(row_ind)):
-        reverse_mapping[names_grn[col_ind[i]]] = names_ad[row_ind[i]]
-
-    col_grn_adata_remapped = col_grn_adata + '_remap'
-    if isinstance(np.unique(grn_adata.obs[col_grn_adata])[0], str):
-        grn_adata.obs[col_grn_adata_remapped] = [reverse_mapping[a] for a in grn_adata.obs[col_grn_adata]]
-    else:
-        grn_adata.obs[col_grn_adata_remapped] = [reverse_mapping[int(a)] for a in grn_adata.obs[col_grn_adata]]
-
-    grn_adata.obs[col_grn_adata_remapped] = pd.Categorical(grn_adata.obs[col_grn_adata_remapped])
-
-    score = cm[row_ind, col_ind].sum()/adata.obs.shape[0]
-    if return_mapping:
-        return score
-    else:
-        return score
-    
-def add_top_edge_annotation_cluster(grn_adata, top_edges=[0.1], nan_fill=0, cluster_var='spectral'):
-    """
-    Annotates the `var` attribute of a GRN (Gene Regulatory Network) AnnData object 
-    with the number of cells in which the top edges appear, computed separately for each cluster.
-
-    Parameters
-    ----------
-    grn_adata : AnnData
-        An AnnData object containing the gene regulatory network with edge information in `.var`.
-    top_edges : list of float, optional
-        A list of thresholds specifying the top edges to annotate (default is [0.1]).
-    nan_fill : numeric, optional
-        Value to fill in for edges that do not appear in the top set for a given threshold (default is 0).
-    cluster_var : str, optional
-        The column name in `grn_adata.obs` representing clusters (default is 'spectral').
-
-    Returns
-    -------
-    AnnData
-        The same AnnData object with new columns added to `.var` representing per-cluster cell counts 
-        for each specified top edge threshold.
-    """
-    var = grn_adata.var
-    if var.index.name is None or var.index.name == 'index':
-        var = var.reset_index()
-        var = var.rename(columns={'index': 'edge_key'})
-    else:
-        var = var.reset_index()
-        
-    for clu in grn_adata.obs[cluster_var].unique():
-        grn_adata_sub = grn_adata[grn_adata.obs[cluster_var] == clu]
-        top_edges_per_cell = _get_top_edges_global(grn_adata_sub, top_edges, layer='X')
-
-        for te in top_edges:
-            key = f'cell_count_{te}_{clu}'
-            if key in var.columns:
-                continue
-            counts_to_merge = top_edges_per_cell.loc[
-                top_edges_per_cell.top_edges == te, 
-                ['edge_key', 'cell_count']
-            ].rename(columns={'cell_count': key})
-            var = var.merge(counts_to_merge, on='edge_key', how='outer')
-            var[key] = var[key].fillna(nan_fill)
-
-    var = var.set_index('edge_key')
-    grn_adata.var = var
-
-    return grn_adata
 
 def filter_clusters_by_cell_count(grn_adata: AnnData, metric_tag: float, top_fraction: float) -> Tuple[Optional[Dict[str, float]], AnnData]:
     """
@@ -359,6 +193,7 @@ def get_top_targets(gene_inter_adata, adata, top_per_source=750, col_cluster='sp
 
     return gene_inter_adata_filtered, reglon_sizes
 
+
 def filter_signatures_by_Ucell(grn_adata, adata, ncores: int = 100) -> pd.DataFrame:
     """
     Filters gene signatures by cluster and computes UCell scores.
@@ -378,54 +213,11 @@ def filter_signatures_by_Ucell(grn_adata, adata, ncores: int = 100) -> pd.DataFr
         DataFrame with UCell scores merged with the 'spectral' cluster labels.
     """
     
-    # Extract gene regulatory network edges
-    edges = grn_adata.var
-    print(f"Max edges per source: {edges.groupby('source').size().max()}")
-
-    # Convert counts layer to DataFrame
-    counts_layer = adata.layers['counts']
-    if sp.issparse(counts_layer):
-        count_matrix = pd.DataFrame(counts_layer.toarray(), index=adata.obs_names, columns=adata.var_names)
-    else:
-        count_matrix = pd.DataFrame(counts_layer, index=adata.obs_names, columns=adata.var_names)
-
-    # Initialize R environment
-    ro.r('library(UCell); library(Matrix)')
-    ro.globalenv['count_matrix'] = pandas2ri.py2rpy(count_matrix)
-    ro.globalenv['all_edges'] = pandas2ri.py2rpy(edges)
-    ro.globalenv['ncores'] = ncores
-
-    # R code: filter edges and compute UCell scores
-    ro.r('''
-        mat <- as.matrix(t(count_matrix))
-        sparse_mat <- as(mat, "CsparseMatrix")
-
-        df <- all_edges
-        df$source <- as.character(df$source)
-        df$target <- as.character(df$target)
-
-        valid_genes <- rownames(sparse_mat)
-        df <- subset(df, source %in% valid_genes & target %in% valid_genes)
-
-        # Create gene signature list
-        result_list <- lapply(split(df, df$source), function(group) unique(c(group$source[1], group$target)))
-        result_list <- result_list[sapply(result_list, length) > 1]
-
-        max_rank <- max(sapply(result_list, length)) + 1
-
-        scores <- ScoreSignatures_UCell(sparse_mat, features = result_list, ncores = ncores, maxRank = max_rank)
-        scores_df <- as.data.frame(scores)
-    ''')
-
-    # Retrieve results from R
-    scores_df_r = ro.r['scores_df']
-    scores_df = pandas2ri.rpy2py(scores_df_r)
-
-    # Merge with spectral clusters
-    data_ucell = scores_df.merge(adata.obs[['spectral']], left_index=True, right_index=True)
-    data_ucell['spectral'] = data_ucell['spectral'].astype('category')
-
+    signatures  = grn_adata.var.groupby('source')['target'].apply(list).to_dict()
+    ucell.compute_ucell_scores(adata, signatures=signatures)
+    data_ucell = adata.obs.filter(like='_UCell')
     return data_ucell
+
 
 
 def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: AnnData, keep_top_ranked: int = 100, filter_by: str = "z_score") -> Tuple[Optional[AnnData], List[str]]:
@@ -460,8 +252,9 @@ def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: AnnData, k
     if grn_adata.var.empty:
         return None, []
 
-    clusters = data_ucell['spectral']
-    ucell_scores = data_ucell.drop(columns=['spectral'])
+    clusters = grn_adata.obs['spectral']
+    ucell_scores = data_ucell
+
     signature_bases = [sig.split("_UCell")[0] for sig in ucell_scores.columns]
 
     cluster_top_sources = []
@@ -534,47 +327,6 @@ def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: AnnData, k
 #     return grn_adata_filtered, top_sources_list
 
 
-def create_regulon_activity_adata(grn_adata, data, grn_adata_):
-    """
-    Convert processed regulon activity `data` into a new AnnData object aligned with GRN metadata.
-
-    Parameters:
-    -----------
-    data : pd.DataFrame
-        DataFrame of regulon activity scores (e.g., UCell outputs). Columns are typically signature names.
-
-    grn_adata : AnnData
-        Full GRN AnnData object, used to inherit cell order, UMAP coordinates, and obs metadata.
-
-    grn_adata_ : AnnData
-        Filtered GRN AnnData object, used to select relevant source genes for columns.
-
-    Returns:
-    --------
-    adata_regl : AnnData
-        New AnnData object containing regulon activity with appropriate obs, var, and UMAP embeddings.
-    """
-
-    # Ensure column naming is consistent
-    data.columns = [col.split("_")[0] + "_regulon" for col in data.columns]
-
-    # Align naming convention for filtering
-    expected_cols = [s + "_regulon" for s in grn_adata.var["source"].unique() if s + "_regulon" in data.columns]
-    data = data[expected_cols]
-
-    # Create AnnData object
-    adata_regl = ad.AnnData(
-        X=data,
-        obs=pd.DataFrame(index=data.index),
-        var=pd.DataFrame(index=data.columns)
-    )
-
-    # Inherit obs and umap from grn_adata
-    adata_regl = adata_regl[grn_adata.obs.index]
-    adata_regl.obsm['X_umap'] = grn_adata.obsm['X_umap']
-    adata_regl.obs = grn_adata.obs.copy()
-
-    return adata_regl
 
 def plot_shared_targets_heatmap(grn_adata, genes=None, figsize=(6, 6), cmap='RdBu_r',
                                 metric='euclidean', method='average', title='Clustered Heatmap of Shared Targets'):
@@ -643,177 +395,6 @@ def plot_shared_targets_heatmap(grn_adata, genes=None, figsize=(6, 6), cmap='RdB
 #**********************************************************************
 
 
-def downstream_recipe(adata)-> anndata.AnnData:
-    """
-    Downstream reciepe for an LRP anndata object:
-    TODO: replace the config dict, to pass values
-    """
-    config = {'min_cells':1, 'n_neighbors': 30, 'leiden_resolution': 0.1, 'n_components': 100, 'knn_neighbors': 50}
-    #sc.pp.filter_genes(adata, min_cells=config['min_cells'])
-    #sc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)
-    #sc.pp.normalize_total(adata)
-    #sc.pp.log1p(adata)
-
-    sc.tl.pca(adata, svd_solver = 'randomized', zero_center = False)
-
-    sc.pp.neighbors(adata, n_neighbors=config['knn_neighbors'])
-    sc.tl.leiden(adata, resolution=config['leiden_resolution'])
-
-    sc.tl.umap(adata, n_components = config['n_components'])
-    return adata
-
-
-
-
-def _get_top_edges_per_cell(grn_adata, top_idx_for_t, top_edges_val):
-    """
-    Calculates the number of cells that contain each unique top edge using 
-    NumPy's vectorized unique counting. This is kept efficient.
-    """
-    
-    # 1. Ensure edge metadata is a NumPy array for fast indexing
-    edge_metadata_np = grn_adata.var.index.to_numpy()
-  
-    # 2. Map indices to edge names (strings)
-    # This creates a large temporary 1D array of strings/objects
-    top_edges_metadata = edge_metadata_np[top_idx_for_t.ravel()]
-
-
-    # 3. Count unique edges
-    unique_edges_structured, cell_counts = np.unique(
-        top_edges_metadata,
-        return_counts=True
-    )
-    
-    # 4. Create and return the DataFrame
-    summary_df = pd.DataFrame({
-        'edge_key': unique_edges_structured,
-        'cell_count': cell_counts
-    })
-    
-    summary_df['top_edges'] = top_edges_val
-    final_cols = ['edge_key', 'top_edges', 'cell_count']
-
-    return summary_df[final_cols]
-
-def _get_top_edges_global(grn_adata, top_edges: list, layer='X'):
-    """
-    ENHANCED: Uses np.argpartition for faster partial sorting and reduced 
-    temporary memory allocation compared to np.argsort.
-    """
-    
-    if layer == 'X':
-        data = grn_adata.X
-    else:
-        data = grn_adata.layers[layer]
-        
-    N_edges = grn_adata.shape[1]
-    
-    # Calculate the largest number of top edges we need across all percentages
-    max_perc = max(top_edges)
-    k_max = int(np.round(N_edges * max_perc))
-
-    # The partition index is (N_edges - k_max). 
-    partition_index = N_edges - k_max
-    
-    all_top = []
-
-    # Handle k_max == N_edges (1.0 percentage) as argpartition fails for k=N
-    if k_max == N_edges:
-        print("Warning: Max percentage is 1.0. Falling back to full index (no sorting needed).")
-        # For 100%, we just need all indices, no sorting needed.
-        b = np.arange(N_edges)[None, :]
-    else:
-        print(f"Using argpartition to find the top {k_max} edges (index {partition_index})...")
-        # THE CRUCIAL OPTIMIZATION: Use argpartition (O(M)) instead of argsort (O(M log M))
-        # This sorts the data such that all elements at/after partition_index are the largest k_max.
-        # It's only called ONCE for the largest needed subset.
-        b = np.argpartition(data, kth=partition_index, axis=1)
-
-    for t_val in top_edges:
-        # Calculate the specific number of edges for the current percentage
-        n_edges_for_t = int(np.round(N_edges * t_val))
-        
-        # Calculate the starting column index for this specific percentage cut
-        start_col_idx = N_edges - n_edges_for_t
-        
-        # Slice 'b' to get the indices corresponding to the top n_edges_for_t
-        top_idx = b[:, start_col_idx:]
-
-        # Use the efficient counting function
-        top_df = _get_top_edges_per_cell(grn_adata, top_idx, t_val)
-        all_top.append(top_df)
-
-    # Concatenate the results
-    return pd.concat(all_top, ignore_index=True)
-
-# def add_top_edge_annotation_global(grn_adata, top_edges = [0.1], nan_fill = 0):
-    
-#     # Pre-process var index for merging
-#     var = grn_adata.var
-#     # Ensure 'edge_key' column exists for merging
-#     if 'edge_key' not in var.columns:
-#         var = var.reset_index()
-#         var = var.rename(columns = {'index':'edge_key'})
-#     else:
-#         var = var.copy() # Need a copy if we use reset_index above to avoid SettingWithCopyWarning
-        
-#     # Get the calculated edge counts
-#     top_edges_per_cell = _get_top_edges_global(grn_adata, top_edges, layer='X')
-    
-#     for te in top_edges:
-#         key = f'global_cell_count_{te}'
-        
-#         # Skip if column already exists (handles the `continue` logic from original)
-#         if key in var.columns:
-#             continue
-            
-#         # Select and rename the necessary subset of results
-#         counts_to_merge = top_edges_per_cell.loc[
-#             top_edges_per_cell.top_edges == te, 
-#             ['edge_key', 'cell_count']
-#         ].rename(columns={'cell_count': key})
-        
-#         # Merge the new count column
-#         var = var.merge(
-#             counts_to_merge, 
-#             left_on='edge_key', 
-#             right_on='edge_key', 
-#             how='left' # Use 'left' merge to keep all original var rows
-#         )
-        
-#         # Fill NaN values (edges not in the top set for this percentage)
-#         var[key] = var[key].fillna(nan_fill)
-
-#     # Restore the index
-#     var = var.set_index('edge_key')
-#     grn_adata.var = var
-    
-#     return grn_adata
-
-
-# def add_top_edge_annotation_cluster(grn_adata, top_edges = [0.1], nan_fill = 0, cluster_var = 'spectral'):
-#     var = grn_adata.var
-#     if var.index.name is None or var.index.name == 'index':
-#         var = var.reset_index()
-#         var = var.rename(columns = {'index':'edge_key'})
-#     else:
-#         var = var.reset_index()
-        
-#     for clu in grn_adata.obs[cluster_var].unique():
-#         grn_adata_sub = grn_adata[grn_adata.obs[cluster_var] == clu]
-#         top_edges_per_cell = _get_top_edges_global(grn_adata_sub,  top_edges, layer='X')
-
-#         for te in top_edges:
-#             if f'cell_count_{te}_{clu}' in var.columns:
-#                 continue
-#             var = var.merge(top_edges_per_cell.loc[top_edges_per_cell.top_edges==te, ['edge_key', 'cell_count']].rename(columns = {'cell_count': f'cell_count_{te}_{clu}'}), left_on = 'edge_key', right_on='edge_key', how='outer')
-#             var[f'cell_count_{te}_{clu}']= var[f'cell_count_{te}_{clu}'].fillna(nan_fill)
-
-#     var = var.set_index('edge_key')
-#     grn_adata.var = var
-
-#     return grn_adata
 
 def compute_edge_overlaps_simple(grn_adata: AnnData, net_list: List[Tuple[str, pd.DataFrame]]) -> Dict[str, float]:
     """
@@ -850,39 +431,7 @@ def compute_edge_overlaps_simple(grn_adata: AnnData, net_list: List[Tuple[str, p
     return overlap_perc
 
 
-def unify_group_labelling(adata, grn_adata, col_adata, col_grn_adata, return_mapping=False):
-    
-    """
-    Adjust group labelling such that grn_adata has the same group label than the 
-    corresponding column in adata based on the grn column.
 
-    Returns the data objects and a score of the matching as the cost of the matching
-    divided by the number of cells.
-    """
-
-    cm = contingency_matrix(adata.obs[col_adata], grn_adata.obs[col_grn_adata])
-    row_ind, col_ind = linear_sum_assignment(cm, maximize = True)
-    
-    names_ad = np.unique(adata.obs[col_adata])
-    names_grn = np.unique(grn_adata.obs[col_grn_adata])
-    mapping = {}
-    reverse_mapping = {}
-    for i in range(len(row_ind)):
-        reverse_mapping[names_grn[col_ind[i]]] = names_ad[row_ind[i]]
-
-    col_grn_adata_remapped = col_grn_adata + '_remap'
-    if isinstance(np.unique(grn_adata.obs[col_grn_adata])[0], str):
-        grn_adata.obs[col_grn_adata_remapped] = [reverse_mapping[a] for a in grn_adata.obs[col_grn_adata]]
-    else:
-        grn_adata.obs[col_grn_adata_remapped] = [reverse_mapping[int(a)] for a in grn_adata.obs[col_grn_adata]]
-
-    grn_adata.obs[col_grn_adata_remapped] = pd.Categorical(grn_adata.obs[col_grn_adata_remapped])
-
-    score = cm[row_ind, col_ind].sum()/adata.obs.shape[0]
-    if return_mapping:
-        return score
-    else:
-        return score
     
 
 def filter_clusters_by_cell_count(grn_adata: AnnData, metric_tag: float, top_fraction: float) -> Tuple[Optional[Dict[str, float]], AnnData]:
@@ -931,10 +480,6 @@ def filter_clusters_by_cell_count(grn_adata: AnnData, metric_tag: float, top_fra
 
 
 
-
-
-
-
 def create_regulon_activity_adata(grn_adata: AnnData, data_ucell: pd.DataFrame, top_sources_list: List[str]) -> AnnData:
     """
     Creates an AnnData object with regulon activity scores based on top GRN sources.
@@ -973,7 +518,10 @@ def create_regulon_activity_adata(grn_adata: AnnData, data_ucell: pd.DataFrame, 
     if 'X_umap' in grn_adata.obsm:
         adata_regulon.obsm['X_umap'] = grn_adata.obsm['X_umap'].copy()
 
+    print('I was here')
     return adata_regulon
+
+
 
 
 def plot_reg(grn_adata: AnnData, regulon: List, name="network", layout: Optional[str]="hierarchical", out_path="network_plots/"):
