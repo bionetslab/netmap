@@ -189,7 +189,7 @@ def attribution_one_target(
     return attributions_list
 
 
-def inferrence(models, data_train_full_tensor, gene_names, config):
+def inferrence(models, data_train_full_tensor, gene_names, xai_method):
 
     tms = []
     name_list = []
@@ -198,7 +198,7 @@ def inferrence(models, data_train_full_tensor, gene_names, config):
     
     for trained_model in models:        
         trained_model.forward_mu_only = True
-        explainer, xai_type = get_explainer(trained_model, config.xai_method)
+        explainer, xai_type = get_explainer(trained_model, xai_method)
         tms.append(explainer)
 
     attributions = []
@@ -214,7 +214,7 @@ def inferrence(models, data_train_full_tensor, gene_names, config):
             randomize_background = True)
 
         
-        attributions_list = aggregate_attributions(attributions_list, strategy=config.aggregation_strategy)
+        attributions_list = aggregate_attributions(attributions_list, strategy='mean')
         attributions.append(attributions_list)
 
     ## AGGREGATION: REPLACE LIST BY AGGREGATED DATA
@@ -310,17 +310,17 @@ def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method
             background_type = background_type)
 
 
-        grn_adata_eph = attribution_to_anndata(current_attribution, var=cou)
-        b = np.argsort(grn_adata_eph.X, axis=1)
-        grn_adata_eph.layers['sorted'] = b
-        grn_adata_eph = edge_selection.add_top_edge_annotation_global(grn_adata=grn_adata_eph, top_edges = thresholds, key_name=f'agg_{m}')
-        df_subset = grn_adata_eph.var.iloc[:, 2:]
-        integral_results = df_subset.apply(
-            lambda row: np.sum(integrate.cumulative_trapezoid(row, thresholds )), 
-            axis=1,
-            )
-        integral_results = integral_results/1000
-        top_egde_collector[f'agg_{m}'] = integral_results
+        # grn_adata_eph = attribution_to_anndata(current_attribution, var=cou)
+        # b = np.argsort(grn_adata_eph.X, axis=1)
+        # grn_adata_eph.layers['sorted'] = b
+        # grn_adata_eph = edge_selection.add_top_edge_annotation_global(grn_adata=grn_adata_eph, top_edges = thresholds, key_name=f'agg_{m}')
+        # df_subset = grn_adata_eph.var.iloc[:, 2:]
+        # integral_results = df_subset.apply(
+        #     lambda row: np.sum(integrate.cumulative_trapezoid(row, thresholds )), 
+        #     axis=1,
+        #     )
+        # integral_results = integral_results/1000
+        # top_egde_collector[f'agg_{m}'] = integral_results
 
 
         if attribution_collector is not None:
@@ -339,12 +339,12 @@ def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method
             keynames.append(f'aggregated_{(m+1)}')
 
 
-    top_egde_collector = pd.DataFrame(top_egde_collector)
-    top_egde_collector['variance_area'] = top_egde_collector.iloc[:, 0:10].var(axis=1)
-    top_egde_collector['mean_area'] = top_egde_collector.iloc[:, 0:10].mean(axis=1)
-    top_egde_collector['zscore'] = scipy.stats.zscore(top_egde_collector['mean_area'])
+    # top_egde_collector = pd.DataFrame(top_egde_collector)
+    # top_egde_collector['variance_area'] = top_egde_collector.iloc[:, 0:10].var(axis=1)
+    # top_egde_collector['mean_area'] = top_egde_collector.iloc[:, 0:10].mean(axis=1)
+    # top_egde_collector['zscore'] = scipy.stats.zscore(top_egde_collector['mean_area'])
 
-    cou = cou.merge(top_egde_collector, left_index = True, right_on='edge_key')
+    # cou = cou.merge(top_egde_collector, left_index = True, right_on='edge_key')
 
     grn_adata = attribution_to_anndata(attributions[keynames[0]], var=cou)
     

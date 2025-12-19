@@ -41,6 +41,7 @@ ipykernel = ">=6.29.5,<7"
 pyarrow = ">=20.0.0,<21"
 cupy = ">=13.5.1,<14"
 gtfparse = ">=2.5.0,<3"
+pyvis = ">=0.3.2,<0.4"
 
 
 [pypi-dependencies]
@@ -48,6 +49,7 @@ piper = ">=0.14.4, <0.15"
 rpy2 = ">=3.5.17, <4"
 napy = ">=0.2.2, <0.3"
 decoupler = { version = ">=2.0.6, <3", extras = ["full"] }
+pyucell = ">=0.5.0, <0.6"
 
 [feature.renv.dependencies]
 r-base = "*"

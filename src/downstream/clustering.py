@@ -4,6 +4,9 @@ from sklearn.cluster import SpectralClustering
 import pandas as pd
 import numpy as np
 import scipy.sparse as scs
+from scipy.optimize import linear_sum_assignment
+from sklearn.cluster import KMeans, SpectralClustering
+from sklearn.metrics.cluster import contingency_matrix
 
 def downstream_recipe(adata)-> anndata.AnnData:
     """
@@ -54,3 +57,41 @@ def process(grn_adata, n_clu=2, cluster_var = 'spectral'):
     print(f'clustering: {n_clu} clusters')
     grn_adata = spectral_clustering(grn_adata, n_clu=n_clu, key_added = 'spectral')
     return grn_adata
+
+
+
+def unify_group_labelling(adata, grn_adata, col_adata, col_grn_adata, return_mapping=False):
+    
+    """
+    Adjust group labelling such that grn_adata has the same group label than the 
+    corresponding column in adata based on the grn column.
+
+    Returns the data objects and a score of the matching as the cost of the matching
+    divided by the number of cells.
+    """
+
+    cm = contingency_matrix(adata.obs[col_adata], grn_adata.obs[col_grn_adata])
+    row_ind, col_ind = linear_sum_assignment(cm, maximize = True)
+    
+    names_ad = np.unique(adata.obs[col_adata])
+    names_grn = np.unique(grn_adata.obs[col_grn_adata])
+    mapping = {}
+    reverse_mapping = {}
+    for i in range(len(row_ind)):
+        reverse_mapping[names_grn[col_ind[i]]] = names_ad[row_ind[i]]
+
+    col_grn_adata_remapped = col_grn_adata + '_remap'
+    if isinstance(np.unique(grn_adata.obs[col_grn_adata])[0], str):
+        grn_adata.obs[col_grn_adata_remapped] = [reverse_mapping[a] for a in grn_adata.obs[col_grn_adata]]
+    else:
+        grn_adata.obs[col_grn_adata_remapped] = [reverse_mapping[int(a)] for a in grn_adata.obs[col_grn_adata]]
+
+    grn_adata.obs[col_grn_adata_remapped] = pd.Categorical(grn_adata.obs[col_grn_adata_remapped])
+
+    score = cm[row_ind, col_ind].sum()/adata.obs.shape[0]
+    if return_mapping:
+        return score
+    else:
+        return score
+
+
