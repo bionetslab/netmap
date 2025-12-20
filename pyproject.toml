@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netmap"
+version = "0.1.0"
+description = "A package for single-cell GRN analysis"
+readme = "README.md"
+authors = [
+    { name = "Anne Hartebrodt", email = "anne.hartebrodt@fau.de"},
+    { name = "Mhaned Oubounyt", email = "mhaned.oubounyt@uni-hamburg.de"},
+]
+requires-python = ">=3.10"
+license = { text = "MIT" } # Update if different
+dependencies = [
+    "scikit-learn",
+    "pandas",
+    "scipy",
+    "numpy",
+    "scanpy",
+    "seaborn",
+    "statsmodels",
+    "omnipath",
+    "captum",
+    "python-igraph",
+    "leidenalg",
+    "matplotlib",
+    "ipykernel",
+    "pyvis",
+    "pyucell",
+    "pyyaml",
+
+]
+
+[project.urls]
+Homepage = "https://github.com/bionetslab/netmap"
