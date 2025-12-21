@@ -30,6 +30,7 @@ dependencies = [
     "pyvis",
     "pyucell",
     "pyyaml",
+    'zstandard',
 
 ]
 
