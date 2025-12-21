@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>netmap.masking package &#8212; Netmap Jan, 2026 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/jquery.js?v=5d32c60e"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="_static/documentation_options.js?v=f7525948"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="netmap-masking-package">
+<h1>netmap.masking package<a class="headerlink" href="#netmap-masking-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-netmap.masking.external">
+<span id="netmap-masking-external-module"></span><h2>netmap.masking.external module<a class="headerlink" href="#module-netmap.masking.external" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.external.add_external_grn">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.external.</span></span><span class="sig-name descname"><span class="pre">add_external_grn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grn_ad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_grn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_grn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'external_grn'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.external.add_external_grn" title="Link to this definition"></a></dt>
+<dd><p>Adds three columns to a anndate GRN object.
+is_target
+is_source
+is_egde</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.external.get_genome_annotation_from_gtf">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.external.</span></span><span class="sig-name descname"><span class="pre">get_genome_annotation_from_gtf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gtf_df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.external.get_genome_annotation_from_gtf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.external.get_regulators">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.external.</span></span><span class="sig-name descname"><span class="pre">get_regulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crm_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.external.get_regulators" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.external.preprocess_bed_file">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.external.</span></span><span class="sig-name descname"><span class="pre">preprocess_bed_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bed_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gtf_df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.external.preprocess_bed_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-netmap.masking.internal">
+<span id="netmap-masking-internal-module"></span><h2>netmap.masking.internal module<a class="headerlink" href="#module-netmap.masking.internal" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.internal.add_neighbourhood_expression_mask">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">add_neighbourhood_expression_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grn_adata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.internal.add_neighbourhood_expression_mask" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.internal.create_pairwise_binary_mask">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">create_pairwise_binary_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.internal.create_pairwise_binary_mask" title="Link to this definition"></a></dt>
+<dd><p>Creates a dictionary of binary masks for each cell and pair of genes,
+including both forward, reverse, and self-pairs (which are all zeros).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>matrix_cells_x_genes</strong> (<em>np.ndarray</em>) – A 2D numpy array where rows are cells
+and columns are genes.</p></li>
+<li><p><strong>gene_list</strong> (<em>list</em>) – A list of strings containing the names of the genes,
+in the same order as the columns in the matrix.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary where keys are gene pair strings (e.g., ‘GeneA_GeneB’)</dt><dd><p>and values are 1D numpy arrays representing the binary mask for that pair
+across all cells.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.internal.dict_to_dataframe">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">dict_to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_order_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.internal.dict_to_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Converts a dictionary of binary masks into a pandas DataFrame,
+respecting a specified column order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask_dict</strong> (<em>dict</em>) – A dictionary where keys are gene pair strings and
+values are 1D numpy arrays (the masks).</p></li>
+<li><p><strong>column_order_list</strong> (<em>list</em>) – A list of gene pair strings specifying the
+desired order of the DataFrame columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame with masks as columns, in the specified order.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.internal.find_consistent_pairs">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">find_consistent_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grn_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.internal.find_consistent_pairs" title="Link to this definition"></a></dt>
+<dd><p>Creates a dictionary of binary masks for each cell and pair of genes,
+including both forward, reverse, and self-pairs (which are all zeros).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>matrix_cells_x_genes</strong> (<em>np.ndarray</em>) – A 2D numpy array where rows are cells
+and columns are genes.</p></li>
+<li><p><strong>gene_list</strong> (<em>list</em>) – A list of strings containing the names of the genes,
+in the same order as the columns in the matrix.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A dictionary where keys are gene pair strings (e.g., ‘GeneA_GeneB’)</dt><dd><p>and values are 1D numpy arrays representing the binary mask for that pair
+across all cells.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="netmap.masking.internal.get_neighborhood_expression">
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">get_neighborhood_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knn_neighbours</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_neighbours</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.internal.get_neighborhood_expression" title="Link to this definition"></a></dt>
+<dd><p>Checks if each gene is expressed in the k-nearest neighbors (kNN) of each cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>adata</strong> (<em>anndata.AnnData</em>) – An AnnData object with a kNN graph in
+<cite>adata.obsp[‘connectivities’]</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A cell x gene binary DataFrame where a value of 1 indicates</dt><dd><p>that the gene is expressed in at least one of the cell’s
+nearest neighbors, and 0 otherwise.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-netmap.masking">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-netmap.masking" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Netmap</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Anne Hartebrodt, Mhaned Oubounyt.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/netmap.masking.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

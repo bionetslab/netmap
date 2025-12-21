@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>netmap package &#8212; Netmap Jan, 2026 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/jquery.js?v=5d32c60e"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="_static/documentation_options.js?v=f7525948"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="netmap-package">
+<h1>netmap package<a class="headerlink" href="#netmap-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="netmap.downstream.html">netmap.downstream package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="netmap.downstream.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.downstream.html#module-netmap.downstream.clustering">netmap.downstream.clustering module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.clustering.downstream_recipe"><code class="docutils literal notranslate"><span class="pre">downstream_recipe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.clustering.process"><code class="docutils literal notranslate"><span class="pre">process()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.clustering.spectral_clustering"><code class="docutils literal notranslate"><span class="pre">spectral_clustering()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.clustering.unify_group_labelling"><code class="docutils literal notranslate"><span class="pre">unify_group_labelling()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.downstream.html#netmap-downstream-downstreammain-module">netmap.downstream.downstreammain module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.downstream.html#module-netmap.downstream.edge_selection">netmap.downstream.edge_selection module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.edge_selection.add_top_edge_annotation_cluster"><code class="docutils literal notranslate"><span class="pre">add_top_edge_annotation_cluster()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.edge_selection.add_top_edge_annotation_global"><code class="docutils literal notranslate"><span class="pre">add_top_edge_annotation_global()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.edge_selection.data_preprr"><code class="docutils literal notranslate"><span class="pre">data_preprr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.downstream.html#module-netmap.downstream.final_downstream">netmap.downstream.final_downstream module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.compute_edge_overlaps_simple"><code class="docutils literal notranslate"><span class="pre">compute_edge_overlaps_simple()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.create_regulon_activity_adata"><code class="docutils literal notranslate"><span class="pre">create_regulon_activity_adata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.curate_network"><code class="docutils literal notranslate"><span class="pre">curate_network()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.filter_clusters_by_cell_count"><code class="docutils literal notranslate"><span class="pre">filter_clusters_by_cell_count()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.filter_grn_by_top_signatures"><code class="docutils literal notranslate"><span class="pre">filter_grn_by_top_signatures()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.filter_signatures_by_Ucell"><code class="docutils literal notranslate"><span class="pre">filter_signatures_by_Ucell()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.get_top_targets"><code class="docutils literal notranslate"><span class="pre">get_top_targets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.plot_reg"><code class="docutils literal notranslate"><span class="pre">plot_reg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.plot_reg_curated"><code class="docutils literal notranslate"><span class="pre">plot_reg_curated()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.final_downstream.plot_shared_targets_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_shared_targets_heatmap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.downstream.html#module-netmap.downstream.gene_clustering">netmap.downstream.gene_clustering module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.gene_clustering.add_clusters_to_adata"><code class="docutils literal notranslate"><span class="pre">add_clusters_to_adata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.gene_clustering.compute_regression"><code class="docutils literal notranslate"><span class="pre">compute_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.gene_clustering.get_hierarchical_clustering"><code class="docutils literal notranslate"><span class="pre">get_hierarchical_clustering()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.gene_clustering.plot_regression_and_dendrogram"><code class="docutils literal notranslate"><span class="pre">plot_regression_and_dendrogram()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.html#netmap.downstream.gene_clustering.plot_scatter_plot"><code class="docutils literal notranslate"><span class="pre">plot_scatter_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.downstream.html#module-netmap.downstream">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="netmap.masking.html">netmap.masking package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="netmap.masking.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.masking.html#module-netmap.masking.external">netmap.masking.external module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.external.add_external_grn"><code class="docutils literal notranslate"><span class="pre">add_external_grn()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.external.get_genome_annotation_from_gtf"><code class="docutils literal notranslate"><span class="pre">get_genome_annotation_from_gtf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.external.get_regulators"><code class="docutils literal notranslate"><span class="pre">get_regulators()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.external.preprocess_bed_file"><code class="docutils literal notranslate"><span class="pre">preprocess_bed_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.masking.html#module-netmap.masking.internal">netmap.masking.internal module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.internal.add_neighbourhood_expression_mask"><code class="docutils literal notranslate"><span class="pre">add_neighbourhood_expression_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.internal.create_pairwise_binary_mask"><code class="docutils literal notranslate"><span class="pre">create_pairwise_binary_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.internal.dict_to_dataframe"><code class="docutils literal notranslate"><span class="pre">dict_to_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.internal.find_consistent_pairs"><code class="docutils literal notranslate"><span class="pre">find_consistent_pairs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.masking.html#netmap.masking.internal.get_neighborhood_expression"><code class="docutils literal notranslate"><span class="pre">get_neighborhood_expression()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.masking.html#module-netmap.masking">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="netmap.model.html">netmap.model package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="netmap.model.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.model.html#module-netmap.model.nbautoencoder">netmap.model.nbautoencoder module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.NegativeBinomialAutoencoder"><code class="docutils literal notranslate"><span class="pre">NegativeBinomialAutoencoder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.NegativeBinomialAutoencoder.compute_loss"><code class="docutils literal notranslate"><span class="pre">NegativeBinomialAutoencoder.compute_loss()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.NegativeBinomialAutoencoder.forward"><code class="docutils literal notranslate"><span class="pre">NegativeBinomialAutoencoder.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.NegativeBinomialAutoencoder.latent"><code class="docutils literal notranslate"><span class="pre">NegativeBinomialAutoencoder.latent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.NegativeBinomialLoss"><code class="docutils literal notranslate"><span class="pre">NegativeBinomialLoss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.NegativeBinomialLoss.forward"><code class="docutils literal notranslate"><span class="pre">NegativeBinomialLoss.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.get_mus"><code class="docutils literal notranslate"><span class="pre">get_mus()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.get_mus_grouping"><code class="docutils literal notranslate"><span class="pre">get_mus_grouping()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.get_thetas"><code class="docutils literal notranslate"><span class="pre">get_thetas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.nbautoencoder.get_thetas_grouping"><code class="docutils literal notranslate"><span class="pre">get_thetas_grouping()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.model.html#module-netmap.model.standardautoencoder">netmap.model.standardautoencoder module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.standardautoencoder.Autoencoder"><code class="docutils literal notranslate"><span class="pre">Autoencoder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.standardautoencoder.Autoencoder.compute_loss"><code class="docutils literal notranslate"><span class="pre">Autoencoder.compute_loss()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.standardautoencoder.Autoencoder.forward"><code class="docutils literal notranslate"><span class="pre">Autoencoder.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.standardautoencoder.Autoencoder.latent"><code class="docutils literal notranslate"><span class="pre">Autoencoder.latent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.standardautoencoder.LogCoshLoss"><code class="docutils literal notranslate"><span class="pre">LogCoshLoss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.standardautoencoder.LogCoshLoss.forward"><code class="docutils literal notranslate"><span class="pre">LogCoshLoss.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.standardautoencoder.MSELoss"><code class="docutils literal notranslate"><span class="pre">MSELoss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.standardautoencoder.MSELoss.forward"><code class="docutils literal notranslate"><span class="pre">MSELoss.forward()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.model.html#module-netmap.model.train_model">netmap.model.train_model module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.train_model.create_model_zoo"><code class="docutils literal notranslate"><span class="pre">create_model_zoo()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.train_model.train_autoencoder"><code class="docutils literal notranslate"><span class="pre">train_autoencoder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.train_model.train_autoencoder_early_stopping"><code class="docutils literal notranslate"><span class="pre">train_autoencoder_early_stopping()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.model.html#module-netmap.model.zinbautoencoder">netmap.model.zinbautoencoder module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.ZINBAutoencoder"><code class="docutils literal notranslate"><span class="pre">ZINBAutoencoder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.ZINBAutoencoder.compute_loss"><code class="docutils literal notranslate"><span class="pre">ZINBAutoencoder.compute_loss()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.ZINBAutoencoder.forward"><code class="docutils literal notranslate"><span class="pre">ZINBAutoencoder.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.ZINBLoss"><code class="docutils literal notranslate"><span class="pre">ZINBLoss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.ZINBLoss.forward"><code class="docutils literal notranslate"><span class="pre">ZINBLoss.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.get_mus"><code class="docutils literal notranslate"><span class="pre">get_mus()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.get_mus_grouping"><code class="docutils literal notranslate"><span class="pre">get_mus_grouping()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.get_thetas"><code class="docutils literal notranslate"><span class="pre">get_thetas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.model.html#netmap.model.zinbautoencoder.get_thetas_grouping"><code class="docutils literal notranslate"><span class="pre">get_thetas_grouping()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.model.html#module-netmap.model">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="netmap.utils.html">netmap.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="netmap.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.utils.html#module-netmap.utils.data_utils">netmap.utils.data_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.utils.html#netmap.utils.data_utils.attribution_to_anndata"><code class="docutils literal notranslate"><span class="pre">attribution_to_anndata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.utils.html#netmap.utils.data_utils.create_output_directory"><code class="docutils literal notranslate"><span class="pre">create_output_directory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.utils.html#netmap.utils.data_utils.save_anndata"><code class="docutils literal notranslate"><span class="pre">save_anndata()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.utils.html#module-netmap.utils.misc">netmap.utils.misc module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.utils.html#netmap.utils.misc.write_config"><code class="docutils literal notranslate"><span class="pre">write_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.utils.html#module-netmap.utils.netmap_config">netmap.utils.netmap_config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig"><code class="docutils literal notranslate"><span class="pre">NetmapConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.adata_filename"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.adata_filename</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.aggregation_strategy"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.aggregation_strategy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.epochs"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.epochs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.grn"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.grn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.input_data"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.input_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.layer"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.layer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.learning_rate"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.learning_rate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.masking_percentage"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.masking_percentage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.model"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.n_models"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.n_models</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.optimizer"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.optimizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.output_directory"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.output_directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.penalize_error"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.penalize_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.print_every"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.print_every</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.read_yaml"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.read_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.tf_only"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.tf_only</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.transcription_factors"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.transcription_factors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.validation_size"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.validation_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.write_yaml"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.write_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.utils.html#netmap.utils.netmap_config.NetmapConfig.xai_method"><code class="docutils literal notranslate"><span class="pre">NetmapConfig.xai_method</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.utils.html#module-netmap.utils.tf_utils">netmap.utils.tf_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.utils.html#netmap.utils.tf_utils.filter_tf_names"><code class="docutils literal notranslate"><span class="pre">filter_tf_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.utils.html#netmap.utils.tf_utils.get_tf_index"><code class="docutils literal notranslate"><span class="pre">get_tf_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="netmap.utils.html#netmap.utils.tf_utils.load_tf_names"><code class="docutils literal notranslate"><span class="pre">load_tf_names()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="netmap.utils.html#module-netmap.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="netmap-model-concept-module">
+<h2>netmap.model_concept module<a class="headerlink" href="#netmap-model-concept-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-netmap.netmap">
+<span id="netmap-netmap-module"></span><h2>netmap.netmap module<a class="headerlink" href="#module-netmap.netmap" title="Link to this heading"></a></h2>
+</section>
+<section id="module-netmap">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-netmap" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Netmap</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Anne Hartebrodt, Mhaned Oubounyt.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/netmap.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
