@@ -56,8 +56,7 @@ from pandas import DataFrame
 import pyucell as ucell
 from pyvis.network import Network
 
-# Omnipath API
-#import omnipath as opath
+
 #import omnipath as op
 
 # Miscellaneous

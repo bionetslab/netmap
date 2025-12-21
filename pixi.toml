@@ -19,4 +19,4 @@ cupy = ">=13.5.1,<14"
 
 
 [pypi-dependencies]
-netmap = { path = ".", editable = true}
+netmap = { git = "https://github.com/bionetslab/netmap" }
