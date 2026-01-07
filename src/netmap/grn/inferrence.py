@@ -114,7 +114,9 @@ def aggregate_attributions(attributions, strategy = 'mean'):
         return np.mean(attributions, axis = 0)
     
 
-def get_explainer(model, explainer_type, raw=False):
+def _get_explainer(model, explainer_type, raw=False):
+
+
     if explainer_type in ['GuidedBackprop', 'Deconvolution']:
         explainer_mode = 'lrp-like'
     else:
@@ -213,6 +215,31 @@ def attribution_one_target(
 
 def inferrence(models, data_train_full_tensor, gene_names, xai_method):
 
+    """
+    The main inferrence function to compute the entire GRN. Computes all
+    attributions for all targets, aggregates them and creates an anndata.AnnData
+    object with the edge names in the var slot.
+
+    Parameters
+    ----------
+    models : list[torch.Model]
+        List of trained autoencoder models
+
+    data_train_full_tensor: torch.tensor
+        input data tensor
+        
+    gene_names: np.array
+        Gene names indicating the order of the genes in the torch tensort
+
+    xai_method: str
+        Method to be used [GradientShap, Deconvolution, GuidedBackprop]
+
+    Returns
+    -------
+    grn_adata : anndata.AnnData 
+        A complete, aggregated GRN object   
+    """
+
     tms = []
     name_list = []
     target_names = []
@@ -220,7 +247,7 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method):
     
     for trained_model in models:        
         trained_model.forward_mu_only = True
-        explainer, xai_type = get_explainer(trained_model, xai_method)
+        explainer, xai_type = _get_explainer(trained_model, xai_method)
         tms.append(explainer)
 
     attributions = []
@@ -265,6 +292,27 @@ def attribution_one_model(
         xai_type='lrp-like',
         background_type = 'randomize'):
     
+        
+    """
+    Compute attribution for one model. 
+
+    Parameters
+    ----------
+
+    lrp_model: list[LRP]
+        List of LRP objects
+    input_data: torch.tensor
+        Tensor with the data the GRN should be computed for.
+    xai_type: str 
+        Type of xai_model [Deconvolution, GradientShap, GuidedBackprop]
+
+    Returns
+    -------
+    attribution_list : np.ndarray
+        Array containing the complete attributions for one model
+
+    """
+    
     attributions_list = []
     
     # Randomize backgorund for each round
@@ -298,9 +346,9 @@ def attribution_one_model(
 
 def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method, n_models = [10, 25, 50], background_type = 'zeros'):
 
+
+
     tms = []
-    name_list = []
-    target_names = []
     
     cou  = [[f'{tup[0]}_{tup[1]}', tup[0], tup[1]] for tup in itertools.product(gene_names, gene_names)]
     cou = pd.DataFrame(cou)
@@ -310,7 +358,7 @@ def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method
     
     for trained_model in models:        
         trained_model.forward_mu_only = True
-        explainer, xai_type = get_explainer(trained_model, xai_method)
+        explainer, xai_type = _get_explainer(trained_model, xai_method)
         tms.append(explainer)
 
 
