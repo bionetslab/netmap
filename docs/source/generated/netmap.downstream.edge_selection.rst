@@ -1,4 +1,4 @@
-netmap.downstream.edge\_selection
+﻿netmap.downstream.edge\_selection
 =================================
 
 .. currentmodule:: netmap.downstream.edge_selection
@@ -20,8 +20,6 @@ netmap.downstream.edge\_selection
    add_top_edge_annotation_cluster
 
    add_top_edge_annotation_global
-
-   data_preprr
 
 
 

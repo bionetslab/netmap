@@ -1,4 +1,4 @@
-netmap.model.zinbautoencoder
+﻿netmap.model.zinbautoencoder
 ============================
 
 .. currentmodule:: netmap.model.zinbautoencoder

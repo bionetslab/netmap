@@ -1,4 +1,4 @@
-netmap.masking.external
+﻿netmap.masking.external
 =======================
 
 .. currentmodule:: netmap.masking.external

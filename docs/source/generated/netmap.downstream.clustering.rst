@@ -1,4 +1,4 @@
-netmap.downstream.clustering
+﻿netmap.downstream.clustering
 ============================
 
 .. currentmodule:: netmap.downstream.clustering

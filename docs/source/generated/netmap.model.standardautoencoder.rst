@@ -1,4 +1,4 @@
-netmap.model.standardautoencoder
+﻿netmap.model.standardautoencoder
 ================================
 
 .. currentmodule:: netmap.model.standardautoencoder

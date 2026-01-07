@@ -1,4 +1,4 @@
-netmap.utils.misc
+﻿netmap.utils.misc
 =================
 
 .. currentmodule:: netmap.utils.misc

@@ -3,7 +3,24 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 
-def _get_top_edges_global(grn_adata, top_edges: int, layer = 'X'):
+def _get_top_edges_global(grn_adata, top_edges: float):
+    """
+    Subroutine to get the top edges from an Anndata GRN object
+
+    Parameters
+    ----------
+    grn_adata : AnnData
+        A GRN anndata object to process containing a layer 'sorted'
+        with the result of an argsort
+
+    top_edges: float
+        Percentage of interest
+
+    Returns
+    -------
+    final_df : pd.DataFrame
+        Processed Anndata object with the counted edges
+    """
 
     b = grn_adata.layers['sorted']
     # Calculate partition indices for all top_edges values
@@ -29,17 +46,38 @@ def _get_top_edges_global(grn_adata, top_edges: int, layer = 'X'):
 
 
     global_counter = top[0]
-    final_df = [data_preprr(global_counter, edge_metadata_np, top_edges[0])]
+    final_df = [_data_preprr(global_counter, edge_metadata_np, top_edges[0])]
     for i in range(1, len(top)):
         global_counter = global_counter + top[i]
         t_val = top_edges[i]
-        final_df.append(data_preprr(global_counter, edge_metadata_np, t_val))
+        final_df.append(_data_preprr(global_counter, edge_metadata_np, t_val))
     
     final_df = np.concatenate(final_df)
     final_df = pd.DataFrame(final_df)
     return final_df
 
-def data_preprr(global_counter, edge_metadata_np, top_edges_val):
+def _data_preprr(global_counter, edge_metadata_np, top_edges_val) -> pd.DataFrame:
+    
+    """
+    Subroutine of to identify the top scoring edges and count how many times an edge
+    is among the top edges.
+
+    Parameters
+    ----------
+    global_counter : Counter
+        A counter dictionary containing the keys of the edges
+
+    edge_metadata_np: np.ndarray
+        The names of the edges
+
+    top_edges_valu: float 
+        Top percentage to be returned with the data
+
+    Returns
+    -------
+    final_summary_result : pd.DataFrame
+        DataFrame with the edge counts per percentage
+    """
     
     edge_keys_list = []
     cell_counts_list = []
@@ -79,6 +117,31 @@ def data_preprr(global_counter, edge_metadata_np, top_edges_val):
 
 
 def add_top_edge_annotation_cluster(grn_adata, top_edges = [0.1], nan_fill = 0, cluster_var = 'spectral'):
+    """
+    Add annotation  colum(s) to the the var slot of the anndata object indicating whether the edge in
+    in the top n% edges (by value) by cluster. A list of possible values can be passed, and should be, if multiple
+    values are required, because the function requires sorting the object.
+
+    Parameters
+    ----------
+    grn_adata : AnnData
+        A GRN anndata object to process
+
+    top_edges: list
+        Percentages of interest
+
+    nan_fill: int [Default: 0]
+        Value to add when no edge is found
+    
+    key_name: str [Default: global]
+        Prefix name of column(s) created
+
+    Returns
+    -------
+    grn_adata : AnnData
+        Processed Anndata object with the column(s) added
+    """
+        
     var = grn_adata.var
     if var.index.name is None or var.index.name == 'index':
         var = var.reset_index()
@@ -103,6 +166,30 @@ def add_top_edge_annotation_cluster(grn_adata, top_edges = [0.1], nan_fill = 0, 
 
 
 def add_top_edge_annotation_global(grn_adata, top_edges = [0.1], nan_fill = 0, key_name = 'global'):
+    """
+    Add annotation  colum(s) to the the var slot of the anndata object indicating whether the edge in
+    in the top n% edges (by value). A list of possible values can be passed, and should be, if multiple
+    values are required, because the function requires sorting the object.
+
+    Parameters
+    ----------
+    grn_adata : AnnData
+        A GRN anndata object to process
+
+    top_edges: list
+        Percentages of interest
+
+    nan_fill: int [Default: 0]
+        Value to add when no edge is found
+    
+    key_name: str [Default: global]
+        Prefix name of column(s) created
+
+    Returns
+    -------
+    grn_adata : AnnData
+        Processed Anndata object with the column(s) added
+    """
 
     var = grn_adata.var
     if var.index.name is None or var.index.name == 'index':

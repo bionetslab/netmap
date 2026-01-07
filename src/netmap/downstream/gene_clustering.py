@@ -8,13 +8,24 @@ import anndata as ad
 
 def get_hierarchical_clustering(adata, genes=None):
     """
-    Performs hierarchical clustering
+    Performs hierarchical clustering of the data matrix (layer:X) using the correlation
+    of the genes.
 
-    Args:
-        adata (ad.AnnData): The input AnnData object.
-        tree_threshold (float): The maximum cophenet distance to include in the regression fit.
-        correlation_threshold (float): The minimum correlation value to define clusters.
-        quantile (float): The quantile for the regression model (e.g., 0.1 for 10th percentile).
+   Parameters
+    ----------
+    adata : AnnData
+        A  anndata object to containing the gene expression data in layer X.
+
+    genes: list (default: None)
+        A list of genes to be used for the clustering (default all genes)
+
+    Returns
+    -------
+    df : pd.DataFrame
+        A dataframe with the correlation and the cophenetic distance
+    dist_linkage:
+        The linkage object from scipy.stats hierarchy
+    
     """
 
     adata_sub = adata.copy()

@@ -12,7 +12,7 @@ from scipy import integrate
 import scipy.stats
 
 
-def quantile_partitioning(data: np.ndarray, q: int) -> np.ndarray:
+def _quantile_partitioning(data: np.ndarray, q: int) -> np.ndarray:
     """
     Performs quantile partitioning on a 1D NumPy array.
 
@@ -65,7 +65,7 @@ def quantile_partitioning(data: np.ndarray, q: int) -> np.ndarray:
         
     return mask
 
-def quantile_partitioning_2d(data: np.ndarray, q: int) -> np.ndarray:
+def _quantile_partitioning_2d(data: np.ndarray, q: int) -> np.ndarray:
     """
     Performs quantile partitioning row-wise on a 2D NumPy array using
     np.apply_along_axis for efficiency.
@@ -85,7 +85,7 @@ def quantile_partitioning_2d(data: np.ndarray, q: int) -> np.ndarray:
         raise ValueError("Input data must be a 2D NumPy array.")
 
     # Use np.apply_along_axis to apply the 1D function to each row (axis=1).
-    return np.apply_along_axis(quantile_partitioning, 1, data, q)
+    return np.apply_along_axis(_quantile_partitioning, 1, data, q)
 
 # def compute_correlation_metric(data, cor_type):
 #     # Compute gene correlation measure
@@ -162,13 +162,36 @@ def shuffle_each_column_independently(tensor):
 
     return shuffled_tensor
 
+
 def attribution_one_target( 
         target_gene,
         lrp_model,
         input_data,
         background,
         xai_type='lrp-like',
-        randomize_background = False):
+        randomize_background = False) -> list:
+    
+    """
+    Attribution for one target. 
+
+    Parameters
+    ----------
+    target_gene : int
+        Index of the gene in the GEX adata object
+
+    lrp_model: list[LRP]
+        List of LRP objects
+    input_data: torch.tensor
+        Tensor with the data the GRN should be computed for.
+    background: torch.tensor
+        Tensor with the background data for the relevance scoring
+
+    Returns
+    -------
+    attributions_list : list[nd.array]
+        List of np.ndarrays containing all attribution matrices for
+        the specified target.
+    """
     
     attributions_list = []
     for m in range(len(lrp_model)):

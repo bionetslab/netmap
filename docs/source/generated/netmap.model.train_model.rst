@@ -1,4 +1,4 @@
-netmap.model.train\_model
+﻿netmap.model.train\_model
 =========================
 
 .. currentmodule:: netmap.model.train_model

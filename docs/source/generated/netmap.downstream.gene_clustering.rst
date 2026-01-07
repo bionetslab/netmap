@@ -1,4 +1,4 @@
-netmap.downstream.gene\_clustering
+﻿netmap.downstream.gene\_clustering
 ==================================
 
 .. currentmodule:: netmap.downstream.gene_clustering

@@ -1,4 +1,4 @@
-netmap.utils.netmap\_config
+﻿netmap.utils.netmap\_config
 ===========================
 
 .. currentmodule:: netmap.utils.netmap_config
