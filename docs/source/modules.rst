@@ -1,7 +1,7 @@
-API Reference
-=============
+netmap
+======
 
-.. automodule:: netmap
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. toctree::
+   :maxdepth: 4
+
+   netmap
