@@ -18,9 +18,10 @@ cuda-version = "12.8.*"
 cupy = ">=13.5.1,<14"
 pooch = ">=1.8.2,<2"
 scikit-image = ">=0.25.2,<0.26"
-sphinx = ">=9.0.4,<10"
+sphinx = "*"
+sphinx-autobuild = "*"
+furo = "*"
 
 
 [pypi-dependencies]
 netmap = { git = "https://github.com/bionetslab/netmap" }
-sphinx-rtd-theme = ">=0.5.1, <0.6"
