@@ -9,7 +9,7 @@ class NetmapConfig:
     input_data: str =  "data.h5ad"
     layer: str = 'X'
     output_directory: str =  "netmap"
-    transcription_factors: str =  "/data_nfs/datasets/SCENIC_DB/tf_lists/allTFs_hg38.txt"
+    transcription_factors: str =  ""
     tf_only: bool = True
     penalize_error: bool = True
     adata_filename: str =  "grn_lrp.h5ad"

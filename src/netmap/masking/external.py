@@ -20,6 +20,7 @@ def _create_edge_mask_from_GRN(grn_df, gene_list, name_grn='external_grn'):
         names: numpy.ndarray: edge name vector (GeneA_GeneB)
 
     """
+
     # Create a mapping from gene names to their matrix indices for efficient look-up.
     gene_to_index = {gene: i for i, gene in enumerate(gene_list)}
     num_genes = len(gene_list)
@@ -55,6 +56,13 @@ def _create_edge_mask_from_GRN(grn_df, gene_list, name_grn='external_grn'):
 
 
 def _get_all_genes_in_grn_object(grnad):
+    """
+    Helper function to get all genes if not available
+    
+    Args:
+        grnad (anndata.Anndata) An anndata object containing a var object with the columns source
+            and target
+    """
     all_sources = np.unique(grnad.var.source)
     all_targets = np.unique(grnad.var.target)
     all_genes = np.unique(np.concatenate([all_sources, all_targets]))
@@ -62,15 +70,14 @@ def _get_all_genes_in_grn_object(grnad):
 
 
 def add_external_grn(grn_ad, external_grn, name_grn = 'external_grn'):
-    
     """
-    Adds three columns to a anndate GRN object. 
-    is_target
-    is_source
-    is_egde
-    
-    """
+    Add annotation columns for a reference GRN
 
+    Args:
+     grn_ad
+    :param external_grn: pd.DataFrame containing a source column and a target column
+    :param name_grn: 
+    """
     all_my_genes = _get_all_genes_in_grn_object(grn_ad)
     edge_mask = _create_edge_mask_from_GRN(external_grn, all_my_genes, name_grn = name_grn)
     grn_ad.var = grn_ad.var.merge(edge_mask, left_index=True, right_index=True)
@@ -81,6 +88,15 @@ def add_external_grn(grn_ad, external_grn, name_grn = 'external_grn'):
 
 
 def get_genome_annotation_from_gtf(gtf_df):
+    """ Add genome information from a pandas data frame to the object.
+    Returns the gene features from a gtf file. 
+
+    Args:
+        gtf_df (pd.DataFrame): Genome information
+
+    Returns:
+        pd.DataFrame with genome infformation
+    """
     genes = gtf_df.filter(feature="gene")
     genes = pd.DataFrame(genes)
     genes.columns = gtf_df.columns
@@ -92,17 +108,36 @@ def get_genome_annotation_from_gtf(gtf_df):
     return genes
 
 
-def preprocess_bed_file(bed_file, gtf_df):
+def preprocess_bed_file(bed_file):
+    """ Read the bed file as a tab separated csv file and obtain all TFs
+    that are related to a gene from the object.
+
+    Args:
+        bed_file (str): path containing the bed file
+
+    Returns:
+        pd.DataFrame: Dataframe relating the TFs to the genes
+    """
     ## ALL cis regulatory motifs
     crm_df = pd.read_csv(bed_file, sep="\t", header=None)
     crm_df.columns = ['chr', 'start', 'end', 'TF_list','TF_number', 'strand', 'number1', 'number2', 'large_number']
-    crm_by_chr = {chr_: df for chr_, df in crm_df.groupby("chr")}
     crm_df['TF_list_list'] = crm_df['TF_list'].str.split(",")
     return crm_df
 
         
 
 def get_regulators(crm_df, genes, window):
+    """ Obtain the regulators of a target gene by searching
+    in a window up and down from the TSS
+
+    Args:
+        crm_df (_type_): _description_
+        genes (_type_): _description_
+        window (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     gene_to_tfs = defaultdict(set)
 
     crm_by_chr = {chr_: df for chr_, df in crm_df.groupby("chr")}

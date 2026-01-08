@@ -346,7 +346,36 @@ def attribution_one_model(
 
 def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method, n_models = [10, 25, 50], background_type = 'zeros'):
 
+    """
+    The main inferrence function to compute the entire GRN model wise. Computes all
+    attributions for all targets, aggregates them on the fly and creates an anndata.AnnData
+    object with the edge names in the var slot.
 
+    Parameters
+    ----------
+    models : list[torch.Model]
+        List of trained autoencoder models
+
+    data_train_full_tensor: torch.tensor
+        input data tensor
+        
+    gene_names: np.array
+        Gene names indicating the order of the genes in the torch tensort
+
+    xai_method: str
+        Method to be used [GradientShap, Deconvolution, GuidedBackprop]
+    
+    n_models: list [int]
+        returns aggregates of the attributions at these levels.
+
+    background_type: str
+        Bacground to compute the LRP values against. One of ['zeros', 'randomize', 'data']
+
+    Returns
+    -------
+    grn_adata : anndata.AnnData 
+        A complete, aggregated GRN object   
+    """
 
     tms = []
     
@@ -361,13 +390,9 @@ def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method
         explainer, xai_type = _get_explainer(trained_model, xai_method)
         tms.append(explainer)
 
-
-    thresholds = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-
     attributions = {}
     attribution_collector = None
     keynames = []
-    top_egde_collector = {}
 
 
     for m in range(len(tms)):
@@ -380,19 +405,6 @@ def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method
             background_type = background_type)
 
 
-        # grn_adata_eph = attribution_to_anndata(current_attribution, var=cou)
-        # b = np.argsort(grn_adata_eph.X, axis=1)
-        # grn_adata_eph.layers['sorted'] = b
-        # grn_adata_eph = edge_selection.add_top_edge_annotation_global(grn_adata=grn_adata_eph, top_edges = thresholds, key_name=f'agg_{m}')
-        # df_subset = grn_adata_eph.var.iloc[:, 2:]
-        # integral_results = df_subset.apply(
-        #     lambda row: np.sum(integrate.cumulative_trapezoid(row, thresholds )), 
-        #     axis=1,
-        #     )
-        # integral_results = integral_results/1000
-        # top_egde_collector[f'agg_{m}'] = integral_results
-
-
         if attribution_collector is not None:
             # add current attribution to the collector
             attribution_collector =  aggregate_attributions([attribution_collector, current_attribution], strategy='sum')
@@ -402,11 +414,13 @@ def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method
             attribution_collector = current_attribution
 
 
-        
-        if (m+1) in n_models:
-            # dont reset, just save the correct matrix
-            attributions[f'aggregated_{(m+1)}'] = attribution_collector/(m+1)
-            keynames.append(f'aggregated_{(m+1)}')
+        try:
+            if (m+1) in n_models:
+                # dont reset, just save the correct matrix
+                attributions[f'aggregated_{(m+1)}'] = attribution_collector/(m+1)
+                keynames.append(f'aggregated_{(m+1)}')
+        except:
+            pass
 
 
     # top_egde_collector = pd.DataFrame(top_egde_collector)
@@ -418,7 +432,8 @@ def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method
 
     grn_adata = attribution_to_anndata(attributions[keynames[0]], var=cou)
     
-    for k in keynames[1:len(keynames)]:
-        # add remaining versions as masks
-        grn_adata.layers[k] = attributions[k]
+    if len(keynames)>0:
+        for k in keynames[1:len(keynames)]:
+            # add remaining versions as masks
+            grn_adata.layers[k] = attributions[k]
     return grn_adata

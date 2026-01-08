@@ -2,9 +2,27 @@ from sklearn.model_selection import train_test_split
 from netmap.model.nbautoencoder import NegativeBinomialAutoencoder
 from netmap.model.zinbautoencoder import ZINBAutoencoder
 
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from tqdm import tqdm
 
 
-def create_model_zoo(data_tensor, n_models = 4, n_epochs = 500, model_type = 'ZINBAutoencoder', dropout_rate = 0.02, latent_dim=8, hidden_dim=[128]):
+def create_model_zoo(data_tensor, n_models = 10, n_epochs = 10000, model_type = 'ZINBAutoencoder', dropout_rate = 0.02, latent_dim=8, hidden_dim=[128]):
+    """ Creates a set of Autoencoders of the data using the speicified architecture. The architecture of the encoder can be specified using 
+    the `hidden_dim` parameter, the decoder architecture is mirrored. Early stopping is used by default.
+
+    Args:
+        data_tensor (torch.tensor): The raw gene expression data
+        n_models (int, optional): The number of models to compute. Defaults to 10.
+        n_epochs (int, optional): Maximum number of epochs, if early stopping is not triggered. Defaults to 10000. Use
+        model_type (str, optional): Model type, one of [ZINBAutoencoder, NegativeBinomialAutoencoder] Defaults to 'ZINBAutoencoder'.
+        dropout_rate (float, optional): Dropout rate used during training. Defaults to 0.02.
+        latent_dim (int, optional): Number of neurons in the latent dimension. Defaults to 8.
+        hidden_dim (list, optional): Architecture specification, list of ints. Defaults to [128].
+
+    Returns:
+        Model )list): The list of trained models.
+    """
     model_zoo = []
     counter = 0
     failures = 0
@@ -23,7 +41,7 @@ def create_model_zoo(data_tensor, n_models = 4, n_epochs = 500, model_type = 'ZI
 
         optimizer2 = torch.optim.Adam(trained_model2.parameters(), lr=1e-4)
 
-        trained_model2 = train_autoencoder_early_stopping(
+        trained_model2 = _train_autoencoder_early_stopping(
                 trained_model2,
                 data_train2.cuda(),
                 data_test2.cuda(),
@@ -40,13 +58,24 @@ def create_model_zoo(data_tensor, n_models = 4, n_epochs = 500, model_type = 'ZI
     return model_zoo
 
 
-def train_autoencoder(
+def _train_autoencoder(
     model,
     data_train,
     optimizer,
     batch_size=32,  # Minibatch size
     num_epochs=100,
 ):
+    """Legacy version of the training loop without early stopping
+
+    Args:
+        model (_type_): The model to be trained
+        data_train (_type_): Trianing data
+        optimizer (_type_): optimizer to be used
+        batch_size (int, optional): Batch size. Defaults to 32.
+
+    Returns:
+        Model: trained model
+    """
     # Prepare DataLoader for training
     train_dataset = TensorDataset(data_train)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
@@ -73,26 +102,36 @@ def train_autoencoder(
 
     return model
 
-import torch
-from torch.utils.data import DataLoader, TensorDataset
 
 
-from tqdm import tqdm
-from torch.utils.data import TensorDataset, DataLoader
-from tqdm import tqdm
-import torch 
-
-def train_autoencoder_early_stopping(
+def _train_autoencoder_early_stopping(
     model,
     data_train,
     data_val,  
     optimizer,
     batch_size=32,
-    num_epochs=100,
+    num_epochs=10000,
     patience=10,  
     min_delta=0.001,  
     validation_freq = 10,
 ):
+    """Training loop for the autoencoders.
+
+    Args:
+        model (_type_): An instance of an autoencoder model
+        data_train (_type_): Training data split
+        data_val (_type_): Validation data split used for early stopping
+        optimizer (_type_): Optimizer used
+        batch_size (int, optional): Minibatch size. Defaults to 32.
+        num_epochs (int, optional): Number of epochs. Defaults to 10000.
+        patience (int, optional): Number of epochs with delta loss smaller 
+            than min delta before early stopping is triggered. Defaults to 10.
+        min_delta (float, optional): Loss delta for early stopping. Defaults to 0.001.
+        validation_freq (int, optional): Number of epochs before validation is run. Defaults to 10.
+
+    Returns:
+        Model: Trained model with the parametrization of the best loss.
+    """
     # Prepare DataLoaders
     train_dataset = TensorDataset(data_train)
     val_dataset = TensorDataset(data_val)

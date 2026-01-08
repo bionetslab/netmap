@@ -148,6 +148,16 @@ def dict_to_dataframe(mask_dict, column_order_list):
 
 
 def add_neighbourhood_expression_mask(adata, grn_adata):
+    """ Create a mask indicating whether the edge is likely actually
+    expressed or not.
+
+    Args:
+        adata (_type_): _description_
+        grn_adata (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     counts = pd.DataFrame(adata.X)
     counts.columns =adata.var.index
     ne = get_neighborhood_expression(adata, required_neighbours=5)

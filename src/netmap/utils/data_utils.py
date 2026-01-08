@@ -8,10 +8,10 @@ def attribution_to_anndata(attribution_list, var = None, obs = None)-> anndata.A
     Transform attribution data frame into an anndata object
 
     Args:
-    attribution_list: (sparse) Data frame of attribution values (one column per edge)
+        attribution_list: (sparse) Data frame of attribution values (one column per edge)
 
     returns: 
-    Anndata object with attribution values in X.
+        anndata.Anndata: Anndata object with attribution values in X.
     """
     print('Creating anndata')
     adata = anndata.AnnData(attribution_list)
