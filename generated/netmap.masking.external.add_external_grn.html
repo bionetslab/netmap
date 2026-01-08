@@ -266,8 +266,6 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="netmap.model.train_model.html">netmap.model.train_model</a><input aria-label="Toggle navigation of netmap.model.train_model" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.create_model_zoo.html">netmap.model.train_model.create_model_zoo</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.train_autoencoder.html">netmap.model.train_model.train_autoencoder</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.train_autoencoder_early_stopping.html">netmap.model.train_model.train_autoencoder_early_stopping</a></li>
 </ul>
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="netmap.model.zinbautoencoder.html">netmap.model.zinbautoencoder</a><input aria-label="Toggle navigation of netmap.model.zinbautoencoder" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -351,10 +349,16 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="netmap.masking.external.add_external_grn">
 <span class="sig-prename descclassname"><span class="pre">netmap.masking.external.</span></span><span class="sig-name descname"><span class="pre">add_external_grn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grn_ad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_grn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_grn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'external_grn'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.external.add_external_grn" title="Link to this definition">¶</a></dt>
-<dd><p>Adds three columns to a anndate GRN object.
-is_target
-is_source
-is_egde</p>
+<dd><p>Add annotation columns for a reference GRN</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grn_ad</strong></p></li>
+<li><p><strong>external_grn</strong> – pd.DataFrame containing a source column and a target column</p></li>
+<li><p><strong>name_grn</strong></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

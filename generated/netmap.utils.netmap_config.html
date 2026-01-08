@@ -266,8 +266,6 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="netmap.model.train_model.html">netmap.model.train_model</a><input aria-label="Toggle navigation of netmap.model.train_model" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.create_model_zoo.html">netmap.model.train_model.create_model_zoo</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.train_autoencoder.html">netmap.model.train_model.train_autoencoder</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.train_autoencoder_early_stopping.html">netmap.model.train_model.train_autoencoder_early_stopping</a></li>
 </ul>
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="netmap.model.zinbautoencoder.html">netmap.model.zinbautoencoder</a><input aria-label="Toggle navigation of netmap.model.zinbautoencoder" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -353,7 +351,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="netmap.utils.netmap_config.NetmapConfig.html#netmap.utils.netmap_config.NetmapConfig" title="netmap.utils.netmap_config.NetmapConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetmapConfig</span></code></a></p></td>
-<td><p>NetmapConfig(input_data: str = 'data.h5ad', layer: str = 'X', output_directory: str = 'netmap', transcription_factors: str = '/data_nfs/datasets/SCENIC_DB/tf_lists/allTFs_hg38.txt', tf_only: bool = True, penalize_error: bool = True, adata_filename: str = 'grn_lrp.h5ad', grn: str = 'grn_lrp.tsv', masking_percentage: float = 0.1, print_every: int = 100, optimizer: str = 'Adam', learning_rate: float = 0.005, epochs: int = 10000, n_models: int = 20, validation_size: float = 0.2, model: str = 'NegativeBinomialAutoencoder', xai_method: str = 'GradientShap', aggregation_strategy: str = 'mean')</p></td>
+<td><p>NetmapConfig(input_data: str = 'data.h5ad', layer: str = 'X', output_directory: str = 'netmap', transcription_factors: str = '', tf_only: bool = True, penalize_error: bool = True, adata_filename: str = 'grn_lrp.h5ad', grn: str = 'grn_lrp.tsv', masking_percentage: float = 0.1, print_every: int = 100, optimizer: str = 'Adam', learning_rate: float = 0.005, epochs: int = 10000, n_models: int = 20, validation_size: float = 0.2, model: str = 'NegativeBinomialAutoencoder', xai_method: str = 'GradientShap', aggregation_strategy: str = 'mean')</p></td>
 </tr>
 </tbody>
 </table>

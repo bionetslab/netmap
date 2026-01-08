@@ -266,8 +266,6 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="netmap.model.train_model.html">netmap.model.train_model</a><input aria-label="Toggle navigation of netmap.model.train_model" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.create_model_zoo.html">netmap.model.train_model.create_model_zoo</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.train_autoencoder.html">netmap.model.train_model.train_autoencoder</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.train_autoencoder_early_stopping.html">netmap.model.train_model.train_autoencoder_early_stopping</a></li>
 </ul>
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="netmap.model.zinbautoencoder.html">netmap.model.zinbautoencoder</a><input aria-label="Toggle navigation of netmap.model.zinbautoencoder" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -351,7 +349,24 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="netmap.masking.external.get_regulators">
 <span class="sig-prename descclassname"><span class="pre">netmap.masking.external.</span></span><span class="sig-name descname"><span class="pre">get_regulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crm_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.external.get_regulators" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Obtain the regulators of a target gene by searching
+in a window up and down from the TSS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>crm_df</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>genes</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>window</strong> (<em>_type_</em>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>_type_</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 

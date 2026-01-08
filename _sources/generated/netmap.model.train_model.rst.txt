@@ -19,10 +19,6 @@
 
    create_model_zoo
 
-   train_autoencoder
-
-   train_autoencoder_early_stopping
-
 
 
 

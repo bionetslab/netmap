@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.model.train_model.train_autoencoder" href="netmap.model.train_model.train_autoencoder.html"><link rel="prev" title="netmap.model.train_model" href="netmap.model.train_model.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.model.zinbautoencoder" href="netmap.model.zinbautoencoder.html"><link rel="prev" title="netmap.model.train_model" href="netmap.model.train_model.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
         <title>netmap.model.train_model.create_model_zoo - Netmap 0.1 documentation</title>
@@ -266,8 +266,6 @@
 </li>
 <li class="toctree-l4 current has-children"><a class="reference internal" href="netmap.model.train_model.html">netmap.model.train_model</a><input aria-label="Toggle navigation of netmap.model.train_model" checked="" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">netmap.model.train_model.create_model_zoo</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.train_autoencoder.html">netmap.model.train_model.train_autoencoder</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.model.train_model.train_autoencoder_early_stopping.html">netmap.model.train_model.train_autoencoder_early_stopping</a></li>
 </ul>
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="netmap.model.zinbautoencoder.html">netmap.model.zinbautoencoder</a><input aria-label="Toggle navigation of netmap.model.zinbautoencoder" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -350,8 +348,29 @@
 <h1>netmap.model.train_model.create_model_zoo<a class="headerlink" href="#netmap-model-train-model-create-model-zoo" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="netmap.model.train_model.create_model_zoo">
-<span class="sig-prename descclassname"><span class="pre">netmap.model.train_model.</span></span><span class="sig-name descname"><span class="pre">create_model_zoo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_models</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ZINBAutoencoder'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[128]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.model.train_model.create_model_zoo" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">netmap.model.train_model.</span></span><span class="sig-name descname"><span class="pre">create_model_zoo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_models</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ZINBAutoencoder'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[128]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.model.train_model.create_model_zoo" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a set of Autoencoders of the data using the speicified architecture. The architecture of the encoder can be specified using
+the <cite>hidden_dim</cite> parameter, the decoder architecture is mirrored. Early stopping is used by default.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_tensor</strong> (<em>torch.tensor</em>) – The raw gene expression data</p></li>
+<li><p><strong>n_models</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of models to compute. Defaults to 10.</p></li>
+<li><p><strong>n_epochs</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of epochs, if early stopping is not triggered. Defaults to 10000. Use</p></li>
+<li><p><strong>model_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Model type, one of [ZINBAutoencoder, NegativeBinomialAutoencoder] Defaults to ‘ZINBAutoencoder’.</p></li>
+<li><p><strong>dropout_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – Dropout rate used during training. Defaults to 0.02.</p></li>
+<li><p><strong>latent_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of neurons in the latent dimension. Defaults to 8.</p></li>
+<li><p><strong>hidden_dim</strong> (<em>list</em><em>, </em><em>optional</em>) – Architecture specification, list of ints. Defaults to [128].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of trained models.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Model )list)</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -360,12 +379,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="netmap.model.train_model.train_autoencoder.html">
+          <a class="next-page" href="netmap.model.zinbautoencoder.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">netmap.model.train_model.train_autoencoder</div>
+                <div class="title">netmap.model.zinbautoencoder</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
