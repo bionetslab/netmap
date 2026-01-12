@@ -49,7 +49,7 @@ class NegativeBinomialLoss(nn.Module):
         return torch.mean(loss)  # Return mean loss over the batch
     
 class NegativeBinomialAutoencoder(nn.Module):
-    def __init__(self, input_dim, latent_dim, dropout_rate=0.0, hidden_dims=[64, 64, 64], activation='relu'):
+    def __init__(self, input_dim, latent_dim, dropout_rate=0.1, hidden_dims=[64], activation='relu'):
         super(NegativeBinomialAutoencoder, self).__init__()
         
         # Mapping for the requested activation functions

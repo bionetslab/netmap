@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 
 
-def create_model_zoo(data_tensor, n_models = 10, n_epochs = 10000, model_type = 'ZINBAutoencoder', dropout_rate = 0.02, latent_dim=8, hidden_dim=[128]):
+def create_model_zoo(data_tensor, n_models = 10, n_epochs = 10000, model_type = 'ZINBAutoencoder', dropout_rate = 0.1, latent_dim=8, hidden_dim=[64]):
     """ Creates a set of Autoencoders of the data using the speicified architecture. The architecture of the encoder can be specified using 
     the `hidden_dim` parameter, the decoder architecture is mirrored. Early stopping is used by default.
 

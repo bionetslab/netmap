@@ -213,7 +213,7 @@ def attribution_one_target(
     return attributions_list
 
 
-def inferrence(models, data_train_full_tensor, gene_names, xai_method):
+def inferrence(models, data_train_full_tensor, gene_names, xai_method='GuidedBackprop'):
 
     """
     The main inferrence function to compute the entire GRN. Computes all
@@ -344,7 +344,7 @@ def attribution_one_model(
     return attributions
 
 
-def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method, n_models = [10, 25, 50], background_type = 'zeros'):
+def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method = 'GuidedBackprop', n_models = [10, 25, 50], background_type = 'zeros'):
 
     """
     The main inferrence function to compute the entire GRN model wise. Computes all
@@ -430,10 +430,13 @@ def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method
 
     # cou = cou.merge(top_egde_collector, left_index = True, right_on='edge_key')
 
-    grn_adata = attribution_to_anndata(attributions[keynames[0]], var=cou)
     
     if len(keynames)>0:
+        grn_adata = attribution_to_anndata(attributions[keynames[0]], var=cou)
+
         for k in keynames[1:len(keynames)]:
             # add remaining versions as masks
             grn_adata.layers[k] = attributions[k]
-    return grn_adata
+        return grn_adata
+    else:
+        return None
