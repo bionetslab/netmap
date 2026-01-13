@@ -213,7 +213,7 @@ def attribution_one_target(
     return attributions_list
 
 
-def inferrence(models, data_train_full_tensor, gene_names, xai_method='GuidedBackprop'):
+def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap'):
 
     """
     The main inferrence function to compute the entire GRN. Computes all
@@ -344,7 +344,7 @@ def attribution_one_model(
     return attributions
 
 
-def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method = 'GuidedBackprop', n_models = [10, 25, 50], background_type = 'zeros'):
+def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method = 'GradientShap', n_models = [10, 25, 50], background_type = 'zeros'):
 
     """
     The main inferrence function to compute the entire GRN model wise. Computes all
