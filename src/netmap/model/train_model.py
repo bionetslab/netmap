@@ -27,7 +27,7 @@ def create_model_zoo(data_tensor, n_models = 10, n_epochs = 10000, model_type = 
     counter = 0
     failures = 0
 
-    while (counter <= n_models) and (failures < 5):
+    while (counter < n_models) and (failures < 5):
         data_train2, data_test2 = train_test_split(data_tensor, test_size=0.2, shuffle=True)
 
         if model_type == 'ZINBAutoencoder':

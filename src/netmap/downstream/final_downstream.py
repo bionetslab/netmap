@@ -219,7 +219,7 @@ def filter_signatures_by_Ucell(grn_adata, adata, ncores: int = 100) -> pd.DataFr
 
 
 
-def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: AnnData, keep_top_ranked: int = 100, filter_by: str = "z_score") -> Tuple[Optional[AnnData], List[str]]:
+def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: AnnData, keep_top_ranked: int = 100, filter_by: str = "z_score", cluster_col = 'spectral') -> Tuple[Optional[AnnData], List[str]]:
     """
     Filters a GRN (Gene Regulatory Network) AnnData object to keep only the edges
     corresponding to the top-ranked signatures per cluster based on UCell scores.
@@ -251,7 +251,7 @@ def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: AnnData, k
     if grn_adata.var.empty:
         return None, []
 
-    clusters = grn_adata.obs['spectral']
+    clusters = grn_adata.obs[cluster_col]
     ucell_scores = data_ucell
 
     signature_bases = [sig.split("_UCell")[0] for sig in ucell_scores.columns]
