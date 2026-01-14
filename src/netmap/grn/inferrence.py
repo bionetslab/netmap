@@ -344,7 +344,84 @@ def attribution_one_model(
     return attributions
 
 
-def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method = 'GradientShap', n_models = [10, 25, 50], background_type = 'zeros'):
+def inferrence_model_wise(models, data_train_full_tensor, gene_names, xai_method = 'GradientShap', background_type = 'zeros'):
+
+    """
+    The main inferrence function to compute the entire GRN model wise. Computes all
+    attributions for all targets, aggregates them on the fly and creates an anndata.AnnData
+    object with the edge names in the var slot.
+
+    Parameters
+    ----------
+    models : list[torch.Model]
+        List of trained autoencoder models
+
+    data_train_full_tensor: torch.tensor
+        input data tensor
+        
+    gene_names: np.array
+        Gene names indicating the order of the genes in the torch tensort
+
+    xai_method: str
+        Method to be used [GradientShap, Deconvolution, GuidedBackprop]
+    
+    n_models: list [int]
+        returns aggregates of the attributions at these levels.
+
+    background_type: str
+        Bacground to compute the LRP values against. One of ['zeros', 'randomize', 'data']
+
+    Returns
+    -------
+    grn_adata : anndata.AnnData 
+        A complete, aggregated GRN object   
+    """
+
+    tms = []
+    
+    cou  = [[f'{tup[0]}_{tup[1]}', tup[0], tup[1]] for tup in itertools.product(gene_names, gene_names)]
+    cou = pd.DataFrame(cou)
+    cou.columns = ['index', 'source', 'target']
+    cou = cou.set_index('index')
+
+    
+    for trained_model in models:        
+        trained_model.forward_mu_only = True
+        explainer, xai_type = _get_explainer(trained_model, xai_method)
+        tms.append(explainer)
+
+    attributions = {}
+    attribution_collector = None
+    keynames = []
+
+
+    for m in range(len(tms)):
+        
+        # get one complete attribution
+        current_attribution = attribution_one_model(
+            tms[m],
+            data_train_full_tensor,
+            xai_type=xai_type,
+            background_type = background_type)
+
+
+        if attribution_collector is not None:
+            # add current attribution to the collector
+            attribution_collector =  aggregate_attributions([attribution_collector, current_attribution], strategy='sum')
+
+
+        else:
+            attribution_collector = current_attribution
+    
+
+    grn_adata = attribution_to_anndata(attribution_collector, var=cou)
+
+    return grn_adata
+
+
+
+
+def inferrence_model_wise_level(models, data_train_full_tensor, gene_names, xai_method = 'GradientShap', n_models = [10, 25, 50], background_type = 'zeros'):
 
     """
     The main inferrence function to compute the entire GRN model wise. Computes all
