@@ -169,8 +169,8 @@ def attribution_one_target(
         target_gene,
         lrp_model,
         input_data,
-        background,
         xai_type='lrp-like',
+        background_type = 'zeros',
         randomize_background = False) -> list:
     
     """
@@ -194,13 +194,22 @@ def attribution_one_target(
         List of np.ndarrays containing all attribution matrices for
         the specified target.
     """
+
+    if background_type == 'randomize':
+        background = shuffle_each_column_independently(input_data)
+    elif background_type == 'zeros':
+        background = torch.zeros((1, input_data.shape[1]))
+        background = background.cuda()
+    elif background_type == 'data':
+        background = input_data
+    else:
+        background = torch.zeros((1, input_data.shape[1]))
+        background = background.cuda()
+
     
     attributions_list = []
     for m in range(len(lrp_model)):
         # Randomize backgorund for each round
-        if randomize_background:
-            background = shuffle_each_column_independently(background)
-
         model = lrp_model[m]
         #for _ in range(num_iterations):
         if xai_type == 'lrp-like':
@@ -213,7 +222,7 @@ def attribution_one_target(
     return attributions_list
 
 
-def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap'):
+def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type == 'zeros'):
 
     """
     The main inferrence function to compute the entire GRN. Computes all
@@ -258,8 +267,8 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
             g,
             tms,
             data_train_full_tensor,
-            data_train_full_tensor, 
             xai_type=xai_type,
+            background_type= background_type,
             randomize_background = True)
 
         
