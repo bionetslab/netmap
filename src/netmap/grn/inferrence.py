@@ -222,7 +222,7 @@ def attribution_one_target(
     return attributions_list
 
 
-def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type == 'zeros'):
+def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros'):
 
     """
     The main inferrence function to compute the entire GRN. Computes all
