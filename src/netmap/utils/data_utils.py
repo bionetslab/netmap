@@ -15,7 +15,7 @@ def attribution_to_anndata(attribution_list, var = None, obs = None)-> anndata.A
     """
     print('Creating anndata')
     adata = anndata.AnnData(attribution_list)
-    adata.raw = adata
+    #adata.raw = adata
     if var is not None:
         print('Setting vars')
         adata.var = var

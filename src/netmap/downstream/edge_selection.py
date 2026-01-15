@@ -74,6 +74,10 @@ def _get_top_edges_global(grn_adata, top_edges: float):
             print(f"You ran into an issue sorting the array. Please manually sort"
                 "the array using chunked_argsort and reduce the chunk size (current default chunk"
                 " size: 500)")
+        except MemoryError:
+            print(f"You ran into an issue sorting the array. Please manually sort"
+                "the array using chunked_argsort and reduce the chunk size (current default chunk"
+                " size: 500)")
 
     b = grn_adata.layers['sorted']
     
