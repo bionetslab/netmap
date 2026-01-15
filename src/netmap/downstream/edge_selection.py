@@ -2,6 +2,52 @@ import numpy as np
 import pandas as pd
 import numpy as np
 from collections import Counter
+import numpy as np
+from scipy.sparse import issparse
+
+def chunked_argsort(adata, layer_name='sorted', chunk_size=500, dtype=None):
+    """
+    Computes np.argsort on adata.X in chunks to save memory.
+    
+    Parameters:
+    -----------
+    adata : AnnData
+        The AnnData object to process.
+    layer_name : str
+        The name of the layer where results will be stored.
+    chunk_size : int
+        Number of rows (cells) to process per iteration.
+    dtype : np.dtype
+        The integer type for the output. If None, it will automatically 
+        choose uint16 or uint32 based on the number of genes.
+    """
+    n_obs, n_vars = adata.shape
+    
+    # 1. Automatically determine the smallest safe integer type
+    if dtype is None:
+        if n_vars < 65535:
+            dtype = np.uint16
+        else:
+            dtype = np.uint32
+            
+    # 2. Pre-allocate the layer
+    adata.layers[layer_name] = np.empty((n_obs, n_vars), dtype=dtype)
+    
+    # 3. Loop through chunks
+    for i in range(0, n_obs, chunk_size):
+        end = min(i + chunk_size, n_obs)
+        
+        # Pull chunk and densify only if necessary
+        chunk = adata.X[i:end]
+        if issparse(chunk):
+            chunk = chunk.toarray()
+            
+        # Perform sort and assign
+        adata.layers[layer_name][i:end] = np.argsort(chunk, axis=1)
+        
+    print(f"Successfully created layer '{layer_name}' using {dtype}.")
+
+
 
 def _get_top_edges_global(grn_adata, top_edges: float):
     """
@@ -21,8 +67,17 @@ def _get_top_edges_global(grn_adata, top_edges: float):
     final_df : pd.DataFrame
         Processed Anndata object with the counted edges
     """
-
+    if  not 'sorted' in grn_adata.layers:
+        try:
+            chunked_argsort(grn_adata)
+        except np._core._exceptions._ArrayMemoryError:
+            print(f"You ran into an issue sorting the array. Please manually sort
+             the array using chunked_argsort and reduce the chunk size (current default chunk
+             size: 500)")
+             
     b = grn_adata.layers['sorted']
+    
+
     # Calculate partition indices for all top_edges values
     top_edges_data_list = [int(np.round(grn_adata.shape[1] * t)) for t in top_edges]
     partition_indices = [grn_adata.shape[1]]+[grn_adata.shape[1] - n for n in top_edges_data_list]
@@ -151,7 +206,7 @@ def add_top_edge_annotation_cluster(grn_adata, top_edges = [0.1], nan_fill = 0, 
         
     for clu in grn_adata.obs[cluster_var].unique():
         grn_adata_sub = grn_adata[grn_adata.obs[cluster_var] == clu]
-        top_edges_per_cell = _get_top_edges_global(grn_adata_sub,  top_edges, layer='X')
+        top_edges_per_cell = _get_top_edges_global(grn_adata_sub,  top_edges)
 
         for te in top_edges:
             if f'cell_count_{te}_{clu}' in var.columns:
@@ -198,7 +253,7 @@ def add_top_edge_annotation_global(grn_adata, top_edges = [0.1], nan_fill = 0, k
     else:
         var = var.reset_index()
         
-    top_edges_per_cell = _get_top_edges_global(grn_adata,  top_edges, layer='X')
+    top_edges_per_cell = _get_top_edges_global(grn_adata,  top_edges)
     for te in top_edges:
         if f'{key_name}_cell_count_{te}' in var.columns:
             continue
