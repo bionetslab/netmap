@@ -170,8 +170,7 @@ def attribution_one_target(
         lrp_model,
         input_data,
         xai_type='lrp-like',
-        background_type = 'zeros',
-        randomize_background = False) -> list:
+        background_type = 'zeros') -> list:
     
     """
     Attribution for one target. 
@@ -222,7 +221,7 @@ def attribution_one_target(
     return attributions_list
 
 
-def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros'):
+def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros', raw=False):
 
     """
     The main inferrence function to compute the entire GRN. Computes all
@@ -256,7 +255,7 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
     
     for trained_model in models:        
         trained_model.forward_mu_only = True
-        explainer, xai_type = _get_explainer(trained_model, xai_method)
+        explainer, xai_type = _get_explainer(trained_model, xai_method, raw=raw)
         tms.append(explainer)
 
     attributions = []
@@ -268,8 +267,7 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
             tms,
             data_train_full_tensor,
             xai_type=xai_type,
-            background_type= background_type,
-            randomize_background = True)
+            background_type= background_type)
 
         
         attributions_list = aggregate_attributions(attributions_list, strategy='mean')
