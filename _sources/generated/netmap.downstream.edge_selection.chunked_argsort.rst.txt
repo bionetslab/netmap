@@ -1,0 +1,6 @@
+netmap.downstream.edge\_selection.chunked\_argsort
+==================================================
+
+.. currentmodule:: netmap.downstream.edge_selection
+
+.. autofunction:: chunked_argsort
