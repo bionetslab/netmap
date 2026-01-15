@@ -71,10 +71,10 @@ def _get_top_edges_global(grn_adata, top_edges: float):
         try:
             chunked_argsort(grn_adata)
         except np._core._exceptions._ArrayMemoryError:
-            print(f"You ran into an issue sorting the array. Please manually sort
-             the array using chunked_argsort and reduce the chunk size (current default chunk
-             size: 500)")
-             
+            print(f"You ran into an issue sorting the array. Please manually sort"
+                "the array using chunked_argsort and reduce the chunk size (current default chunk"
+                " size: 500)")
+
     b = grn_adata.layers['sorted']
     
 
