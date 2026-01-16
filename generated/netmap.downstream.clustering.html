@@ -352,10 +352,10 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.clustering.downstream_recipe.html#netmap.downstream.clustering.downstream_recipe" title="netmap.downstream.clustering.downstream_recipe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">downstream_recipe</span></code></a></p></td>
-<td><p>Minimal downstream processing for GRN object.</p></td>
+<td><p>Runs sc.pca, sc.neighbors, sc.leiden, and sc.umap.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.clustering.process.html#netmap.downstream.clustering.process" title="netmap.downstream.clustering.process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code></a></p></td>
-<td><p>Wrapper function for convenience processing and clustering</p></td>
+<td><p>Wrapper function that passes all extra keyword arguments to downstream_recipe.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.clustering.spectral_clustering.html#netmap.downstream.clustering.spectral_clustering" title="netmap.downstream.clustering.spectral_clustering"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spectral_clustering</span></code></a></p></td>
 <td><p>Run sklearn spectral clustering on the neighbour matrix in the anndata object.</p></td>

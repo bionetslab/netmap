@@ -349,23 +349,9 @@
 <h1>netmap.downstream.clustering.downstream_recipe<a class="headerlink" href="#netmap-downstream-clustering-downstream-recipe" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="netmap.downstream.clustering.downstream_recipe">
-<span class="sig-prename descclassname"><span class="pre">netmap.downstream.clustering.</span></span><span class="sig-name descname"><span class="pre">downstream_recipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grn_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'knn_neighbors':</span> <span class="pre">50,</span> <span class="pre">'leiden_resolution':</span> <span class="pre">0.1,</span> <span class="pre">'min_cells':</span> <span class="pre">1,</span> <span class="pre">'n_components':</span> <span class="pre">100,</span> <span class="pre">'n_neighbors':</span> <span class="pre">30}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AnnData</span></span></span><a class="headerlink" href="#netmap.downstream.clustering.downstream_recipe" title="Link to this definition">¶</a></dt>
-<dd><p>Minimal downstream processing for GRN object. Runs sc.pca (without scaling),
-sc.neighbours, sc.leiden, sc. umap</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>grn_adata</strong> (<em>AnnData</em>) – A GRN anndata object to process</p></li>
-<li><p><strong>config</strong> (<em>dict</em>) – Parameters for the processing</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>grn_adata</strong> – Processed Anndata object</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>AnnData</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">netmap.downstream.clustering.</span></span><span class="sig-name descname"><span class="pre">downstream_recipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grn_adata</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AnnData</span></span></span><a class="headerlink" href="#netmap.downstream.clustering.downstream_recipe" title="Link to this definition">¶</a></dt>
+<dd><p>Runs sc.pca, sc.neighbors, sc.leiden, and sc.umap.
+Parameters are pulled from kwargs, with defaults provided.</p>
 </dd></dl>
 
 </section>

@@ -349,24 +349,8 @@
 <h1>netmap.downstream.clustering.process<a class="headerlink" href="#netmap-downstream-clustering-process" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="netmap.downstream.clustering.process">
-<span class="sig-prename descclassname"><span class="pre">netmap.downstream.clustering.</span></span><span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grn_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_clu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_added</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spectral'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.downstream.clustering.process" title="Link to this definition">¶</a></dt>
-<dd><p>Wrapper function for convenience processing and clustering</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>grn_adata</strong> (<em>AnnData</em>) – A GRN anndata object to process</p></li>
-<li><p><strong>n_clu</strong> (<em>int</em>) – Number of clusters to compute</p></li>
-<li><p><strong>key_added</strong> (<em>str</em>) – The key to add the new labelling to [Default: spectral]</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>grn_adata</strong> – Processed Anndata object with an additional column in the .obs
-slot of the object named <cite>key_added</cite></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>AnnData</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">netmap.downstream.clustering.</span></span><span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grn_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_clu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_added</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spectral'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.downstream.clustering.process" title="Link to this definition">¶</a></dt>
+<dd><p>Wrapper function that passes all extra keyword arguments to downstream_recipe.</p>
 </dd></dl>
 
 </section>
