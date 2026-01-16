@@ -5,7 +5,7 @@ from collections import Counter
 import numpy as np
 from scipy.sparse import issparse
 
-def chunked_argsort(adata, layer_name='sorted', chunk_size=500, dtype=None):
+def chunked_argsort(unsadata, layer_name='sorted', chunk_size=500, dtype=None):
     """
     Computes np.argsort on adata.X in chunks to save memory.
     
@@ -21,7 +21,7 @@ def chunked_argsort(adata, layer_name='sorted', chunk_size=500, dtype=None):
         The integer type for the output. If None, it will automatically 
         choose uint16 or uint32 based on the number of genes.
     """
-    n_obs, n_vars = adata.shape
+    n_obs, n_vars = unsadata.shape
     
     # 1. Automatically determine the smallest safe integer type
     if dtype is None:
@@ -31,19 +31,19 @@ def chunked_argsort(adata, layer_name='sorted', chunk_size=500, dtype=None):
             dtype = np.uint32
             
     # 2. Pre-allocate the layer
-    adata.layers[layer_name] = np.empty((n_obs, n_vars), dtype=dtype)
+    unsadata.layers[layer_name] = np.empty((n_obs, n_vars), dtype=dtype)
     
     # 3. Loop through chunks
     for i in range(0, n_obs, chunk_size):
         end = min(i + chunk_size, n_obs)
         
         # Pull chunk and densify only if necessary
-        chunk = adata.X[i:end]
+        chunk = unsadata.X[i:end]
         if issparse(chunk):
             chunk = chunk.toarray()
             
         # Perform sort and assign
-        adata.layers[layer_name][i:end] = np.argsort(chunk, axis=1)
+        unsadata.layers[layer_name][i:end] = np.argsort(chunk, axis=1)
         
     print(f"Successfully created layer '{layer_name}' using {dtype}.")
 
