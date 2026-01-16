@@ -10,32 +10,51 @@ from sklearn.metrics.cluster import contingency_matrix
 
 
 
-def downstream_recipe(grn_adata, config = {'min_cells':1, 'n_neighbors': 30, 'leiden_resolution': 0.1, 'n_components': 100, 'knn_neighbors': 50})-> anndata.AnnData:
+def downstream_recipe(grn_adata, **kwargs) -> sc.AnnData:
     """
-    Minimal downstream processing for GRN object. Runs sc.pca (without scaling),
-    sc.neighbours, sc.leiden, sc. umap
-
-    Parameters
-    ----------
-    grn_adata : AnnData
-        A GRN anndata object to process
-
-    config: dict
-        Parameters for the processing
-
-    Returns
-    -------
-    grn_adata : AnnData
-        Processed Anndata object
+    Runs sc.pca, sc.neighbors, sc.leiden, and sc.umap.
+    Parameters are pulled from kwargs, with defaults provided.
     """
+    # Define defaults and update with any provided kwargs
+    config = {
+        'n_neighbors': 30, 
+        'leiden_resolution': 0.1, 
+        'n_components': 100, 
+        'knn_neighbors': 50,
+        'svd_solver': 'randomized'
+    }
+    config.update(kwargs)
+
+    # Use the config values in the scanpy functions
+    sc.tl.pca(grn_adata, svd_solver=config['svd_solver'], zero_center=False)
     
-    sc.tl.pca(grn_adata, svd_solver = 'randomized', zero_center = False)
+    # Note: sc.pp.neighbors uses n_neighbors. 
+    # If you specifically want to use your 'knn_neighbors' key:
     sc.pp.neighbors(grn_adata, n_neighbors=config['knn_neighbors'])
+    
     sc.tl.leiden(grn_adata, resolution=config['leiden_resolution'])
-    sc.tl.umap(grn_adata, n_components = config['n_components'])
+    
+    # n_components in UMAP usually refers to the dimensions of the embedding (default 2)
+    sc.tl.umap(grn_adata, n_components=config['n_components'])
 
     return grn_adata
 
+def process(grn_adata, n_clu=2, key_added='spectral', **kwargs):
+    """
+    Wrapper function that passes all extra keyword arguments to downstream_recipe.
+    """
+
+    if not scs.issparse(grn_adata.X):
+        grn_adata.X[np.isnan(grn_adata.X)] = 0
+    
+    # Pass the kwargs directly into the recipe
+    grn_adata = downstream_recipe(grn_adata, **kwargs)
+    
+    # Assuming spectral_clustering is defined elsewhere
+    grn_adata = spectral_clustering(grn_adata, n_clu=n_clu, key_added=key_added)
+    
+    return grn_adata
+    
 
 def spectral_clustering(adata, n_clu = 2, key_added = 'spectral'):
     """
@@ -73,32 +92,7 @@ def spectral_clustering(adata, n_clu = 2, key_added = 'spectral'):
 
 
 
-def process(grn_adata, n_clu=2, key_added = 'spectral'):
-    """
-    Wrapper function for convenience processing and clustering
 
-    Parameters
-    ----------
-    grn_adata : AnnData
-        A GRN anndata object to process
-
-    n_clu: int
-        Number of clusters to compute
-    key_added: str
-        The key to add the new labelling to [Default: spectral]
-
-    Returns
-    -------
-    grn_adata : AnnData
-        Processed Anndata object with an additional column in the .obs
-        slot of the object named `key_added`
-    """
-
-    if not scs.issparse(grn_adata.X):
-        grn_adata.X[np.isnan(grn_adata.X) ] = 0
-    grn_adata = downstream_recipe(grn_adata)
-    grn_adata = spectral_clustering(grn_adata, n_clu=n_clu, key_added = key_added)
-    return grn_adata
 
 
 
