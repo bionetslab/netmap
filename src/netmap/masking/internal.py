@@ -11,7 +11,7 @@ import scipy.stats as st
 import itertools
 
 
-def get_neighborhood_expression(adata, knn_neighbours =10, required_neighbours = 1):
+def get_neighborhood_expression(adata, knn_neighbours =10, required_neighbours = 1, expression_threshold = 0):
     """
     Checks if each gene is expressed in the k-nearest neighbors (kNN) of each cell.
 
@@ -33,12 +33,7 @@ def get_neighborhood_expression(adata, knn_neighbours =10, required_neighbours =
     connectivities = adata.obsp['connectivities'].copy()
     connectivities.data = np.ones(connectivities.data.shape)  # Binarize the graph
 
-    # Get the binary gene expression matrix (cells x genes)
-    if issparse(adata.X):
-        binary_expression = (adata.X > 10).astype(int).tocsr()
-    else:
-        binary_expression = (adata.X > 10).astype(int)
-
+    binary_expression = binarize_adata(adata, expression_threshold = expression_threshold)
     # Perform matrix multiplication to check for neighbor expression
     # connectivities (cells x cells) @ binary_expression (cells x genes)
     # The result is a matrix where each value is the number of neighbors
@@ -90,33 +85,6 @@ def create_pairwise_binary_mask(binary_matrix, gene_list):
 
     return pairwise_mask_dict
 
-def dict_to_dataframe(mask_dict, column_order_list):
-    """
-    Converts a dictionary of binary masks into a pandas DataFrame,
-    respecting a specified column order.
-
-    Args:
-        mask_dict (dict): A dictionary where keys are gene pair strings and
-                          values are 1D numpy arrays (the masks).
-        column_order_list (list): A list of gene pair strings specifying the
-                                  desired order of the DataFrame columns.
-
-    Returns:
-        pd.DataFrame: A DataFrame with masks as columns, in the specified order.
-    """
-    # 1. Create a dictionary with only the ordered columns
-    ordered_data = {col: mask_dict[col] for col in column_order_list if col in mask_dict}
-    
-    # 2. Check if all specified columns were found
-    if len(ordered_data) != len(column_order_list):
-        missing_columns = set(column_order_list) - set(ordered_data.keys())
-        print(f"Warning: The following columns were not found in the mask dictionary: {missing_columns}")
-
-    # 3. Create the DataFrame from the ordered dictionary
-    df = pd.DataFrame(ordered_data)
-    
-    return df
-
 
 
 def dict_to_dataframe(mask_dict, column_order_list):
@@ -146,8 +114,17 @@ def dict_to_dataframe(mask_dict, column_order_list):
     
     return df
 
+def binarize_adata(adata, expression_threshold = 0):
 
-def add_neighbourhood_expression_mask(adata, grn_adata):
+    if issparse(adata.X):
+        binary_expression = (adata.X > expression_threshold).astype(int).tocsr()
+    else:
+        binary_expression = (adata.X > expression_threshold).astype(int)
+    return binary_expression
+
+
+
+def add_neighbourhood_expression_mask(adata, grn_adata, strict=False):
     """ Create a mask indicating whether the edge is likely actually
     expressed or not.
 
@@ -160,7 +137,11 @@ def add_neighbourhood_expression_mask(adata, grn_adata):
     """
     counts = pd.DataFrame(adata.X)
     counts.columns =adata.var.index
-    ne = get_neighborhood_expression(adata, required_neighbours=5)
+    # binarized matrix = ne
+    if not strict:
+        ne = get_neighborhood_expression(adata, required_neighbours=5)
+    else:
+        ne = binarize_adata(adata)
     mask = create_pairwise_binary_mask(ne, counts.columns)
     mask = dict_to_dataframe(mask, column_order_list = grn_adata.var.index)
     grn_adata.layers['mask'] = mask
