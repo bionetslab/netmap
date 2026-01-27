@@ -1,0 +1,6 @@
+netmap.masking.internal.binarize\_adata
+=======================================
+
+.. currentmodule:: netmap.masking.internal
+
+.. autofunction:: binarize_adata

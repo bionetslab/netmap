@@ -19,6 +19,8 @@
 
    add_neighbourhood_expression_mask
 
+   binarize_adata
+
    create_pairwise_binary_mask
 
    dict_to_dataframe
