@@ -585,7 +585,7 @@ def curate_network(grn_adata_, organism="human", tfs=None):
 
     return net_df_curated
 
-def plot_reg_curated(net_df: DataFrame, regulon: List, name="network", layout: Optional[str]="hierarchical", out_path="network_plots/"):
+def plot_reg_curated(net_df: pd.DataFrame, regulon: List, name="network", layout: Optional[str]="hierarchical", out_path="network_plots/"):
     
     # Filter network for selected regulon
     df = net_df
