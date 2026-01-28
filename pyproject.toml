@@ -14,8 +14,6 @@ authors = [
 requires-python = ">=3.10"
 license = { text = "MIT" } # Update if different
 dependencies = [
-    "zstandard",
-    "anndata",
     "scikit-learn",
     "pandas",
     "scipy",
@@ -23,7 +21,6 @@ dependencies = [
     "scanpy",
     "seaborn",
     "statsmodels",
-    "omnipath",
     "captum",
     "python-igraph",
     "leidenalg",
@@ -32,7 +29,6 @@ dependencies = [
     "pyvis",
     "pyucell",
     "pyyaml",
-    "omnipath"
 
 ]
 
