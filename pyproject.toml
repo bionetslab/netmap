@@ -15,7 +15,7 @@ requires-python = ">=3.10"
 license = { text = "MIT" } # Update if different
 dependencies = [
     "scikit-learn",
-    "pandas<=3.13",
+    "pandas",
     "scipy",
     "numpy",
     "scanpy",
@@ -30,7 +30,6 @@ dependencies = [
     "pyvis",
     "pyucell",
     "pyyaml",
-    'zstandard',
     "omnipath"
 
 ]
