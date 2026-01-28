@@ -1,0 +1,6 @@
+netmap.masking.external.add\_genome\_information\_to\_anndata
+=============================================================
+
+.. currentmodule:: netmap.masking.external
+
+.. autofunction:: add_genome_information_to_anndata

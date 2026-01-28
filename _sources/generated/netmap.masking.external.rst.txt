@@ -19,6 +19,8 @@
 
    add_external_grn
 
+   add_genome_information_to_anndata
+
    get_genome_annotation_from_gtf
 
    get_regulators
