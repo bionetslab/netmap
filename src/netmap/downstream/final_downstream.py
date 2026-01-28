@@ -1,66 +1,24 @@
-# Standard library imports
-import gc
-import json
 import logging
-import os
-import sys
-import time
 import warnings
 from functools import reduce
-from itertools import chain, product
-from typing import Tuple, List, Dict, Optional
-from anndata import AnnData
-from itertools import combinations
-
-
-# Third-party imports
+from itertools import chain, product, combinations
+from typing import List, Optional, Tuple, Union
+import json
+import os
 import anndata as ad
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scanpy as sc
-import scipy.sparse as scs
-from anndata import AnnData
 import seaborn as sns
-import scipy.sparse as sp
-import anndata
 from scipy.stats import pearsonr, ranksums
-from scipy.optimize import linear_sum_assignment
-from sklearn.cluster import KMeans, SpectralClustering
-from sklearn.metrics.cluster import contingency_matrix
+#from scipy.stats import mannwhitneyu
 from statsmodels.stats.multitest import multipletests
-import pandas as pd
-from scipy.stats import mannwhitneyu
-from statsmodels.stats.multitest import multipletests
-from anndata import AnnData
-import importlib
-import json
-import os
-from turtle import shape
-from typing import List, Optional, Tuple, Union
-
 import networkx as nx
-import pandas as pd
 import requests
-from pandas import DataFrame
 from pyvis.network import Network
-from anndata import AnnData
-import importlib
-import json
-import os
-from typing import List, Optional, Tuple, Union
-
-import networkx as nx
-import pandas as pd
-from pandas import DataFrame
 import pyucell as ucell
-from pyvis.network import Network
 
-
-#import omnipath as op
-
-# Miscellaneous
-warnings.filterwarnings("ignore")
 
 from netmap.downstream.clustering import process, spectral_clustering, downstream_recipe
 from netmap.downstream.edge_selection import add_top_edge_annotation_global
@@ -69,7 +27,7 @@ from netmap.downstream.edge_selection import add_top_edge_annotation_global
     
 
 
-def filter_clusters_by_cell_count(grn_adata: AnnData, metric_tag: float, top_fraction: float) -> Tuple[Optional[Dict[str, float]], AnnData]:
+def filter_clusters_by_cell_count(grn_adata: ad.AnnData, metric_tag: float, top_fraction: float) -> Tuple[Optional[Dict[str, float]], ad.AnnData]:
     """
     Filter features (genes/edges) based on cell count differences between two clusters,
     selecting the top fraction of features for each cluster.
@@ -193,7 +151,7 @@ def get_top_targets(gene_inter_adata, adata, top_per_source=750, col_cluster='sp
     return gene_inter_adata_filtered, reglon_sizes
 
 
-def filter_signatures_by_Ucell(grn_adata, adata, ncores: int = 100) -> pd.DataFrame:
+def filter_signatures_by_Ucell(grn_adata, adata) -> pd.DataFrame:
     """
     Filters gene signatures by cluster and computes UCell scores.
 
@@ -203,8 +161,6 @@ def filter_signatures_by_Ucell(grn_adata, adata, ncores: int = 100) -> pd.DataFr
         AnnData object containing GRN (gene regulatory network) information.
     adata : AnnData
         AnnData object containing gene expression counts in the 'counts' layer.
-    ncores : int, optional
-        Number of cores to use for parallel computation, by default 100.
 
     Returns
     -------
@@ -219,7 +175,7 @@ def filter_signatures_by_Ucell(grn_adata, adata, ncores: int = 100) -> pd.DataFr
 
 
 
-def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: AnnData, keep_top_ranked: int = 100, filter_by: str = "z_score", cluster_col = 'spectral') -> Tuple[Optional[AnnData], List[str]]:
+def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: ad.AnnData, keep_top_ranked: int = 100, filter_by: str = "z_score", cluster_col = 'spectral') -> Tuple[Optional[ad.AnnData], List[str]]:
     """
     Filters a GRN (Gene Regulatory Network) AnnData object to keep only the edges
     corresponding to the top-ranked signatures per cluster based on UCell scores.
@@ -395,7 +351,7 @@ def plot_shared_targets_heatmap(grn_adata, genes=None, figsize=(6, 6), cmap='RdB
 
 
 
-def compute_edge_overlaps_simple(grn_adata: AnnData, net_list: List[Tuple[str, pd.DataFrame]]) -> Dict[str, float]:
+def compute_edge_overlaps_simple(grn_adata: ad.AnnData, net_list: List[Tuple[str, pd.DataFrame]]) -> Dict[str, float]:
     """
     Compute the percentage of overlapping edges between a GRN and multiple reference networks.
 
@@ -431,7 +387,7 @@ def compute_edge_overlaps_simple(grn_adata: AnnData, net_list: List[Tuple[str, p
 
 
 
-def filter_clusters_by_cell_count(grn_adata: AnnData, metric_tag: float, top_fraction: float) -> Tuple[Optional[Dict[str, float]], AnnData]:
+def filter_clusters_by_cell_count(grn_adata: ad.AnnData, metric_tag: float, top_fraction: float) -> Tuple[Optional[Dict[str, float]], ad.AnnData]:
     """
     Filter features (genes/edges) based on cell count differences between two clusters,
     selecting the top fraction of features for each cluster.
@@ -477,7 +433,7 @@ def filter_clusters_by_cell_count(grn_adata: AnnData, metric_tag: float, top_fra
 
 
 
-def create_regulon_activity_adata(grn_adata: AnnData, data_ucell: pd.DataFrame, top_sources_list: List[str]) -> AnnData:
+def create_regulon_activity_adata(grn_adata: ad.AnnData, data_ucell: pd.DataFrame, top_sources_list: List[str]) -> ad.AnnData:
     """
     Creates an AnnData object with regulon activity scores based on top GRN sources.
 
@@ -520,7 +476,7 @@ def create_regulon_activity_adata(grn_adata: AnnData, data_ucell: pd.DataFrame, 
 
 
 
-def plot_reg(grn_adata: AnnData, regulon: List, name="network", layout: Optional[str]="hierarchical", out_path="network_plots/"):
+def plot_reg(grn_adata: ad.AnnData, regulon: List, name="network", layout: Optional[str]="hierarchical", out_path="network_plots/"):
     
     # Make all genes uppercase
     #df = df.applymap(lambda s: s.upper() if type(s) == str else s)
