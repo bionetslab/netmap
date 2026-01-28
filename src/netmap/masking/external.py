@@ -173,6 +173,6 @@ def get_regulators(crm_df, genes, window):
 def add_genome_information_to_anndata(grn_adata, tf_to_gene_df, window_name = ''):
     grn_adata.var = grn_adata.var.reset_index().merge(tf_to_gene_df.loc[:, ['edge', 'regulator']], left_on='edge_key', right_on='edge', how='left').set_index('edge_key')
     grn_adata.var.regulator = grn_adata.var.regulator.apply(lambda x: False if pd.isna(x) else True)
-    grn_adata.var = grn_adata.var.drop_columns(columns = ['edge'])
+    grn_adata.var = grn_adata.var.drop(columns = ['edge'])
     grn_adata.var = grn_adata.var.rename(columns= {'regulator': f'regulator{window_name}'})
     return grn_adata
