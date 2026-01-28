@@ -2,7 +2,7 @@ import logging
 import warnings
 from functools import reduce
 from itertools import chain, product, combinations
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict
 import json
 import os
 import anndata as ad
