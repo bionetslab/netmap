@@ -77,7 +77,7 @@ def create_pairwise_binary_mask(binary_matrix, gene_list):
 
     gene_pairs_indices = list(itertools.combinations(range(num_genes), 2))
     for g1_idx, g2_idx in gene_pairs_indices:
-        mask = binary_matrix[:, g1_idx] * binary_matrix[:, g2_idx]
+        mask = np.multiply(binary_matrix[:, g1_idx] , binary_matrix[:, g2_idx])
         key_fwd = f"{gene_list[g1_idx]}_{gene_list[g2_idx]}"
         pairwise_mask_dict[key_fwd] = mask
         key_rev = f"{gene_list[g2_idx]}_{gene_list[g1_idx]}"
@@ -102,13 +102,14 @@ def dict_to_dataframe(mask_dict, column_order_list):
         pd.DataFrame: A DataFrame with masks as columns, in the specified order.
     """
     # 1. Create a dictionary with only the ordered columns
-    ordered_data = {col: mask_dict[col] for col in column_order_list if col in mask_dict}
+    ordered_data = {col: np.asarray(mask_dict[col]).squeeze() for col in column_order_list if col in mask_dict}
     
     # 2. Check if all specified columns were found
     if len(ordered_data) != len(column_order_list):
         missing_columns = set(column_order_list) - set(ordered_data.keys())
         print(f"Warning: The following columns were not found in the mask dictionary: {missing_columns}")
 
+    print(ordered_data)
     # 3. Create the DataFrame from the ordered dictionary
     df = pd.DataFrame(ordered_data)
     
@@ -117,7 +118,7 @@ def dict_to_dataframe(mask_dict, column_order_list):
 def binarize_adata(adata, expression_threshold = 0):
 
     if issparse(adata.X):
-        binary_expression = (adata.X > expression_threshold).astype(int).tocsr()
+        binary_expression = (adata.X.todense() > expression_threshold).astype(int)
     else:
         binary_expression = (adata.X > expression_threshold).astype(int)
     return binary_expression
@@ -140,9 +141,11 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False):
         ne = get_neighborhood_expression(adata, required_neighbours=5)
     else:
         ne = binarize_adata(adata)
-    mask = create_pairwise_binary_mask(ne, adata.var.index)
+    mask = create_pairwise_binary_mask(ne, list(adata.var.index))
+    
     mask = dict_to_dataframe(mask, column_order_list = grn_adata.var.index)
     grn_adata.layers['mask'] = mask
+    grn_adata.var['count_nonzero'] = np.sum(grn_adata.layers['mask'], axis =0)
     return grn_adata
 
 
