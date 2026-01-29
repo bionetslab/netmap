@@ -135,14 +135,12 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False):
     Returns:
         _type_: _description_
     """
-    counts = pd.DataFrame(adata.X)
-    counts.columns =adata.var.index
-    # binarized matrix = ne
+
     if not strict:
         ne = get_neighborhood_expression(adata, required_neighbours=5)
     else:
         ne = binarize_adata(adata)
-    mask = create_pairwise_binary_mask(ne, counts.columns)
+    mask = create_pairwise_binary_mask(ne, adata.var.index)
     mask = dict_to_dataframe(mask, column_order_list = grn_adata.var.index)
     grn_adata.layers['mask'] = mask
     return grn_adata
