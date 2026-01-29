@@ -21,6 +21,8 @@
 
    create_output_directory
 
+   merge_all_to_obs
+
    save_anndata
 
 

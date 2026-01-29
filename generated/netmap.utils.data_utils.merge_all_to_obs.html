@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.utils.tf_utils.get_tf_index" href="netmap.utils.tf_utils.get_tf_index.html"><link rel="prev" title="netmap.utils.tf_utils" href="netmap.utils.tf_utils.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.utils.data_utils.save_anndata" href="netmap.utils.data_utils.save_anndata.html"><link rel="prev" title="netmap.utils.data_utils.create_output_directory" href="netmap.utils.data_utils.create_output_directory.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>netmap.utils.tf_utils.filter_tf_names - Netmap 0.1 documentation</title>
+        <title>netmap.utils.data_utils.merge_all_to_obs - Netmap 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -283,10 +283,10 @@
 </ul>
 </li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="netmap.utils.html">netmap.utils</a><input aria-label="Toggle navigation of netmap.utils" checked="" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l4 has-children"><a class="reference internal" href="netmap.utils.data_utils.html">netmap.utils.data_utils</a><input aria-label="Toggle navigation of netmap.utils.data_utils" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 current has-children"><a class="reference internal" href="netmap.utils.data_utils.html">netmap.utils.data_utils</a><input aria-label="Toggle navigation of netmap.utils.data_utils" checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.attribution_to_anndata.html">netmap.utils.data_utils.attribution_to_anndata</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.create_output_directory.html">netmap.utils.data_utils.create_output_directory</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.merge_all_to_obs.html">netmap.utils.data_utils.merge_all_to_obs</a></li>
+<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">netmap.utils.data_utils.merge_all_to_obs</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.save_anndata.html">netmap.utils.data_utils.save_anndata</a></li>
 </ul>
 </li>
@@ -298,8 +298,8 @@
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.netmap_config.NetmapConfig.html">netmap.utils.netmap_config.NetmapConfig</a></li>
 </ul>
 </li>
-<li class="toctree-l4 current has-children"><a class="reference internal" href="netmap.utils.tf_utils.html">netmap.utils.tf_utils</a><input aria-label="Toggle navigation of netmap.utils.tf_utils" checked="" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">netmap.utils.tf_utils.filter_tf_names</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="netmap.utils.tf_utils.html">netmap.utils.tf_utils</a><input aria-label="Toggle navigation of netmap.utils.tf_utils" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="netmap.utils.tf_utils.filter_tf_names.html">netmap.utils.tf_utils.filter_tf_names</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.tf_utils.get_tf_index.html">netmap.utils.tf_utils.get_tf_index</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.tf_utils.load_tf_names.html">netmap.utils.tf_utils.load_tf_names</a></li>
 </ul>
@@ -330,7 +330,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/generated/netmap.utils.tf_utils.filter_tf_names.rst.txt" title="View this page">
+  <a class="muted-link" href="../_sources/generated/netmap.utils.data_utils.merge_all_to_obs.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -348,19 +348,13 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="netmap-utils-tf-utils-filter-tf-names">
-<h1>netmap.utils.tf_utils.filter_tf_names<a class="headerlink" href="#netmap-utils-tf-utils-filter-tf-names" title="Link to this heading">¶</a></h1>
+          <section id="netmap-utils-data-utils-merge-all-to-obs">
+<h1>netmap.utils.data_utils.merge_all_to_obs<a class="headerlink" href="#netmap-utils-data-utils-merge-all-to-obs" title="Link to this heading">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="netmap.utils.tf_utils.filter_tf_names">
-<span class="sig-prename descclassname"><span class="pre">netmap.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">filter_tf_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tf_genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tfs_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.utils.tf_utils.filter_tf_names" title="Link to this definition">¶</a></dt>
-<dd><p>Filter the transcription factor list using an anndata object</p>
-<p>Args:
-tf_genes: list of transcription factors
-adata: anndata.AnnData object
-tfs_only: Boolean indicating whether to return transcription factors, or</p>
-<blockquote>
-<div><p>the full intersection of the adata.var.index and the tf_list</p>
-</div></blockquote>
+<dt class="sig sig-object py" id="netmap.utils.data_utils.merge_all_to_obs">
+<span class="sig-prename descclassname"><span class="pre">netmap.utils.data_utils.</span></span><span class="sig-name descname"><span class="pre">merge_all_to_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.utils.data_utils.merge_all_to_obs" title="Link to this definition">¶</a></dt>
+<dd><p>Takes all variables from source_adata and appends them as columns
+to target_adata.obs for easy plotting.</p>
 </dd></dl>
 
 </section>
@@ -370,23 +364,23 @@ tfs_only: Boolean indicating whether to return transcription factors, or</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="netmap.utils.tf_utils.get_tf_index.html">
+          <a class="next-page" href="netmap.utils.data_utils.save_anndata.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">netmap.utils.tf_utils.get_tf_index</div>
+                <div class="title">netmap.utils.data_utils.save_anndata</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="netmap.utils.tf_utils.html">
+          <a class="prev-page" href="netmap.utils.data_utils.create_output_directory.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">netmap.utils.tf_utils</div>
+                <div class="title">netmap.utils.data_utils.create_output_directory</div>
                 
               </div>
             </a>
@@ -420,8 +414,8 @@ tfs_only: Boolean indicating whether to return transcription factors, or</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">netmap.utils.tf_utils.filter_tf_names</a><ul>
-<li><a class="reference internal" href="#netmap.utils.tf_utils.filter_tf_names"><code class="docutils literal notranslate"><span class="pre">filter_tf_names()</span></code></a></li>
+<li><a class="reference internal" href="#">netmap.utils.data_utils.merge_all_to_obs</a><ul>
+<li><a class="reference internal" href="#netmap.utils.data_utils.merge_all_to_obs"><code class="docutils literal notranslate"><span class="pre">merge_all_to_obs()</span></code></a></li>
 </ul>
 </li>
 </ul>
