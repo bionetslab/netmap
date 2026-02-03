@@ -65,5 +65,8 @@ def merge_all_to_obs(target_adata, source_adata, replace=True):
             target_adata.obs = pd.concat([target_adata.obs, source_df], axis=1)
         else:
             print('Regulon columns where present and not replaced.')
+    else:
+        target_adata.obs = pd.concat([target_adata.obs, source_df], axis=1)
+
 
     return target_adata

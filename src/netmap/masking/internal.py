@@ -47,73 +47,54 @@ def get_neighborhood_expression(adata, knn_neighbours =10, required_neighbours =
     return neighborhood_expression
 
 
-def create_pairwise_binary_mask(binary_matrix, gene_list):
+def create_pairwise_binary_mask(binary_matrix, gene_list, ordered_pair_list):
     """
-    Creates a dictionary of binary masks for each cell and pair of genes,
-    including both forward, reverse, and self-pairs (which are all zeros).
-
-    Args:
-        matrix_cells_x_genes (np.ndarray): A 2D numpy array where rows are cells
-                                          and columns are genes.
-        gene_list (list): A list of strings containing the names of the genes,
-                          in the same order as the columns in the matrix.
-
-    Returns:
-        dict: A dictionary where keys are gene pair strings (e.g., 'GeneA_GeneB')
-              and values are 1D numpy arrays representing the binary mask for that pair
-              across all cells.
-    """
-
-    num_cells, num_genes = binary_matrix.shape
-
-    if len(gene_list) != num_genes:
-        raise ValueError("The length of the gene_list must match the number of genes (columns) in the matrix.")
-
-    pairwise_mask_dict = {}
-    zero_vector = np.zeros(num_cells, dtype=int)
-    for g_idx, gene_name in enumerate(gene_list):
-        key = f"{gene_name}_{gene_name}"
-        pairwise_mask_dict[key] = zero_vector
-
-    gene_pairs_indices = list(itertools.combinations(range(num_genes), 2))
-    for g1_idx, g2_idx in gene_pairs_indices:
-        mask = np.multiply(binary_matrix[:, g1_idx] , binary_matrix[:, g2_idx])
-        key_fwd = f"{gene_list[g1_idx]}_{gene_list[g2_idx]}"
-        pairwise_mask_dict[key_fwd] = mask
-        key_rev = f"{gene_list[g2_idx]}_{gene_list[g1_idx]}"
-        pairwise_mask_dict[key_rev] = mask
-
-    return pairwise_mask_dict
-
-
-
-def dict_to_dataframe(mask_dict, column_order_list):
-    """
-    Converts a dictionary of binary masks into a pandas DataFrame,
-    respecting a specified column order.
-
-    Args:
-        mask_dict (dict): A dictionary where keys are gene pair strings and
-                          values are 1D numpy arrays (the masks).
-        column_order_list (list): A list of gene pair strings specifying the
-                                  desired order of the DataFrame columns.
-
-    Returns:
-        pd.DataFrame: A DataFrame with masks as columns, in the specified order.
-    """
-    # 1. Create a dictionary with only the ordered columns
-    ordered_data = {col: np.asarray(mask_dict[col]).squeeze() for col in column_order_list if col in mask_dict}
+    Creates a dense 2D array of pairwise masks using preallocation.
     
-    # 2. Check if all specified columns were found
-    if len(ordered_data) != len(column_order_list):
-        missing_columns = set(column_order_list) - set(ordered_data.keys())
-        print(f"Warning: The following columns were not found in the mask dictionary: {missing_columns}")
-
-    print(ordered_data)
-    # 3. Create the DataFrame from the ordered dictionary
-    df = pd.DataFrame(ordered_data)
+    Args:
+        binary_matrix (np.ndarray): Rows=cells, Cols=genes.
+        gene_list (list): The names of the genes in binary_matrix columns.
+        ordered_pair_list (list): The specific order of "GeneA_GeneB" strings 
+                                  requested for the final output columns.
+                                  
+    Returns:
+        np.ndarray: A 2D array of shape (num_cells, len(ordered_pair_list)).
+    """
+    num_cells = binary_matrix.shape[0]
+    num_pairs = len(ordered_pair_list)
     
-    return df
+    # 1. Preallocate the result matrix. 
+    # Using np.int8 (1 byte) instead of default np.int64 (8 bytes) 
+    # reduces the memory footprint by 87.5%.
+    result = np.zeros((num_cells, num_pairs), dtype=np.int8)
+    print(result.shape)
+    
+    # 2. Map gene names to their original column indices for O(1) lookup
+    gene_to_idx = {name: i for i, name in enumerate(gene_list)}
+    
+    print(ordered_pair_list[0:3])
+    # 3. Fill the matrix column by column
+    for col_idx, pair_str in enumerate(ordered_pair_list):
+        print(pair_str.split('_'))
+        g1_name, g2_name = pair_str.split('_')
+        
+        # Self-pairs (e.g., GeneA_GeneA) are skipped because 
+        # the matrix is already initialized to zeros.
+        if g1_name != g2_name:
+            idx1 = gene_to_idx[g1_name]
+            idx2 = gene_to_idx[g2_name]
+            
+            # Use the 'out' parameter to write the multiplication result
+            # directly into the preallocated column slice.
+            
+            np.multiply(
+                binary_matrix[:, idx1], 
+                binary_matrix[:, idx2], 
+            )
+            
+    return result
+
+
 
 def binarize_adata(adata, expression_threshold = 0):
 
@@ -141,9 +122,8 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False):
         ne = get_neighborhood_expression(adata, required_neighbours=5)
     else:
         ne = binarize_adata(adata)
-    mask = create_pairwise_binary_mask(ne, list(adata.var.index))
+    mask = create_pairwise_binary_mask(ne, list(adata.var.index), grn_adata.var_names)
     
-    mask = dict_to_dataframe(mask, column_order_list = grn_adata.var.index)
     grn_adata.layers['mask'] = mask
     grn_adata.var['count_nonzero'] = np.sum(grn_adata.layers['mask'], axis =0)
     return grn_adata
