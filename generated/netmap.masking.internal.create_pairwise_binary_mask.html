@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.masking.internal.dict_to_dataframe" href="netmap.masking.internal.dict_to_dataframe.html"><link rel="prev" title="netmap.masking.internal.binarize_adata" href="netmap.masking.internal.binarize_adata.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.masking.internal.find_consistent_pairs" href="netmap.masking.internal.find_consistent_pairs.html"><link rel="prev" title="netmap.masking.internal.binarize_adata" href="netmap.masking.internal.binarize_adata.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>netmap.masking.internal.create_pairwise_binary_mask - Netmap 0.1 documentation</title>
@@ -244,7 +244,6 @@
 <li class="toctree-l5"><a class="reference internal" href="netmap.masking.internal.add_neighbourhood_expression_mask.html">netmap.masking.internal.add_neighbourhood_expression_mask</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.masking.internal.binarize_adata.html">netmap.masking.internal.binarize_adata</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">netmap.masking.internal.create_pairwise_binary_mask</a></li>
-<li class="toctree-l5"><a class="reference internal" href="netmap.masking.internal.dict_to_dataframe.html">netmap.masking.internal.dict_to_dataframe</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.masking.internal.find_consistent_pairs.html">netmap.masking.internal.find_consistent_pairs</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.masking.internal.get_neighborhood_expression.html">netmap.masking.internal.get_neighborhood_expression</a></li>
 </ul>
@@ -352,28 +351,22 @@
 <h1>netmap.masking.internal.create_pairwise_binary_mask<a class="headerlink" href="#netmap-masking-internal-create-pairwise-binary-mask" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="netmap.masking.internal.create_pairwise_binary_mask">
-<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">create_pairwise_binary_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.internal.create_pairwise_binary_mask" title="Link to this definition">¶</a></dt>
-<dd><p>Creates a dictionary of binary masks for each cell and pair of genes,
-including both forward, reverse, and self-pairs (which are all zeros).</p>
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">create_pairwise_binary_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered_pair_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.masking.internal.create_pairwise_binary_mask" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a dense 2D array of pairwise masks using preallocation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>matrix_cells_x_genes</strong> (<em>np.ndarray</em>) – A 2D numpy array where rows are cells
-and columns are genes.</p></li>
-<li><p><strong>gene_list</strong> (<em>list</em>) – A list of strings containing the names of the genes,
-in the same order as the columns in the matrix.</p></li>
+<li><p><strong>binary_matrix</strong> (<em>np.ndarray</em>) – Rows=cells, Cols=genes.</p></li>
+<li><p><strong>gene_list</strong> (<em>list</em>) – The names of the genes in binary_matrix columns.</p></li>
+<li><p><strong>ordered_pair_list</strong> (<em>list</em>) – The specific order of “GeneA_GeneB” strings
+requested for the final output columns.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>A dictionary where keys are gene pair strings (e.g., ‘GeneA_GeneB’)</dt><dd><p>and values are 1D numpy arrays representing the binary mask for that pair
-across all cells.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-even"><p>A 2D array of shape (num_cells, len(ordered_pair_list)).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -385,12 +378,12 @@ across all cells.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="netmap.masking.internal.dict_to_dataframe.html">
+          <a class="next-page" href="netmap.masking.internal.find_consistent_pairs.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">netmap.masking.internal.dict_to_dataframe</div>
+                <div class="title">netmap.masking.internal.find_consistent_pairs</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
