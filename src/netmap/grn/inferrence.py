@@ -221,7 +221,7 @@ def attribution_one_target(
     return attributions_list
 
 
-def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros', raw=False):
+def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros', backing_file='grn_adata.h5', return_in_memory=False):
 
     """
     The main inferrence function to compute the entire GRN. Computes all
@@ -255,40 +255,84 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
     
     for trained_model in models:        
         trained_model.forward_mu_only = True
-        explainer, xai_type = _get_explainer(trained_model, xai_method, raw=raw)
+        explainer, xai_type = _get_explainer(trained_model, xai_method, raw=False)
         tms.append(explainer)
 
     attributions = []
 
-    for g in tqdm(range(data_train_full_tensor.shape[1])):
-        attributions_list = attribution_one_target(
-            g,
-            tms,
-            data_train_full_tensor,
-            xai_type=xai_method,
-            background_type= background_type)
+    rows = data_train_full_tensor.shape[0]
+    cols = data_train_full_tensor.shape[1]
+    cols_grn = cols*cols
 
+    if backing_file is not None:
+        with h5py.File(backing_file, 'w') as f:
+
+            dset = f.create_dataset(
+                'data', 
+                shape=(rows, cols_grn), 
+                dtype='float32', 
+                chunks=(rows, cols)
+            )
+
+            for g in tqdm(range(data_train_full_tensor.shape[1])):
+                attributions_list = attribution_one_target(
+                    g,
+                    tms,
+                    data_train_full_tensor,
+                    xai_type=xai_type,
+                    background_type= background_type)
+
+                
+                
+                attributions_list = aggregate_attributions(attributions_list, strategy='mean')
+                dset[:, (g*cols): ((g+1)*cols)] = attributions_list        
+
+    else:
+        for g in tqdm(range(data_train_full_tensor.shape[1])):
+                attributions_list = attribution_one_target(
+                    g,
+                    tms,
+                    data_train_full_tensor,
+                    xai_type=xai_type,
+                    background_type= background_type)
+
+                
+                
+                attributions_list = aggregate_attributions(attributions_list, strategy='mean')
+                attributions.append(attributions_list)
         
-        attributions_list = aggregate_attributions(attributions_list, strategy='mean')
-        attributions.append(attributions_list)
+        attributions = np.hstack(attributions)
 
-    ## AGGREGATION: REPLACE LIST BY AGGREGATED DATA
-    for i in range(len(attributions)):
-
+    for i in range(cols):
         ## Create name vector
         name_list = name_list + list(gene_names)
         target_names = target_names+[gene_names[i]] *len(gene_names)
 
-
-
-    attributions = np.hstack(attributions)
     
     index_list = [f"{s}_{t}" for (s, t) in zip(name_list, target_names)]
     cou = pd.DataFrame({'index': index_list, 'source':name_list, 'target':target_names})
     cou = cou.set_index('index')
 
-    grn_adata = attribution_to_anndata(attributions, var=cou)
+    if backing_file is not None:
+        if return_in_memory:
+            with h5py.File(backing_file, 'r+') as f:
+                dset = f['data']
+                grn_adata  = ad.AnnData(dset, uns = {'backing_file': backing_file}, var = cou)
+                grn_adata = grn_adata.to_memory()
 
+        else:
+            grn_adata  = ad.AnnData(shape = (rows, cols_grn), uns = {'backing_file': backing_file}, var = cou)
+    else:
+        grn_adata = attribution_to_anndata(attributions, var=cou)
+
+    return grn_adata
+
+
+def return_grn_adata_to_memory(grn_adata):
+    with h5py.File(grn_adata.uns['backing_file'], 'r+') as f:
+        dset = f['data']
+        grn_adata.X = dset
+        grn_adata = grn_adata.to_memory()
     return grn_adata
 
 
