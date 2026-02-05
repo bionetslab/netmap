@@ -10,6 +10,7 @@ from netmap.utils.data_utils import attribution_to_anndata
 import itertools
 from scipy import integrate
 import scipy.stats
+import h5py
 
 
 def _quantile_partitioning(data: np.ndarray, q: int) -> np.ndarray:
