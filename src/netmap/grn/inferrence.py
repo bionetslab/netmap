@@ -261,12 +261,11 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
     attributions = []
 
     for g in tqdm(range(data_train_full_tensor.shape[1])):
-        # use only selected t
         attributions_list = attribution_one_target(
             g,
             tms,
             data_train_full_tensor,
-            xai_type=xai_type,
+            xai_type=xai_method,
             background_type= background_type)
 
         

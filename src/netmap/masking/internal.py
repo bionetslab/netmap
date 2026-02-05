@@ -65,14 +65,11 @@ def create_pairwise_binary_mask(binary_matrix, gene_list, ordered_pair_list):
     
     # 1. Preallocate the result matrix. 
     # Using np.int8 (1 byte) instead of default np.int64 (8 bytes) 
-    # reduces the memory footprint by 87.5%.
     result = np.zeros((num_cells, num_pairs), dtype=np.int8)
-    print(result.shape)
     
     # 2. Map gene names to their original column indices for O(1) lookup
     gene_to_idx = {name: i for i, name in enumerate(gene_list)}
     
-    print(ordered_pair_list[0:3])
     # 3. Fill the matrix column by column
     for col_idx, pair_str in enumerate(ordered_pair_list):
         print(pair_str.split('_'))
