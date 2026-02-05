@@ -11,6 +11,7 @@ import itertools
 from scipy import integrate
 import scipy.stats
 import h5py
+import anndata as ad
 
 
 def _quantile_partitioning(data: np.ndarray, q: int) -> np.ndarray:
