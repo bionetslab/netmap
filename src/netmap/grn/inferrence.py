@@ -290,8 +290,8 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
                 
                 
                 attributions_list = aggregate_attributions(attributions_list, strategy='mean')
-                collect_sums.append(np.sum(attribution_list, axis = 0))
-                collect_means.append(np.mean(attribution_list, axis = 0))
+                collect_sums.append(np.sum(attributions_list, axis = 0))
+                collect_means.append(np.mean(attributions_list, axis = 0))
                 dset[:, (g*cols): ((g+1)*cols)] = attributions_list        
 
     else:
@@ -306,8 +306,8 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
                 
                 
                 attributions_list = aggregate_attributions(attributions_list, strategy='mean')
-                collect_sums.append(np.sum(attribution_list, axis = 0))
-                collect_means.append(np.mean(attribution_list, axis = 0))
+                collect_sums.append(np.sum(attributions_list, axis = 0))
+                collect_means.append(np.mean(attributions_list, axis = 0))
 
                 attributions.append(attributions_list)
         
