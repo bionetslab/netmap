@@ -322,8 +322,8 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
     index_list = [f"{s}_{t}" for (s, t) in zip(name_list, target_names)]
     cou = pd.DataFrame({'index': index_list, 'source':name_list, 'target':target_names})
     cou = cou.set_index('index')
-    cou['edge_sums'] = np.concat(collect_sums)
-    cou['edge_means'] = np.concat(collect_means)
+    cou['edge_sums'] = np.concatenate(collect_sums)
+    cou['edge_means'] = np.concatenate(collect_means)
 
     if backing_file is not None:
         if return_in_memory:
