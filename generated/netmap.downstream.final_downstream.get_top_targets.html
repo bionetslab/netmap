@@ -229,6 +229,7 @@
 <li class="toctree-l5"><a class="reference internal" href="netmap.downstream.gene_clustering.plot_scatter_plot.html">netmap.downstream.gene_clustering.plot_scatter_plot</a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.downstream.plotting.html">netmap.downstream.plotting</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="netmap.masking.html">netmap.masking</a><input aria-label="Toggle navigation of netmap.masking" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -286,6 +287,9 @@
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.attribution_to_anndata.html">netmap.utils.data_utils.attribution_to_anndata</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.create_output_directory.html">netmap.utils.data_utils.create_output_directory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.merge_all_to_obs.html">netmap.utils.data_utils.merge_all_to_obs</a></li>
+<li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.remove_regulon_columns.html">netmap.utils.data_utils.remove_regulon_columns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.retrieve_edges_by_column.html">netmap.utils.data_utils.retrieve_edges_by_column</a></li>
+<li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.retrieve_top_edges.html">netmap.utils.data_utils.retrieve_top_edges</a></li>
 <li class="toctree-l5"><a class="reference internal" href="netmap.utils.data_utils.save_anndata.html">netmap.utils.data_utils.save_anndata</a></li>
 </ul>
 </li>
@@ -351,7 +355,7 @@
 <h1>netmap.downstream.final_downstream.get_top_targets<a class="headerlink" href="#netmap-downstream-final-downstream-get-top-targets" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="netmap.downstream.final_downstream.get_top_targets">
-<span class="sig-prename descclassname"><span class="pre">netmap.downstream.final_downstream.</span></span><span class="sig-name descname"><span class="pre">get_top_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_inter_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_per_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spectral'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_reg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.downstream.final_downstream.get_top_targets" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">netmap.downstream.final_downstream.</span></span><span class="sig-name descname"><span class="pre">get_top_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_inter_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_per_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spectral'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_reg_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netmap.downstream.final_downstream.get_top_targets" title="Link to this definition">¶</a></dt>
 <dd><p>Selects top gene targets per source from a clustered gene interaction AnnData.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

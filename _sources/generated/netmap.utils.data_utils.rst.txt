@@ -23,6 +23,12 @@
 
    merge_all_to_obs
 
+   remove_regulon_columns
+
+   retrieve_edges_by_column
+
+   retrieve_top_edges
+
    save_anndata
 
 

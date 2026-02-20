@@ -1,4 +1,4 @@
-﻿netmap.downstream.edge\_selection
+netmap.downstream.edge\_selection
 =================================
 
 .. currentmodule:: netmap.downstream.edge_selection

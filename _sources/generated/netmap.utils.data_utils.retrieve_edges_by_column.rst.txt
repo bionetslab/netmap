@@ -1,0 +1,6 @@
+netmap.utils.data\_utils.retrieve\_edges\_by\_column
+====================================================
+
+.. currentmodule:: netmap.utils.data_utils
+
+.. autofunction:: retrieve_edges_by_column

@@ -1,4 +1,4 @@
-netmap.downstream
+﻿netmap.downstream
 =================
 
 .. currentmodule:: netmap.downstream
@@ -34,5 +34,7 @@ netmap.downstream
    final_downstream
 
    gene_clustering
+
+   plotting
 
 
