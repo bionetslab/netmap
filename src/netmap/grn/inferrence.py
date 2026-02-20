@@ -17,7 +17,13 @@ import pyarrow as pa
 import pyarrow.ipc as ipc
 import numpy as np
 from tqdm import tqdm
-
+import pyarrow as pa
+import pyarrow.dataset as ds
+import pyarrow.parquet as pq
+import numpy as np
+import os
+from tqdm import tqdm
+import os.path as op
 
 def _quantile_partitioning(data: np.ndarray, q: int) -> np.ndarray:
     """
@@ -227,12 +233,7 @@ def attribution_one_target(
         attributions_list.append(attribution.detach().cpu().numpy())
     return attributions_list
 
-import pyarrow as pa
-import pyarrow.dataset as ds
-import pyarrow.parquet as pq
-import numpy as np
-import os
-from tqdm import tqdm
+
 
 def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros', backing_file='grn_adata.h5', return_in_memory=False):
 
