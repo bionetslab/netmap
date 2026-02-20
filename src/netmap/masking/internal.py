@@ -72,7 +72,6 @@ def create_pairwise_binary_mask(binary_matrix, gene_list, ordered_pair_list):
     
     # 3. Fill the matrix column by column
     for col_idx, pair_str in enumerate(ordered_pair_list):
-        print(pair_str.split('_'))
         g1_name, g2_name = pair_str.split('_')
         
         # Self-pairs (e.g., GeneA_GeneA) are skipped because 

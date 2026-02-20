@@ -13,6 +13,11 @@ import scipy.stats
 import h5py
 import anndata as ad
 
+import pyarrow as pa
+import pyarrow.ipc as ipc
+import numpy as np
+from tqdm import tqdm
+
 
 def _quantile_partitioning(data: np.ndarray, q: int) -> np.ndarray:
     """
@@ -224,6 +229,145 @@ def attribution_one_target(
 
 
 def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros', backing_file='grn_adata.h5', return_in_memory=False):
+
+    """
+    The main inferrence function to compute the entire GRN. Computes all
+    attributions for all targets, aggregates them and creates an anndata.AnnData
+    object with the edge names in the var slot.
+
+    Parameters
+    ----------
+    models : list[torch.Model]
+        List of trained autoencoder models
+
+    data_train_full_tensor: torch.tensor
+        input data tensor
+        
+    gene_names: np.array
+        Gene names indicating the order of the genes in the torch tensort
+
+    xai_method: str
+        Method to be used [GradientShap, Deconvolution, GuidedBackprop]
+
+    Returns
+    -------
+    grn_adata : anndata.AnnData 
+        A complete, aggregated GRN object   
+    """
+
+    tms = []
+    name_list = []
+    target_names = []
+    
+    
+    for trained_model in models:        
+        trained_model.forward_mu_only = True
+        explainer, xai_type = _get_explainer(trained_model, xai_method, raw=False)
+        tms.append(explainer)
+
+    attributions = []
+
+    rows = data_train_full_tensor.shape[0]
+    cols = data_train_full_tensor.shape[1]
+    cols_grn = cols*cols
+
+    collect_sums = []
+    collect_means = []
+
+
+
+    if backing_file is not None:
+
+        dummy_data = np.zeros((rows, cols), dtype="float32")
+        column_names = [f"col_{i}" for i in range(cols)]
+        dummy_table = pa.table({name: dummy_data[:, i] for i, name in enumerate(column_names)})
+
+        # Arrow IPC writer with zstd compression
+        writer = ipc.new_file(
+            backing_file,
+            dummy_table.schema,
+            options=ipc.IpcWriteOptions(compression="zstd")
+        )
+
+        for g in tqdm(range(data_train_full_tensor.shape[1])):
+
+            attributions_list = attribution_one_target(
+                g,
+                tms,
+                data_train_full_tensor,
+                xai_type=xai_type,
+                background_type=background_type
+            )
+
+            attributions_list = aggregate_attributions(attributions_list, strategy='mean')
+
+            collect_sums.append(np.sum(attributions_list, axis=0))
+            collect_means.append(np.mean(attributions_list, axis=0))
+
+            source_list = list(gene_names)
+            target_names = [gene_names[g]] *len(gene_names)
+            edge_names = [f'{s}_{t}' for s,t in zip(source_list, target_names)]
+
+            
+            table = pa.table({
+                edge_names[i]: attributions_list[:, i]
+                for i in range(attributions_list.shape[1])
+            })
+
+            writer.write_table(table)
+
+        writer.close()
+
+
+    else:
+        for g in tqdm(range(data_train_full_tensor.shape[1])):
+                attributions_list = attribution_one_target(
+                    g,
+                    tms,
+                    data_train_full_tensor,
+                    xai_type=xai_type,
+                    background_type= background_type)
+
+                
+                
+                attributions_list = aggregate_attributions(attributions_list, strategy='mean')
+                collect_sums.append(np.sum(attributions_list, axis = 0))
+                collect_means.append(np.mean(attributions_list, axis = 0))
+
+                attributions.append(attributions_list)
+        
+        attributions = np.hstack(attributions)
+
+    name_list = []
+    target_names = []
+    for i in range(cols):
+        ## Create name vector
+        name_list = name_list + list(gene_names)
+        target_names = target_names+[gene_names[i]] *len(gene_names)
+
+    
+    index_list = [f"{s}_{t}" for (s, t) in zip(name_list, target_names)]
+    cou = pd.DataFrame({'index': index_list, 'source':name_list, 'target':target_names})
+    cou = cou.set_index('index')
+    cou['edge_sums'] = np.concatenate(collect_sums)
+    cou['edge_means'] = np.concatenate(collect_means)
+
+    if backing_file is not None:
+        if return_in_memory:
+            with h5py.File(backing_file, 'r+') as f:
+                dset = f['data']
+                grn_adata  = ad.AnnData(dset, uns = {'backing_file': backing_file}, var = cou)
+                grn_adata = grn_adata.to_memory()
+
+        else:
+            grn_adata  = ad.AnnData(shape = (rows, cols_grn), uns = {'backing_file': backing_file}, var = cou)
+    else:
+        grn_adata = attribution_to_anndata(attributions, var=cou)
+
+    return grn_adata
+
+
+def inferrence_h5py(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros', backing_file='grn_adata.h5', return_in_memory=False):
 
     """
     The main inferrence function to compute the entire GRN. Computes all

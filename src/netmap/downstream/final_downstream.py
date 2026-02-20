@@ -72,7 +72,8 @@ def filter_clusters_by_cell_count(grn_adata: ad.AnnData, metric_tag: float, top_
     return filtered_adata
 
 
-def get_top_targets(gene_inter_adata, adata, top_per_source=750, col_cluster='spectral', min_reg_size=100, verbose=True):
+
+def get_top_targets(gene_inter_adata, adata, top_per_source=750, col_cluster='spectral', min_reg_size=100, verbose=True, return_copy = False):
     """
     Selects top gene targets per source from a clustered gene interaction AnnData.
 
@@ -112,6 +113,7 @@ def get_top_targets(gene_inter_adata, adata, top_per_source=750, col_cluster='sp
         rank_dfs.append(df[['names', f'rank_{c}']])
     df_rank = reduce(lambda l, r: pd.merge(l, r, on='names', how='inner'), rank_dfs)
 
+
     # Compute differences per cluster
     Keep_edges, reglon_sizes = [], []
     for c in clusters:
@@ -125,32 +127,38 @@ def get_top_targets(gene_inter_adata, adata, top_per_source=750, col_cluster='sp
 
         # Process sources
         for source in gene_inter_adata.var["source"].unique():
-            tf_rank = df_rank_c.loc[df_rank_c['names'] == source, 'diff'].values[0]
-            df_targets = (
-                gene_inter_adata.var[gene_inter_adata.var['source'] == source]
-                .merge(df_rank_c[['names', 'diff']], left_on='target', right_on='names', how='left')
-            )
-            df_targets['rank_distance'] = (df_targets['diff'] - tf_rank).abs()
-            df_targets = df_targets.sort_values('rank_distance').head(top_per_source)
+            if df_rank_c.loc[df_rank_c['names'] == source, 'diff'].shape[0]>0:
+                tf_rank = df_rank_c.loc[df_rank_c['names'] == source, 'diff'].values[0]
+                df_targets = (
+                    gene_inter_adata.var[gene_inter_adata.var['source'] == source]
+                    .merge(df_rank_c[['names', 'diff']], left_on='target', right_on='names', how='left')
+                )
+                df_targets['rank_distance'] = (df_targets['diff'] - tf_rank).abs()
+                df_targets = df_targets.sort_values('rank_distance').head(top_per_source)
 
-            reglon_sizes.append(len(df_targets))
-            if len(df_targets) >= min_reg_size:
-                Keep_edges.extend(f"{source}_{t}" for t in df_targets['target'])
+                reglon_sizes.append(len(df_targets))
+                if len(df_targets) >= min_reg_size:
+                    Keep_edges.extend(f"{source}_{t}" for t in df_targets['target'])
 
     # Deduplicate and subset
     Keep_edges = list(set(chain.from_iterable([[k] for k in Keep_edges])))
     if verbose:
         print(f"Edges kept: {len(Keep_edges)} unique")
 
-    gene_inter_adata_filtered = gene_inter_adata[:, gene_inter_adata.var.index.isin(Keep_edges)].copy()
+    if return_copy:
+        gene_inter_adata = gene_inter_adata[:, gene_inter_adata.var.index.isin(Keep_edges)].copy()
+    else:
+        # add a boolean to the object instead of creating a copy.
+        gene_inter_adata.var["selected_edge"] = gene_inter_adata.var.index.isin(Keep_edges)
+    
     if verbose:
-        print(f"Filtered shape: {gene_inter_adata_filtered.shape}")
+        print(f"Filtered shape: {gene_inter_adata.shape}")
         print(f"Unique sources: {len(gene_inter_adata.var['source'].unique())}")
         print(f"After selecting top_per_source={top_per_source}")
 
-    return gene_inter_adata_filtered, reglon_sizes
+    return gene_inter_adata, reglon_sizes
 
-
+    
 def filter_signatures_by_Ucell(grn_adata, adata) -> pd.DataFrame:
     """
     Filters gene signatures by cluster and computes UCell scores.

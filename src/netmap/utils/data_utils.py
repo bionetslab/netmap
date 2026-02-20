@@ -4,6 +4,7 @@ import os.path as op
 
 import pandas as pd
 import scipy.sparse
+import h5py
 
 def attribution_to_anndata(attribution_list, var = None, obs = None)-> anndata.AnnData:
 
@@ -70,3 +71,45 @@ def merge_all_to_obs(target_adata, source_adata, replace=True):
 
 
     return target_adata
+
+
+def retrieve_top_edges(grn_adata, percentage = 0.1):
+
+    grn_adata.uns['edge_sum_original_index'] = grn_adata.var['edge_sums'].values.argsort()[::-1]
+    
+    # Slice the object
+    max_entry = grn_adata.var.shape[0]
+    max_index = int(max_entry*percentage)
+    sorted_indices = np.sort(grn_adata.uns['edge_sum_original_index'])
+    sorted_indices = sorted_indices[0:max_index]
+
+    with h5py.File(grn_adata.uns['backing_file'], 'r+') as f:
+        dset = f['data']
+
+        X = dset[:, sorted_indices]
+        new_grn_adata = ad.AnnData(X = X, var = grn_adata.var.iloc[sorted_indices], obs = grn_adata.obs, uns = grn_adata.uns)
+        new_grn_adata.uns['complete_grn'] = False
+    return new_grn_adata
+
+
+def retrieve_edges_by_column(grn_adata, edges_keys, column_name = 'index'):
+    
+    indices = list(var[var[column_name].isin(edges_keys)].index)
+    with h5py.File(grn_adata.uns['backing_file'], 'r+') as f:
+        dset = f['data']
+        X = dset[:, indices]
+        new_grn_adata = ad.AnnData(X = X, var = grn_adata.var.iloc[indices], obs = grn_adata.obs, uns = grn_adata.uns)
+        new_grn_adata.uns['complete_grn'] = False
+    return new_grn_adata
+
+
+def remove_regulon_columns(grn_adata):
+    
+    """
+    Utility function to remove regulon columns, if for some reason you added it
+    and need to remove it when scanpy plotting starts complaining.
+
+    """
+    spike_cols = [col for col in grn_adata.obs.columns if 'regulon' in col]
+    grn_adata.obs = grn_adata.obs.drop(columns = spike_cols)
+    return grn_adata
