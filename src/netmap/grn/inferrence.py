@@ -227,6 +227,12 @@ def attribution_one_target(
         attributions_list.append(attribution.detach().cpu().numpy())
     return attributions_list
 
+import pyarrow as pa
+import pyarrow.dataset as ds
+import pyarrow.parquet as pq
+import numpy as np
+import os
+from tqdm import tqdm
 
 def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientShap', background_type = 'zeros', backing_file='grn_adata.h5', return_in_memory=False):
 
@@ -278,45 +284,49 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
 
     if backing_file is not None:
 
-        dummy_data = np.zeros((rows, cols), dtype="float32")
-        column_names = [f"col_{i}" for i in range(cols)]
-        dummy_table = pa.table({name: dummy_data[:, i] for i, name in enumerate(column_names)})
+        # Configuration
+        output_dir = op.dirname(backing_file)
+        os.makedirs(output_dir, exist_ok=True)
 
-        # Arrow IPC writer with zstd compression
-        writer = ipc.new_file(
-            backing_file,
-            dummy_table.schema,
-            options=ipc.IpcWriteOptions(compression="zstd")
-        )
+        name_list =  list(gene_names)
+        name = 'attr'
+        
+        for i in range(cols):
+            ## Create name vector
+            name_list = name_list + list(gene_names)
+            target_names = target_names+[gene_names[i]] *len(gene_names)
+        column_names = [f'{s}_{t}' for s,t in zip(name_list, target_names)]
 
+        schema = pa.schema([(name, pa.float32()) for name in column_names])
+
+        # Loop through your column-wise groups
         for g in tqdm(range(data_train_full_tensor.shape[1])):
-
+            # Generate your column-wise chunk (shape: [rows, cols])
             attributions_list = attribution_one_target(
-                g,
-                tms,
-                data_train_full_tensor,
-                xai_type=xai_type,
-                background_type=background_type
+                g, tms, data_train_full_tensor, 
+                xai_type=xai_type, background_type=background_type
             )
-
+            
             attributions_list = aggregate_attributions(attributions_list, strategy='mean')
-
+            
             collect_sums.append(np.sum(attributions_list, axis=0))
             collect_means.append(np.mean(attributions_list, axis=0))
 
-            source_list = list(gene_names)
-            target_names = [gene_names[g]] *len(gene_names)
-            edge_names = [f'{s}_{t}' for s,t in zip(source_list, target_names)]
-
+            # 2. Convert the column-chunk to a PyArrow Table
+            # Map the numpy chunk to the specific column names for this group 'g'
+            current_col_names = column_names[g*cols : (g+1)*cols]
             
-            table = pa.table({
-                edge_names[i]: attributions_list[:, i]
-                for i in range(attributions_list.shape[1])
-            })
+            # We create a table where each slice of the numpy array is a column
+            chunk_table = pa.table(
+                [attributions_list[:, i] for i in range(attributions_list.shape[1])],
+                names=current_col_names
+            )
 
-            writer.write_table(table)
+            # 3. Write this specific column-group to a Parquet file
+            # In a dataset, these will be "sharded" columns
+            file_path = os.path.join(output_dir, f"{gene_names[i]}.parquet")
+            pq.write_table(chunk_table, file_path)
 
-        writer.close()
 
 
     else:
