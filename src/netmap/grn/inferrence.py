@@ -287,6 +287,7 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
 
         # Configuration
         output_dir = op.dirname(backing_file)
+        op.join(output_dir, 'grn')
         os.makedirs(output_dir, exist_ok=True)
 
         name_list =  list(gene_names)
@@ -325,7 +326,7 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
 
             # 3. Write this specific column-group to a Parquet file
             # In a dataset, these will be "sharded" columns
-            file_path = os.path.join(output_dir, f"{gene_names[i]}.parquet")
+            file_path = os.path.join(output_dir, f"{gene_names[g]}.parquet")
             pq.write_table(chunk_table, file_path)
 
 
