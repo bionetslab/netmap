@@ -4,7 +4,7 @@ from captum.attr import GuidedBackprop, GradientShap, Deconvolution
 import torch
 from tqdm import tqdm
 
-import pandas as pd
+import pandas as pdimport pyarrow.dataset as ds
 
 from netmap.utils.data_utils import attribution_to_anndata
 import itertools
@@ -287,16 +287,17 @@ def inferrence(models, data_train_full_tensor, gene_names, xai_method='GradientS
 
         # Configuration
         output_dir = op.dirname(backing_file)
-        op.join(output_dir, 'grn')
+        output_dir = op.join(output_dir, 'grn')
         os.makedirs(output_dir, exist_ok=True)
 
-        name_list =  list(gene_names)
+        name_list =  []
         name = 'attr'
         
         for i in range(cols):
             ## Create name vector
             name_list = name_list + list(gene_names)
             target_names = target_names+[gene_names[i]] *len(gene_names)
+            
         column_names = [f'{s}_{t}' for s,t in zip(name_list, target_names)]
 
         schema = pa.schema([(name, pa.float32()) for name in column_names])
