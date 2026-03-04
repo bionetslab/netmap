@@ -17,6 +17,8 @@
    :nosignatures:
 
 
+   add_cluster_based_candidate_edges
+
    add_neighbourhood_expression_mask
 
    binarize_adata

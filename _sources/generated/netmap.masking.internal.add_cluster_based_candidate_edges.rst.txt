@@ -1,0 +1,6 @@
+netmap.masking.internal.add\_cluster\_based\_candidate\_edges
+=============================================================
+
+.. currentmodule:: netmap.masking.internal
+
+.. autofunction:: add_cluster_based_candidate_edges

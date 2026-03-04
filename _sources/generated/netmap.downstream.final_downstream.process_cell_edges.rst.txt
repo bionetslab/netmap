@@ -1,0 +1,6 @@
+netmap.downstream.final\_downstream.process\_cell\_edges
+========================================================
+
+.. currentmodule:: netmap.downstream.final_downstream
+
+.. autofunction:: process_cell_edges

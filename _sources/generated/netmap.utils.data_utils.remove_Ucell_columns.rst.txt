@@ -1,0 +1,6 @@
+netmap.utils.data\_utils.remove\_Ucell\_columns
+===============================================
+
+.. currentmodule:: netmap.utils.data_utils
+
+.. autofunction:: remove_Ucell_columns

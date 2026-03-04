@@ -9,6 +9,17 @@ netmap.downstream.plotting
 
 
 
+.. rubric:: Functions
+
+.. autosummary::
+   :toctree:                          
+   :template: autosummary/function.rst
+   :nosignatures:
+
+
+   rank_regulon_groups_dotplot
+
+
 
 
 

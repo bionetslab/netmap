@@ -1,0 +1,6 @@
+netmap.downstream.final\_downstream.compute\_signatures\_UCell\_scores
+======================================================================
+
+.. currentmodule:: netmap.downstream.final_downstream
+
+.. autofunction:: compute_signatures_UCell_scores

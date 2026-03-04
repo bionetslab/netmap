@@ -1,0 +1,6 @@
+netmap.downstream.plotting.rank\_regulon\_groups\_dotplot
+=========================================================
+
+.. currentmodule:: netmap.downstream.plotting
+
+.. autofunction:: rank_regulon_groups_dotplot
