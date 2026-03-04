@@ -128,8 +128,10 @@ def retrieve_top_edges(grn_adata, output_dir, percentage=0.1):
 
 def retrieve_edges_by_index(grn_adata, output_dir, index_list):
 
-    parquet_files = list(output_dir.glob("*.parquet"))
+    if not isinstance(output_dir, Path):
+        output_dir = Path(output_dir)
 
+    parquet_files = list(output_dir.glob("*.parquet"))
     sorted_indices = np.sort(index_list)
 
     index_set = set(grn_adata.var.index[sorted_indices])
