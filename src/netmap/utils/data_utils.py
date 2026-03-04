@@ -10,6 +10,7 @@ from pathlib import Path
 import pyarrow.parquet as pq
 import pyarrow as pa
 import numpy as np
+import anndata as ad
 
 def attribution_to_anndata(attribution_list, var = None, obs = None)-> anndata.AnnData:
 
