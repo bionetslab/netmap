@@ -24,7 +24,8 @@ from netmap.downstream.clustering import process, spectral_clustering, downstrea
 from netmap.downstream.edge_selection import add_top_edge_annotation_global
 
 
-    
+from itertools import combinations
+from collections import Counter
 
 
 def filter_clusters_by_cell_count(grn_adata: ad.AnnData, metric_tag: float, top_fraction: float) -> Tuple[Optional[Dict[str, float]], ad.AnnData]:
@@ -159,7 +160,7 @@ def get_top_targets(gene_inter_adata, adata, top_per_source=750, col_cluster='sp
     return gene_inter_adata, reglon_sizes
 
     
-def filter_signatures_by_Ucell(grn_adata, adata) -> pd.DataFrame:
+def filter_signatures_by_Ucell(selected_edges, adata) -> pd.DataFrame:
     """
     Filters gene signatures by cluster and computes UCell scores.
 
@@ -177,10 +178,71 @@ def filter_signatures_by_Ucell(grn_adata, adata) -> pd.DataFrame:
     """
     
     signatures  = grn_adata.var.groupby('source')['target'].apply(list).to_dict()
-    ucell.compute_ucell_scores(adata, signatures=signatures)
+    ucell.compute_ucell_scores(adata, signatures=signatures, n_jobs=1)
     data_ucell = adata.obs.filter(like='_UCell')
     return data_ucell
 
+
+
+
+def process_cell_edges(keep_edges):
+    results = {'unique': {}, 'pairwise': {}}
+    all_cells = list(keep_edges.keys())
+
+    def get_source_summary(edge_set):
+        # Handles (source, target) tuples OR strings with a separator like '->'
+        sources = []
+        for e in edge_set:
+            sources.append(e.split('_')[0])
+        
+        source_dict = dict(Counter(sources))
+        sources = pd.DataFrame({'source' :source_dict.keys(), 'count': source_dict.values()}).sort_values('count', ascending=False)
+        return sources
+
+    # Calculate Uniques
+    for cell in all_cells:
+        others = set().union(*(set(keep_edges[c]) for c in all_cells if c != cell))
+        unique = set(keep_edges[cell]) - others
+
+        df = pd.DataFrame(
+            [e.split('_', 1) for e in unique],
+            columns=['source', 'target']
+        )
+
+        results['unique'][cell] = {
+            'edges': df,
+            'summary': get_source_summary(unique)
+        }
+        
+    return results
+
+
+def compute_signatures_UCell_scores(selected_edges, adata, key='unique') -> pd.DataFrame:
+    """
+    Filters gene signatures by cluster and computes UCell scores.
+
+    Parameters
+    ----------
+    grn_adata : AnnData
+        AnnData object containing GRN (gene regulatory network) information.
+    adata : AnnData
+        AnnData object containing gene expression counts in the 'counts' layer.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with UCell scores merged with the 'spectral' cluster labels.
+    """
+    
+    all_signatures = {}
+    for ct in resi[key]:
+        sign = resi[key][ct]['edges'].groupby('source')['target'].apply(list).to_dict()
+        sign  = {f"{ct}_{k}": v for k, v in sign.items()}
+        all_signatures = all_signatures | sign
+
+    ucell.compute_ucell_scores(adata, signatures=all_signatures, n_jobs=1)
+    data_ucell = adata.obs.filter(like='_UCell')
+    return data_ucell
 
 
 def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: ad.AnnData, keep_top_ranked: int = 100, filter_by: str = "z_score", cluster_col = 'spectral') -> Tuple[Optional[ad.AnnData], List[str]]:
