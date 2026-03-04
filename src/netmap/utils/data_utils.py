@@ -6,6 +6,10 @@ import pandas as pd
 import scipy.sparse
 import h5py
 
+from pathlib import Path
+import pyarrow.parquet as pq
+import pyarrow as pa
+
 def attribution_to_anndata(attribution_list, var = None, obs = None)-> anndata.AnnData:
 
     """
