@@ -167,6 +167,7 @@ def add_cluster_based_candidate_edges(grn_adata, cluster_column = 'leiden_remap'
 
 
 
+
 def find_consistent_pairs(grn_adata, gene_names):
     """
     Creates a dictionary of binary masks for each cell and pair of genes,

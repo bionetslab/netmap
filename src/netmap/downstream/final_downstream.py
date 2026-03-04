@@ -182,6 +182,85 @@ def filter_signatures_by_Ucell(selected_edges, adata) -> pd.DataFrame:
     data_ucell = adata.obs.filter(like='_UCell')
     return data_ucell
 
+def select_top_edges(gene_inter_adata, adata, top_per_source=10, col_cluster='leiden_remap', min_reg_size=10, verbose=True, return_copy = False):
+    """
+    Selects top gene targets per source from a clustered gene interaction AnnData.
+
+    Parameters
+    ----------
+    gene_inter_adata : AnnData
+        Gene interaction AnnData with `var` containing 'source' and 'target'.
+    adata : AnnData
+        Expression AnnData for ranking genes.
+    top_per_source : int, default=750
+        Number of top targets to select per source.
+    col_cluster : str, default='spectral'
+        Column in obs defining clusters.grn_adata3.var
+
+    Returns
+    -------
+    gene_inter_adata_filtered : AnnData
+        Filtered AnnData containing top edges.
+    reglon_sizes : list of int
+        Sizes of regulatory regions per source.
+
+    """
+
+    min_edge_support = 0.5
+
+    if verbose: print(f"Initial shape: {gene_inter_adata.shape}")
+
+    # Rank genes per cluster
+    sc.tl.rank_genes_groups(adata, groupby=col_cluster, method='t-test')
+    clusters = list(set(np.unique(gene_inter_adata.obs[col_cluster])).intersection(adata.obs[col_cluster]))
+
+    # Merge ranking data across clusters
+    rank_dfs = []
+    for c in clusters:
+        if verbose: print(f"Ranking cluster: {c}")
+        df = sc.get.rank_genes_groups_df(adata, group=str(c))
+        df = df.sort_values('scores', ascending=False)
+        df[f"rank_{c}"] = np.arange(1, len(df) + 1)
+        rank_dfs.append(df[['names', f'rank_{c}']])
+    df_rank = reduce(lambda l, r: pd.merge(l, r, on='names', how='inner'), rank_dfs)
+
+    keep_edges_dict = {}
+    # Compute differences per cluster
+    
+    for c in clusters:
+        Keep_edges, reglon_sizes = [], []
+        if verbose: print(f"Selecting targets for cluster: {c}")
+        df_rank_c = df_rank.copy()
+        rank_cols = [col for col in df_rank.columns if col != 'names']
+        rank_cols.remove(f"rank_{c}")
+        df_rank_c['avg'] = df_rank_c[rank_cols].mean(axis=1)
+        df_rank_c['diff'] = (df_rank_c[f"rank_{c}"] - df_rank_c['avg']).abs()
+        df_rank_c = df_rank_c.sort_values('diff', ascending=False)
+
+
+        for source in gene_inter_adata.var["source"].unique():
+            if df_rank_c.loc[df_rank_c['names'] == source, 'diff'].shape[0] > 0:
+                tf_rank = df_rank_c.loc[df_rank_c['names'] == source, 'diff'].values[0]
+
+                df_targets = (
+                    gene_inter_adata.var[
+                        (gene_inter_adata.var['source'] == source) &
+                        (gene_inter_adata.var[f'{c}_nonzero'] >= min_edge_support)
+                    ]
+                    .merge(df_rank_c[['names', 'diff']],
+                        left_on='target', right_on='names', how='left')
+                )
+
+                df_targets['rank_distance'] = (df_targets['diff'] - tf_rank).abs()
+                df_targets = df_targets.sort_values('rank_distance').head(top_per_source)
+
+                reglon_sizes.append(len(df_targets))
+                if len(df_targets) >= min_reg_size:
+                    Keep_edges.extend(f"{source}_{t}" for t in df_targets['target'])
+
+            keep_edges_dict[c] = Keep_edges
+    keep_edges_dict = process_cell_edges(keep_edges)
+    return keep_edges_dict
 
 
 
@@ -235,15 +314,14 @@ def compute_signatures_UCell_scores(selected_edges, adata, key='unique') -> pd.D
     """
     
     all_signatures = {}
-    for ct in resi[key]:
-        sign = resi[key][ct]['edges'].groupby('source')['target'].apply(list).to_dict()
+    for ct in selected_edges[key]:
+        sign = selected_edges[key][ct]['edges'].groupby('source')['target'].apply(list).to_dict()
         sign  = {f"{ct}_{k}": v for k, v in sign.items()}
         all_signatures = all_signatures | sign
 
     ucell.compute_ucell_scores(adata, signatures=all_signatures, n_jobs=1)
     data_ucell = adata.obs.filter(like='_UCell')
     return data_ucell
-
 
 def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: ad.AnnData, keep_top_ranked: int = 100, filter_by: str = "z_score", cluster_col = 'spectral') -> Tuple[Optional[ad.AnnData], List[str]]:
     """
@@ -320,36 +398,6 @@ def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: ad.AnnData
     return grn_adata_filtered, top_sources_list
 
 
-# def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: AnnData, keep_top_ranked: int = 100) -> Tuple[Optional[AnnData], List[str]]:
-    
-#     if grn_adata.var.empty:
-#         return None, []
-
-#     df = data_ucell.copy()
-#     features = [c for c in df.columns if c.endswith('_UCell')]
-#     clusters = sorted(df['spectral'].unique())
-#     all_results = []
-
-#     for cl in clusters:
-#         g1, g2 = df[df['spectral'] == cl], df[df['spectral'] != cl]
-#         res = []
-#         for f in features:
-#             try:
-#                 s, p = mannwhitneyu(g1[f], g2[f], alternative='two-sided')
-#                 res.append({'cluster': cl, 'gene_set': f, 'mean_diff': g1[f].mean() - g2[f].mean(), 'pval': p})
-#             except: 
-#                 res.append({'cluster': cl, 'gene_set': f, 'mean_diff': 0, 'pval': 1})
-#         res = pd.DataFrame(res)
-#         res['padj'] = multipletests(res['pval'], method='fdr_bh')[1]
-#         all_results.append(res.sort_values(['padj','mean_diff'], ascending=[True, False]).head(keep_top_ranked))
-
-#     combined = pd.concat(all_results, ignore_index=True)
-#     top_sources = [s.split("_UCell")[0] for s in list(combined["gene_set"])]
-#     top_sources_list = list(set(top_sources))
-
-#     grn_adata_filtered = grn_adata[:, grn_adata.var["source"].isin(top_sources_list)].copy()
-    
-#     return grn_adata_filtered, top_sources_list
 
 
 
@@ -415,9 +463,7 @@ def plot_shared_targets_heatmap(grn_adata, genes=None, figsize=(6, 6), cmap='RdB
     plt.suptitle(title, y=1.05)
     plt.show()
 
-    #return shared_target_matrix
 
-#**********************************************************************
 
 
 
