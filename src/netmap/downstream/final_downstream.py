@@ -323,6 +323,8 @@ def compute_signatures_UCell_scores(selected_edges, adata, key='unique') -> pd.D
     data_ucell = adata.obs.filter(like='_UCell')
     return data_ucell
 
+    
+
 def filter_grn_by_top_signatures(data_ucell: pd.DataFrame, grn_adata: ad.AnnData, keep_top_ranked: int = 100, filter_by: str = "z_score", cluster_col = 'spectral') -> Tuple[Optional[ad.AnnData], List[str]]:
     """
     Filters a GRN (Gene Regulatory Network) AnnData object to keep only the edges
