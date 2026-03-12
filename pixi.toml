@@ -13,6 +13,8 @@ install-kernel = "python -m ipykernel install --user --name pixi_netmap --displa
 uninstall-kernel = "jupyter kernelspec uninstall pixi_netmap"
 
 [dependencies]
+anndata = ">=0.12.8,<0.13"
+scanpy = ">=1.12,<2"
 pytorch-gpu = "*"
 cuda-version = "12.8.*"
 cupy = ">=13.5.1,<14"
@@ -21,7 +23,28 @@ scikit-image = ">=0.25.2,<0.26"
 sphinx = "*"
 sphinx-autobuild = "*"
 furo = "*"
-
+numba = ">=0.63.1,<0.64"
+libopenblas = ">=0.3.31,<0.4"
+jupyter = ">=1.1.1,<2"
+gtfparse = ">=2.5.0,<3"
+ipykernel = ">=7.1.0,<8"
+scikit-learn =  "*"
+pandas= "*"
+scipy= "*"
+numpy= "*"
+seaborn= "*"
+statsmodels= "*"
+captum= "*"
+python-igraph= "*"
+leidenalg= "*"
+matplotlib= "*"
+pyvis= "*"
+pyyaml= "*"
+plotnine = ">=0.15.3,<0.16"
+patchworklib = ">=0.6.3,<0.7"
+pyarrow = ">=20.0.0,<21"
+celltypist = ">=1.7.1,<2"
+scvi = ">=0.6.8,<0.7"
 
 [pypi-dependencies]
 netmap = { git = "https://github.com/bionetslab/netmap" }

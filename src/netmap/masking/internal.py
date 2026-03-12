@@ -153,13 +153,13 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X
     return grn_adata
 
 
-def add_cluster_based_candidate_edges(grn_adata, cluster_column = 'leiden_remap'):
+def add_cluster_based_candidate_edges(grn_adata, cluster_column = 'leiden_remap', threshold = 0.5):
     vc = grn_adata.obs[cluster_column].value_counts()
     grn_adata.var[f'count_nonzero_norm'] = grn_adata.var[f'count_nonzero']/grn_adata.obs.shape[0]
     for ps in list(vc.index):
         grn_adata.var[f'{ps}_nonzero'] = (grn_adata[grn_adata.obs[cluster_column] == ps].layers['mask'].sum(axis = 0))/vc[ps]
         #grn_adata.var[f'{ps}_candidate_edge'] = np.abs(grn_adata.var[f'{ps}_nonzero']-grn_adata.var[f'count_nonzero_norm'])>0.1
-        grn_adata.var[f'{ps}_candidate_edge'] = grn_adata.var[f'{ps}_nonzero']>0.5
+        grn_adata.var[f'{ps}_candidate_edge'] = grn_adata.var[f'{ps}_nonzero']>threshold
 
     value_cols = [f'{ps}_candidate_edge' for ps in vc.index]
     grn_adata.var['candidate_edge'] = grn_adata.var[value_cols].sum(axis = 1)

@@ -38,20 +38,18 @@ def rank_regulon_groups_dotplot(grn_adata_filtered, adata_regl, original_cluster
         regulon = adata_regl.var.regulon_name[ri]
         sou = adata_regl.var.source[ri]
         count = count+1
-        fractions[f'{regulon}_UCell'] =   grn_adata_filtered.var[grn_adata_filtered.var.source == sou][colheaders].sum()
+        fractions[f'{regulon}'] =   grn_adata_filtered.var[grn_adata_filtered.var.source == sou][colheaders].sum()
         
     fractions = pd.DataFrame(fractions)
     fractions.index = [x.replace('_nonzero', '') for x in fractions.index]
-
 
     # return fig needs to be true: get plot, modify sizes, then plot or return
     pp = sc.pl.rank_genes_groups_dotplot(adata_regl, n_genes=n_genes, key=key, groupby=new_cluster_column, cmap=cmap, figsize=figsize, values_to_plot=values_to_plot, return_fig = True)
     fractions = fractions.reindex(list(pp.dot_size_df.index))
 
     pp.dot_size_df = fractions.loc[:, pp.dot_color_df.columns]
-    print(fractions)
     pp.dot_size_df = pp.dot_size_df/(pp.dot_size_df.max())
-    
+    pp.dot_size_df = pp.dot_size_df.fillna(0)
     if return_fig:
         return pp
     else:
