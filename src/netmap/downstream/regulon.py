@@ -184,7 +184,7 @@ def aggregate_edges(selected_edges, grn_adata, key='unique') -> pd.DataFrame:
         print(ct)
         sign = selected_edges[key][ct]['edges'].groupby('source').apply(lambda x: (x['source'] + "_" + x['target']).tolist()).to_dict()
         for g in sign:
-            regulons[f'{ct}_{g}'] = grn_adata[:, sign[g]].X.sum(axis = 1)
+            regulons[f'{ct}_{g}'] = grn_adata[:, sign[g]].X.sum(axis = 1)/len(sign[g])
     regulons = pd.DataFrame(regulons)
     return regulons
 

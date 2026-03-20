@@ -50,6 +50,7 @@ def rank_regulon_groups_dotplot(grn_adata_filtered, adata_regl, original_cluster
     pp.dot_size_df = fractions.loc[:, pp.dot_color_df.columns]
     pp.dot_size_df = pp.dot_size_df/(pp.dot_size_df.max())
     pp.dot_size_df = pp.dot_size_df.fillna(0)
+    
     if return_fig:
         return pp
     else:
