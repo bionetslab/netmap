@@ -176,8 +176,8 @@ def make_cluster_regulon_dataframe(keep_edges):
         for clu in keep_edges[un] :
             df = keep_edges[un][clu]['edges']
             if df.shape[0]>0:
-                df['cluster'] = clu
-                df['set_type'] = un 
+                df['cluster'] = un
+                df['set_type'] = clu 
                 all_regulons.append(df)
     all_regulons = pd.concat(all_regulons)
     return all_regulons
