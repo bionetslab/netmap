@@ -27,6 +27,7 @@ def get_grn_targets(keep_edges, cluster, source_genes):
     return list(re[re.source.isin(source_genes)].target)
 
 
+
 def prepare_jaccard_analysis_df(grn_adata, all_signatures, keep_edges, marker_sets, cluster_assignment, cluster_mapper):
     """Processes all clusters and returns a unified DataFrame for plotting."""
     all_results = []

@@ -176,12 +176,12 @@ def make_cluster_regulon_dataframe(keep_edges):
         for clu in keep_edges[un] :
             df = keep_edges[un][clu]['edges']
             if df.shape[0]>0:
-                df['cluster'] = un
-                df['set_type'] = clu 
+                df['cluster'] = clu
+                df['set_type'] = un 
                 all_regulons.append(df)
     all_regulons = pd.concat(all_regulons)
     return all_regulons
-
+    
 def load_edge_dict_from_dataframe(all_regulons):
     """
     Reverses a concatenated DataFrame back into the nested dictionary:

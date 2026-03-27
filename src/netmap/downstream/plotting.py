@@ -1,5 +1,7 @@
 import scanpy as sc
 import pandas as pd
+from collections import Counter
+
 
 def rank_regulon_groups_dotplot(grn_adata_filtered, adata_regl, original_cluster_column = 'leiden', new_cluster_column = 'leiden_remap',  n_genes=10, key="wilcoxon",  cmap='bwr', figsize=(25, 2), values_to_plot="scores", return_fig = True):
     """_summary_
