@@ -182,6 +182,28 @@ def make_cluster_regulon_dataframe(keep_edges):
     all_regulons = pd.concat(all_regulons)
     return all_regulons
 
+def load_edge_dict_from_dataframe(all_regulons):
+    """
+    Reverses a concatenated DataFrame back into the nested dictionary:
+    {set_type: {cluster: {'edges': DataFrame}}}
+    """
+    keep_edges = {}
+
+    # Group by the metadata columns we added in the forward function
+    for (set_type, cluster), group_df in all_regulons.groupby(['set_type', 'cluster']):
+        
+        # Initialize the outer dictionary (set_type) if it doesn't exist
+        if set_type not in keep_edges:
+            keep_edges[set_type] = {}
+            
+        # Clean the DataFrame: remove the metadata columns we added
+        # and reset the index if necessary to match the original state
+        clean_df = group_df.drop(columns=['set_type', 'cluster']).copy()
+        
+        # Reconstruct the internal 'edges' dictionary
+        keep_edges[set_type][cluster] = {'edges': clean_df}
+        
+    return keep_edges
 
 
 def jaccard_similarity(set1, set2):
