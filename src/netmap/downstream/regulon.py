@@ -28,9 +28,8 @@ from itertools import combinations
 from collections import Counter
 
 
-def select_top_edges(gene_inter_adata, adata, top_per_source=10, col_cluster='leiden_remap', min_reg_size=10, verbose=True, return_copy = False, tf_column=None):
+def select_top_edges(gene_inter_adata, adata, top_per_source=10, col_cluster='leiden_remap', min_reg_size=10, verbose=True, return_copy = False, tf_column=None, min_edge_support = 0.5):
 
-    min_edge_support = 0.5
     clusters = list(np.unique(gene_inter_adata.obs[col_cluster]))
     keep_edges_dict = {}
 
