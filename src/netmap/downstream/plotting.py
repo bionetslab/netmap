@@ -2,6 +2,16 @@ import scanpy as sc
 import pandas as pd
 from collections import Counter
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+
+import networkx as nx
+
+import seaborn as sns
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
 
 def rank_regulon_groups_dotplot(grn_adata_filtered, adata_regl, original_cluster_column = 'leiden', new_cluster_column = 'leiden_remap',  n_genes=10, key="wilcoxon",  cmap='bwr', figsize=(25, 2), values_to_plot="scores", return_fig = True):
     """_summary_
@@ -60,11 +70,6 @@ def rank_regulon_groups_dotplot(grn_adata_filtered, adata_regl, original_cluster
 
 
 
-import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
-import seaborn as sns
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 def get_grn_from_regulon(regulon_df, full_name, top_n=20):
     """
