@@ -105,7 +105,7 @@ def binarize_adata(adata, expression_threshold = 0, layer = 'X'):
         if issparse(adata.layers[layer]):
             binary_expression = (adata.layers[layer].todense() > expression_threshold).astype(int)
         else:
-            binary_expression = (adata.layer[layer] > expression_threshold).astype(int)
+            binary_expression = (adata.layers[layer] > expression_threshold).astype(int)
     return binary_expression
 
 
