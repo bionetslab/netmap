@@ -164,9 +164,7 @@ def unify_group_labelling(adata, grn_adata, col_adata, col_grn_adata) -> float:
 
 def unify_group_labelling(adata, grn_adata, col_adata, col_grn_adata, return_mapping=True):
     """
-    Matches overclustered grn_adata to adata using Maximum Weight Bipartite Matching.
-    This ensures every GRN cluster is assigned the 'best' possible reference 
-    label while maximizing the global sum of cell overlaps.
+    Matches overclustered grn_adata to adata using Argmax
     """
     # 1. Compute Contingency Matrix
     # Rows = adata (Ref), Cols = grn_adata (Target)
@@ -175,21 +173,7 @@ def unify_group_labelling(adata, grn_adata, col_adata, col_grn_adata, return_map
     names_ad = np.unique(adata.obs[col_adata])
     names_grn = np.unique(grn_adata.obs[col_grn_adata])
     
-    # 2. Maximum Weight Matching
-    # SciPy's bipartite matching finds the MINIMUM weight. 
-    # To find the MAXIMUM weight, we subtract the matrix from its maximum value.
-    # Note: This handles the N > M case (overclustering) by ensuring 
-    # each column (GRN cluster) finds its best match in the rows (Ref).
-    
-    # We transpose because we want a match for every column (GRN cluster)
-    # cm.T shape: (n_grn_clusters, n_ref_clusters)
     cost_matrix = cm.max() - cm.T 
-    
-    # row_ind will correspond to names_grn indices
-    # col_ind will correspond to names_ad indices
-    # 'min_weight_full_bipartite_matching' will match all nodes of the smaller set.
-    # Since we want a mapping for ALL GRN clusters, we use a greedy maximum 
-    # weight assignment per cluster.
     
     reverse_mapping = {}
     total_matched_cells = 0
