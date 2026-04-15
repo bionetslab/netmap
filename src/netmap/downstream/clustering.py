@@ -8,6 +8,12 @@ from scipy.optimize import linear_sum_assignment
 from sklearn.cluster import KMeans, SpectralClustering
 from sklearn.metrics.cluster import contingency_matrix
 
+import numpy as np
+import pandas as pd
+from scipy.sparse import csr_matrix
+from scipy.sparse.csgraph import min_weight_full_bipartite_matching
+from sklearn.metrics.cluster import contingency_matrix
+
 
 
 def downstream_recipe(grn_adata, **kwargs) -> sc.AnnData:
@@ -154,3 +160,56 @@ def unify_group_labelling(adata, grn_adata, col_adata, col_grn_adata) -> float:
     return score
 
 
+
+
+def unify_group_labelling(adata, grn_adata, col_adata, col_grn_adata, return_mapping=True):
+    """
+    Matches overclustered grn_adata to adata using Maximum Weight Bipartite Matching.
+    This ensures every GRN cluster is assigned the 'best' possible reference 
+    label while maximizing the global sum of cell overlaps.
+    """
+    # 1. Compute Contingency Matrix
+    # Rows = adata (Ref), Cols = grn_adata (Target)
+    cm = contingency_matrix(adata.obs[col_adata], grn_adata.obs[col_grn_adata])
+    
+    names_ad = np.unique(adata.obs[col_adata])
+    names_grn = np.unique(grn_adata.obs[col_grn_adata])
+    
+    # 2. Maximum Weight Matching
+    # SciPy's bipartite matching finds the MINIMUM weight. 
+    # To find the MAXIMUM weight, we subtract the matrix from its maximum value.
+    # Note: This handles the N > M case (overclustering) by ensuring 
+    # each column (GRN cluster) finds its best match in the rows (Ref).
+    
+    # We transpose because we want a match for every column (GRN cluster)
+    # cm.T shape: (n_grn_clusters, n_ref_clusters)
+    cost_matrix = cm.max() - cm.T 
+    
+    # row_ind will correspond to names_grn indices
+    # col_ind will correspond to names_ad indices
+    # 'min_weight_full_bipartite_matching' will match all nodes of the smaller set.
+    # Since we want a mapping for ALL GRN clusters, we use a greedy maximum 
+    # weight assignment per cluster.
+    
+    reverse_mapping = {}
+    total_matched_cells = 0
+    
+    # Efficiently find the max for each GRN cluster
+    best_ref_indices = np.argmax(cm, axis=0)
+    
+    for grn_idx, ref_idx in enumerate(best_ref_indices):
+        grn_label = names_grn[grn_idx]
+        ref_label = names_ad[ref_idx]
+        reverse_mapping[grn_label] = ref_label
+        total_matched_cells += cm[ref_idx, grn_idx]
+
+    # 3. Apply Mapping
+    col_grn_remapped = f"{col_grn_adata}_remap"
+    grn_adata.obs[col_grn_remapped] = grn_adata.obs[col_grn_adata].map(reverse_mapping)
+    grn_adata.obs[col_grn_remapped] = pd.Categorical(grn_adata.obs[col_grn_remapped])
+
+    score = total_matched_cells / grn_adata.n_obs
+    
+    if return_mapping:
+        return score, reverse_mapping
+    return score
