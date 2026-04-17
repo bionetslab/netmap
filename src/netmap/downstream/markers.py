@@ -28,7 +28,7 @@ def get_grn_targets(keep_edges, cluster, source_genes):
 
 
 
-def prepare_jaccard_analysis_df(grn_adata, all_signatures, keep_edges, marker_sets, cluster_assignment, cluster_mapper):
+def prepare_jaccard_analysis_df(grn_adata, all_signatures, keep_edges, marker_sets, cluster_mapper):
     """Processes all clusters and returns a unified DataFrame for plotting."""
     all_results = []
     
@@ -56,17 +56,8 @@ def prepare_jaccard_analysis_df(grn_adata, all_signatures, keep_edges, marker_se
             print(f"Skipping cluster {ct} due to error: {e}")
 
     full_df = pd.concat(all_results)
-    
-    # Merge with cluster metadata
-    full_df = full_df.merge(cluster_assignment, left_on='celltype', right_on='index')
-    
-    # Mapping Logic (On-Target vs Off-Target)
-    def check_match(row):
-        allowed = cluster_mapper.get(row['ct'], [])
-        return 'on target' if row['cluster_high_level'] in allowed else 'off target'
-    
-    full_df['is_mapped'] = full_df.apply(check_match, axis=1)
-    return full_df[full_df['ct'].isin(cluster_mapper.keys())].copy()
+
+    return full_df
 
 
 def plot_jaccard_comparison(plot_df, title="Jaccard Similarity: On-Target vs Off-Target"):
