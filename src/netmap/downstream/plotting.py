@@ -13,7 +13,7 @@ import seaborn as sns
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 
-def rank_regulon_groups_dotplot(grn_adata_filtered, adata_regl, original_cluster_column = 'leiden', new_cluster_column = 'leiden_remap',  n_genes=10, key="wilcoxon",  cmap='bwr', figsize=(25, 2), values_to_plot="scores", return_fig = True):
+def rank_regulon_groups_dotplot(grn_adata_filtered, adata_regl, original_cluster_column = 'leiden', new_cluster_column = 'leiden_remap',  n_genes=10, key="wilcoxon",  cmap='bwr', figsize=(25, 2), values_to_plot="scores", return_fig = True, var_group_rotation=0):
     """_summary_
 
     Function will throw and error if original cluster column and new cluster are not the same.
@@ -56,7 +56,8 @@ def rank_regulon_groups_dotplot(grn_adata_filtered, adata_regl, original_cluster
     fractions.index = [x.replace('_nonzero', '') for x in fractions.index]
 
     # return fig needs to be true: get plot, modify sizes, then plot or return
-    pp = sc.pl.rank_genes_groups_dotplot(adata_regl, n_genes=n_genes, key=key, groupby=new_cluster_column, cmap=cmap, figsize=figsize, values_to_plot=values_to_plot, return_fig = True)
+    pp = sc.pl.rank_genes_groups_dotplot(adata_regl, n_genes=n_genes, key=key, groupby=new_cluster_column, cmap=cmap, figsize=figsize, values_to_plot=values_to_plot, return_fig=True, var_group_rotation =var_group_rotation)
+    print(pp)
     fractions = fractions.reindex(list(pp.dot_size_df.index))
 
     pp.dot_size_df = fractions.loc[:, pp.dot_color_df.columns]
@@ -88,42 +89,76 @@ def get_grn_from_regulon(regulon_df, full_name, top_n=20):
     return nx.from_pandas_edgelist(subset, 'source', 'target', create_using=nx.DiGraph())
 
 def draw_inset_graph(parent_ax, G, orientation='x'):
-    """Handles the geometry of the marginal GRN plots."""
-    bbox = (0.0, -0.45, 1.0, 0.3) if orientation == 'x' else (-0.45, 0.0, 0.3, 1.0)
-    ax_ins = inset_axes(parent_ax, width="100%", height="100%", loc='center',
-                        bbox_to_anchor=bbox, bbox_transform=parent_ax.transAxes)
+    # Pushing the bbox further (to -0.5) to avoid any overlap with the axis frame
+    if orientation == 'x':
+        bbox = (0.0, -0.52, 1.0, 0.35) 
+    else:
+        bbox = (-0.52, 0.0, 0.35, 1.0)
     
-    pos = nx.spring_layout(G, k=1.5, seed=42)
-    nx.draw_networkx(G, pos, ax=ax_ins, node_size=200, node_color='#a8dadc', 
-                     edge_color='#457b9d', alpha=0.7, font_size=7, font_weight='bold')
+    ax_ins = inset_axes(parent_ax, width="100%", height="100%", loc='center',
+                        bbox_to_anchor=bbox, bbox_transform=parent_ax.transAxes, borderpad=0)
+    
+    if len(G) > 0:
+        pos = nx.kamada_kawai_layout(G)
+        
+        # Logic for 2-node graphs to keep edges from looking like infinite lines
+        if len(G) <= 3:
+            ax_ins.set_xlim(-2.5, 2.5)
+            ax_ins.set_ylim(-2.5, 2.5)
+        else:
+            x_values, y_values = zip(*pos.values())
+            x_r, y_r = max(x_values) - min(x_values), max(y_values) - min(y_values)
+            ax_ins.set_xlim(min(x_values) - x_r*0.4, max(x_values) + x_r*0.4)
+            ax_ins.set_ylim(min(y_values) - y_r*0.4, max(y_values) + y_r*0.4)
+
+        nx.draw_networkx_edges(G, pos, ax=ax_ins, edge_color='#bdc3c7', alpha=0.4, width=0.8)
+        nx.draw_networkx_nodes(G, pos, ax=ax_ins, node_size=100, node_color='#f8f9fa', 
+                               edgecolors='#34495e', linewidths=0.5)
+        nx.draw_networkx_labels(G, pos, ax=ax_ins, font_size=7, font_weight='bold', clip_on=False)
+
     ax_ins.axis('off')
 
-def plot_regulon_comparison(adata, regulon_table, regulons, cluster_key='leiden_remap'):
-    """
-    The 'One-Liner' function.
-    Pass it the adata, the big regulon table, and the two strings.
-    """
+def plot_regulon_comparison(adata, regulon_table, regulons, cluster_key='leiden_remap', palette=None, show_legend=True):
     # 1. Prepare Scatter Data
     df = pd.DataFrame(adata[:, regulons].X.copy(), columns=regulons)
     df['group'] = adata.obs[cluster_key].values
 
-    # 2. Build Graphs automatically from the names
+    # 2. Build Graphs
     G_x = get_grn_from_regulon(regulon_table, regulons[0])
     G_y = get_grn_from_regulon(regulon_table, regulons[1])
 
     # 3. Plotting
-    fig, ax = plt.subplots(figsize=(9, 9))
-    plt.subplots_adjust(left=0.25, bottom=0.25)
-
-    sns.scatterplot(data=df, x=regulons[0], y=regulons[1], hue='group', ax=ax, s=20, alpha=0.5)
+    fig, ax = plt.subplots(figsize=(4, 4))
     
+    # Increase margins significantly to accommodate external GRNs and titles
+    plt.subplots_adjust(top=0.82, right=0.82, left=0.18, bottom=0.18)
+
+    sns.scatterplot(
+        data=df, x=regulons[0], y=regulons[1], hue='group', 
+        palette=palette, ax=ax, s=20, alpha=0.5, legend=show_legend
+    )
+    
+    # Draw Insets with extra clearance
     draw_inset_graph(ax, G_x, 'x')
     draw_inset_graph(ax, G_y, 'y')
     
-    # Clean up aesthetics
-    sns.despine(ax=ax)
-    ax.legend(title='Cluster', bbox_to_anchor=(1.05, 1), loc='upper left')
+    # 4. Move Labels and Shrink Ticks
+    ax.xaxis.set_label_position('top')
+    ax.yaxis.set_label_position('right')
     
+    # Shrink the numbers on the axes
+    ax.tick_params(axis='both', which='major', labelsize=7)
+    
+    # 5. Legend Styling
+    if show_legend:
+        ax.legend(
+            title=cluster_key, bbox_to_anchor=(1.2, 1), loc='upper left',
+            fontsize=6, title_fontsize=7, frameon=False
+        )
+    elif ax.get_legend():
+        ax.get_legend().remove()
+    
+    sns.despine(ax=ax)
     return fig, ax
 
 
