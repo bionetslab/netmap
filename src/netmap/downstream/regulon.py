@@ -141,7 +141,7 @@ def compute_signatures_UCell_scores(selected_edges, adata, key='unique') -> pd.D
     return data_ucell
 
 
-def aggregate_edges(selected_edges, grn_adata, key='unique') -> pd.DataFrame:
+def aggregate_edges(selected_edges, grn_adata, key='unique', grouping = 'source') -> pd.DataFrame:
     """
     Filters gene signatures by cluster and computes UCell scores.
 
@@ -161,13 +161,69 @@ def aggregate_edges(selected_edges, grn_adata, key='unique') -> pd.DataFrame:
     regulons = {}
     for ct in selected_edges[key]:
         print(ct)
-        sign = selected_edges[key][ct]['edges'].groupby('source').apply(lambda x: (x['source'] + "_" + x['target']).tolist()).to_dict()
+        sign = selected_edges[key][ct]['edges'].groupby(grouping).apply(lambda x: (x['source'] + "_" + x['target']).tolist()).to_dict()
         for g in sign:
             regulons[f'{ct}_{g}'] = grn_adata[:, sign[g]].X.mean(axis = 1)
     regulons = pd.DataFrame(regulons)
     return regulons
+        
     
+def aggregate_edges_arbitrary(grn_adata, edge_dict) -> pd.DataFrame:
+    """
+    Filters gene signatures by cluster and computes UCell scores.
 
+    Parameters
+    ----------
+    grn_adata : AnnData
+        AnnData object containing GRN (gene regulatory network) information.
+    adata : AnnData
+        AnnData object containing gene expression counts in the 'counts' layer.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with UCell scores merged with the 'spectral' cluster labels.
+    """
+    
+    regulons = {}
+    for name in edge_dict:
+        if scs.issparse(grn_adata.X):
+            regulons[f'{name}'] = np.asarray(grn_adata[:, list(edge_dict[name])].X.mean(axis = 1))[:,0]
+        else:
+            regulons[f'{name}'] = grn_adata[:, list(edge_dict[name])].X.mean(axis = 1)
+
+    
+    regulons = pd.DataFrame(regulons)
+    return regulons    
+
+    
+def aggregate_edges_arbitrary(grn_adata, edge_dict) -> pd.DataFrame:
+    """
+    Filters gene signatures by cluster and computes UCell scores.
+
+    Parameters
+    ----------
+    grn_adata : AnnData
+        AnnData object containing GRN (gene regulatory network) information.
+    adata : AnnData
+        AnnData object containing gene expression counts in the 'counts' layer.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with UCell scores merged with the 'spectral' cluster labels.
+    """
+    
+    regulons = {}
+    for name in edge_dict:
+        if scs.issparse(grn_adata.X):
+            regulons[f'{name}'] = np.asarray(grn_adata[:, list(edge_dict[name])].X.mean(axis = 1))[:,0]
+        else:
+            regulons[f'{name}'] = grn_adata[:, list(edge_dict[name])].X.mean(axis = 1)
+
+    
+    regulons = pd.DataFrame(regulons)
+    return regulons
 
 def make_cluster_regulon_dataframe(keep_edges):
     all_regulons = []
