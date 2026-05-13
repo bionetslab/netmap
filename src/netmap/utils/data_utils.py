@@ -79,7 +79,7 @@ def merge_all_to_obs(target_adata, source_adata, replace=True):
     return target_adata
 
 
-def retrieve_top_edges(grn_adata, output_dir, percentage=0.1):
+def retrieve_top_edges(grn_adata, output_dir, percentage=0.1, inplace=False):
 
     if not isinstance(output_dir, Path):
         output_dir = Path(output_dir)
@@ -121,12 +121,15 @@ def retrieve_top_edges(grn_adata, output_dir, percentage=0.1):
     )
 
     grn_adata = grn_adata[:, sorted_indices]
-    grn_adata = ad.AnnData(full_table.to_pandas().to_numpy(), var = grn_adata.var, obs = grn_adata.obs)
     
+    if not inplace:
+        grn_adata = ad.AnnData(full_table.to_pandas().to_numpy(), var = grn_adata.var, obs = grn_adata.obs)
+    else:
+        grn_adata.X = full_table.to_pandas().to_numpy()    
     return grn_adata
 
 
-def retrieve_edges_by_index(grn_adata, output_dir, index_list):
+def retrieve_edges_by_index(grn_adata, output_dir, index_list, inplace=False):
 
     if not isinstance(output_dir, Path):
         output_dir = Path(output_dir)
@@ -163,8 +166,10 @@ def retrieve_edges_by_index(grn_adata, output_dir, index_list):
     )
 
     grn_adata = grn_adata[:, sorted_indices]
-    grn_adata = ad.AnnData(full_table.to_pandas().to_numpy(), var = grn_adata.var, obs = grn_adata.obs)
-    
+    if not inplace:
+        grn_adata = ad.AnnData(full_table.to_pandas().to_numpy(), var = grn_adata.var, obs = grn_adata.obs)
+    else:
+        grn_adata.X = full_table.to_pandas().to_numpy()
     return grn_adata
 
 

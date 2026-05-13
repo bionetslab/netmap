@@ -18,6 +18,7 @@ import networkx as nx
 import requests
 from pyvis.network import Network
 import pyucell as ucell
+import scipy.sparse as scs
 
 
 from netmap.downstream.clustering import process, spectral_clustering, downstream_recipe
@@ -168,35 +169,7 @@ def aggregate_edges(selected_edges, grn_adata, key='unique', grouping = 'source'
     return regulons
         
     
-def aggregate_edges_arbitrary(grn_adata, edge_dict) -> pd.DataFrame:
-    """
-    Filters gene signatures by cluster and computes UCell scores.
 
-    Parameters
-    ----------
-    grn_adata : AnnData
-        AnnData object containing GRN (gene regulatory network) information.
-    adata : AnnData
-        AnnData object containing gene expression counts in the 'counts' layer.
-
-    Returns
-    -------
-    pd.DataFrame
-        DataFrame with UCell scores merged with the 'spectral' cluster labels.
-    """
-    
-    regulons = {}
-    for name in edge_dict:
-        if scs.issparse(grn_adata.X):
-            regulons[f'{name}'] = np.asarray(grn_adata[:, list(edge_dict[name])].X.mean(axis = 1))[:,0]
-        else:
-            regulons[f'{name}'] = grn_adata[:, list(edge_dict[name])].X.mean(axis = 1)
-
-    
-    regulons = pd.DataFrame(regulons)
-    return regulons    
-
-    
 def aggregate_edges_arbitrary(grn_adata, edge_dict) -> pd.DataFrame:
     """
     Filters gene signatures by cluster and computes UCell scores.
@@ -224,6 +197,45 @@ def aggregate_edges_arbitrary(grn_adata, edge_dict) -> pd.DataFrame:
     
     regulons = pd.DataFrame(regulons)
     return regulons
+
+
+import pandas as pd
+from itertools import combinations
+
+def get_overlapping_signatures(all_regulons):
+    genes_by_ct = all_regulons.groupby('cluster')['target'].apply(set).to_dict()
+    all_cts = sorted(genes_by_ct.keys())
+    pairwise_results = []
+
+    # 2. Iterate through all pairwise combinations
+    for ct1, ct2 in combinations(all_cts, 2):
+        genes1 = genes_by_ct[ct1]
+        genes2 = genes_by_ct[ct2]
+        
+        # Union of all genes in either cell type for this specific pair
+        all_genes_in_pair = genes1.union(genes2)
+        
+        for gene in all_genes_in_pair:
+            # Logic to determine status
+            if gene in genes1 and gene in genes2:
+                status = 'both'
+            elif gene in genes1:
+                status = f'only {ct1}'
+            else:
+                status = f'only {ct2}'
+                
+            pairwise_results.append({
+                'celltype_1': ct1,
+                'celltype_2': ct2,
+                'status': status,
+                'gene': gene
+            })
+
+    # 3. Create the final DataFrame
+    pairwise_df = pd.DataFrame(pairwise_results)
+
+    return pairwise_df
+
 
 def make_cluster_regulon_dataframe(keep_edges):
     all_regulons = []
