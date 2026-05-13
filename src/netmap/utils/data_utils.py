@@ -79,7 +79,7 @@ def merge_all_to_obs(target_adata, source_adata, replace=True):
     return target_adata
 
 
-def retrieve_top_edges(grn_adata, output_dir, percentage=0.1, inplace=False):
+def retrieve_top_edges(grn_adata, output_dir, percentage=0.1, inplace=True):
 
     if not isinstance(output_dir, Path):
         output_dir = Path(output_dir)
@@ -120,16 +120,17 @@ def retrieve_top_edges(grn_adata, output_dir, percentage=0.1, inplace=False):
         names=[name for t in sub_tables for name in t.column_names]
     )
 
-    grn_adata = grn_adata[:, sorted_indices]
-    
     if not inplace:
+        grn_adata = grn_adata[:, sorted_indices]
         grn_adata = ad.AnnData(full_table.to_pandas().to_numpy(), var = grn_adata.var, obs = grn_adata.obs)
     else:
-        grn_adata.X = full_table.to_pandas().to_numpy()    
+        grn_adata = grn_adata[:, sorted_indices].copy()
+        grn_adata.X = full_table.to_pandas().to_numpy()
     return grn_adata
 
 
-def retrieve_edges_by_index(grn_adata, output_dir, index_list, inplace=False):
+
+def retrieve_edges_by_index(grn_adata, output_dir, index_list, inplace=True):
 
     if not isinstance(output_dir, Path):
         output_dir = Path(output_dir)
@@ -165,12 +166,15 @@ def retrieve_edges_by_index(grn_adata, output_dir, index_list, inplace=False):
         names=[name for t in sub_tables for name in t.column_names]
     )
 
-    grn_adata = grn_adata[:, sorted_indices]
+    
     if not inplace:
+        grn_adata = grn_adata[:, sorted_indices]
         grn_adata = ad.AnnData(full_table.to_pandas().to_numpy(), var = grn_adata.var, obs = grn_adata.obs)
     else:
+        grn_adata = grn_adata[:, sorted_indices].copy()
         grn_adata.X = full_table.to_pandas().to_numpy()
     return grn_adata
+
 
 
 def remove_regulon_columns(grn_adata):
