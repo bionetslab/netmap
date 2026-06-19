@@ -153,6 +153,75 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X
     return grn_adata
 
 
+def add_cluster_wise_spearman(grn_adata, adata, cluster_column='leiden_remap'):
+    """
+    Compute cluster-wise Spearman rank correlation between source and target gene
+    expression for each edge in grn_adata, adding a '{cluster}_spearman' column
+    to grn_adata.var for every cluster.
+
+    Args:
+        grn_adata (anndata.AnnData): GRN AnnData (obs=cells, var=edges).
+            var must contain 'source' and 'target' columns.
+        adata (anndata.AnnData): Expression AnnData (obs=cells, var=genes).
+            obs must be aligned with grn_adata.obs.
+        cluster_column (str): Column in grn_adata.obs with cluster labels.
+
+    Returns:
+        anndata.AnnData: grn_adata with new '{cluster}_spearman' columns in .var.
+    """
+    sources = grn_adata.var['source'].values
+    targets = grn_adata.var['target'].values
+
+    # Collect all unique genes, preserving order
+    seen = {}
+    for g in list(sources) + list(targets):
+        seen[g] = None
+    all_genes = list(seen.keys())
+
+    adata_gene_set = set(adata.var_names)
+    missing = [g for g in all_genes if g not in adata_gene_set]
+    if missing:
+        print(f"Warning: {len(missing)} GRN genes not found in adata and will produce NaN correlations.")
+    available_genes = [g for g in all_genes if g in adata_gene_set]
+    gene_to_idx = {g: i for i, g in enumerate(available_genes)}
+
+    clusters = grn_adata.obs[cluster_column].unique()
+
+    for ps in clusters:
+        cell_mask = grn_adata.obs[cluster_column] == ps
+
+        expr = adata[cell_mask, available_genes].X
+        if issparse(expr):
+            expr = expr.toarray()
+        else:
+            expr = np.asarray(expr)
+
+        n_cells = expr.shape[0]
+
+        if n_cells < 3:
+            grn_adata.var[f'{ps}_spearman'] = np.nan
+            continue
+
+        # Rank-transform each gene column, then standardise
+        ranked = np.apply_along_axis(st.rankdata, 0, expr)
+        means = ranked.mean(axis=0)
+        stds = ranked.std(axis=0, ddof=1)
+        stds[stds == 0] = 1  # constant genes -> zero correlation
+        rank_std = (ranked - means) / stds
+
+        # Full Spearman correlation matrix via rank-based Pearson
+        corr_matrix = (rank_std.T @ rank_std) / (n_cells - 1)
+
+        spearman_vals = np.full(len(sources), np.nan)
+        for i, (src, tgt) in enumerate(zip(sources, targets)):
+            if src in gene_to_idx and tgt in gene_to_idx:
+                spearman_vals[i] = corr_matrix[gene_to_idx[src], gene_to_idx[tgt]]
+
+        grn_adata.var[f'{ps}_spearman'] = spearman_vals
+
+    return grn_adata
+
+
 def add_cluster_based_candidate_edges(grn_adata, cluster_column = 'leiden_remap', threshold = 0.5):
     vc = grn_adata.obs[cluster_column].value_counts()
     grn_adata.var[f'count_nonzero_norm'] = grn_adata.var[f'count_nonzero']/grn_adata.obs.shape[0]

@@ -112,6 +112,154 @@ def process_cell_edges(keep_edges_with_vals):
     return results
 
 
+def process_cell_edges_signed(keep_edges_pos, keep_edges_neg):
+    """
+    Build the positive/negative regulon result structure from per-cluster edge lists.
+
+    Args:
+        keep_edges_pos (dict): {cluster: [(edge_str, sum_val), ...]} for positive edges.
+        keep_edges_neg (dict): {cluster: [(edge_str, sum_val), ...]} for negative edges.
+
+    Returns:
+        dict: Nested result with keys 'unique' and 'all', each mapping cluster ->
+              {'positive': {'edges': DataFrame, 'summary': DataFrame},
+               'negative': {'edges': DataFrame, 'summary': DataFrame}}.
+    """
+    results = {'unique': {}, 'all': {}}
+    all_cells = list(keep_edges_pos.keys())
+
+    def get_source_summary(edge_list):
+        sources = [e[0].split('_')[0] for e in edge_list]
+        source_dict = dict(Counter(sources))
+        return pd.DataFrame(
+            {'source': list(source_dict.keys()), 'count': list(source_dict.values())}
+        ).sort_values('count', ascending=False)
+
+    def build_df(name_set, lookup_dict):
+        data = []
+        for name in name_set:
+            source, target = name.split('_', 1)
+            data.append([source, target, lookup_dict[name]])
+        return pd.DataFrame(data, columns=['source', 'target', 'sum_of_edge'])
+
+    for cell in all_cells:
+        pos_dict = dict(keep_edges_pos[cell])
+        neg_dict = dict(keep_edges_neg[cell])
+
+        others_pos = set()
+        others_neg = set()
+        for c in all_cells:
+            if c != cell:
+                others_pos.update([e[0] for e in keep_edges_pos[c]])
+                others_neg.update([e[0] for e in keep_edges_neg[c]])
+
+        unique_pos = set(pos_dict.keys()) - others_pos
+        unique_neg = set(neg_dict.keys()) - others_neg
+
+        results['unique'][cell] = {
+            'positive': {
+                'edges': build_df(unique_pos, pos_dict),
+                'summary': get_source_summary([(n, pos_dict[n]) for n in unique_pos]),
+            },
+            'negative': {
+                'edges': build_df(unique_neg, neg_dict),
+                'summary': get_source_summary([(n, neg_dict[n]) for n in unique_neg]),
+            },
+        }
+        results['all'][cell] = {
+            'positive': {
+                'edges': build_df(pos_dict.keys(), pos_dict),
+                'summary': get_source_summary(keep_edges_pos[cell]),
+            },
+            'negative': {
+                'edges': build_df(neg_dict.keys(), neg_dict),
+                'summary': get_source_summary(keep_edges_neg[cell]),
+            },
+        }
+
+    return results
+
+
+def _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutral_threshold):
+    df_pos = df_targets[df_targets[spearman_col] >= neutral_threshold]
+    df_neg = df_targets[df_targets[spearman_col] <= -neutral_threshold]
+    pos = (
+        [(f"{source}_{r['target']}", r['sum_of_edge']) for _, r in df_pos.iterrows()]
+        if len(df_pos) >= min_reg_size else []
+    )
+    neg = (
+        [(f"{source}_{r['target']}", r['sum_of_edge']) for _, r in df_neg.iterrows()]
+        if len(df_neg) >= min_reg_size else []
+    )
+    return pos, neg
+
+
+def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='leiden_remap',
+                             min_reg_size=10, verbose=True, tf_column=None,
+                             min_edge_support=0.5, neutral_threshold=0.05):
+    """
+    Select top edges per source TF per cluster and split them into positive and
+    negative regulons based on cluster-wise Spearman correlation.
+
+    Requires ``add_cluster_wise_spearman`` to have been called first so that
+    ``{cluster}_spearman`` columns are present in ``gene_inter_adata.var``.
+
+    Edges with |spearman| < neutral_threshold are excluded (neutral effect).
+
+    Args:
+        gene_inter_adata (anndata.AnnData): GRN AnnData with mask layer and
+            '{cluster}_spearman' columns in .var.
+        top_per_source (int): Maximum edges to consider per source TF per cluster.
+        col_cluster (str): Cluster column in obs.
+        min_reg_size (int): Minimum edges a sign-group must have to be kept.
+        verbose (bool): Print progress.
+        tf_column (str or None): var column flagging TF rows; restricts sources to TFs.
+        min_edge_support (float): Minimum mask support fraction required per edge.
+        neutral_threshold (float): Edges with |spearman| < this value are excluded.
+
+    Returns:
+        dict: {'unique': {cluster: {'positive': ..., 'negative': ...}},
+               'all':    {cluster: {'positive': ..., 'negative': ...}}}
+    """
+    clusters = list(np.unique(gene_inter_adata.obs[col_cluster]))
+    keep_edges_pos = {}
+    keep_edges_neg = {}
+
+    for c in clusters:
+        if verbose:
+            print(f"Selecting targets for cluster: {c}")
+
+        cells_c = gene_inter_adata.obs[col_cluster] == c
+        gene_inter_adata.var['edge_support_c'] = (
+            gene_inter_adata.layers['mask'][cells_c, :].mean(axis=0)
+        )
+        spearman_col = f'{c}_spearman'
+
+        if tf_column is not None:
+            tfs = gene_inter_adata.var[gene_inter_adata.var[tf_column]]['source'].unique()
+            source_list = set(gene_inter_adata.var["source"].unique()).intersection(set(tfs))
+        else:
+            source_list = gene_inter_adata.var["source"].unique()
+
+        pos_edges, neg_edges = [], []
+        for source in source_list:
+            df_targets = gene_inter_adata.var[
+                (gene_inter_adata.var['source'] == source) &
+                (gene_inter_adata.var['edge_support_c'] >= min_edge_support)
+            ].copy()
+            df_targets['sum_of_edge'] = gene_inter_adata[cells_c, df_targets.index].X.mean(axis=0)
+            df_targets = df_targets.sort_values('sum_of_edge', ascending=False).head(top_per_source)
+
+            pos, neg = _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutral_threshold)
+            pos_edges.extend(pos)
+            neg_edges.extend(neg)
+
+        keep_edges_pos[c] = pos_edges
+        keep_edges_neg[c] = neg_edges
+
+    return process_cell_edges_signed(keep_edges_pos, keep_edges_neg)
+
+
 def compute_signatures_UCell_scores(selected_edges, adata, key='unique') -> pd.DataFrame:
     """
     Filters gene signatures by cluster and computes UCell scores.
