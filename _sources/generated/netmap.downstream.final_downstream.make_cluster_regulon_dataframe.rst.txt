@@ -1,6 +1,0 @@
-netmap.downstream.final\_downstream.make\_cluster\_regulon\_dataframe
-=====================================================================
-
-.. currentmodule:: netmap.downstream.final_downstream
-
-.. autofunction:: make_cluster_regulon_dataframe

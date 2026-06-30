@@ -38,6 +38,12 @@ Installation
    pip install -e .
 
 .. toctree::
+   :maxdepth: 1
+   :caption: Tutorials
+
+   tutorials/index
+
+.. toctree::
    :maxdepth: 4
    :caption: API Reference
 

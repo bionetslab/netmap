@@ -1,4 +1,4 @@
-netmap.downstream.plotting
+﻿netmap.downstream.plotting
 ==========================
 
 .. currentmodule:: netmap.downstream.plotting

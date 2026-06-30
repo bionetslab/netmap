@@ -1,6 +1,0 @@
-netmap.downstream.final\_downstream.select\_top\_edges
-======================================================
-
-.. currentmodule:: netmap.downstream.final_downstream
-
-.. autofunction:: select_top_edges

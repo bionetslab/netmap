@@ -1,6 +1,0 @@
-netmap.downstream.final\_downstream.aggregate\_edges
-====================================================
-
-.. currentmodule:: netmap.downstream.final_downstream
-
-.. autofunction:: aggregate_edges
