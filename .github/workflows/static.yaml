@@ -18,13 +18,19 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install pandoc
+        run: sudo apt-get install -y pandoc
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints furo
+          pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints furo nbsphinx
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install . # Install the local package to make it importable
-          
+
+      - name: Copy tutorial notebooks from examples
+        run: cp examples/*.ipynb docs/source/tutorials/
+
       - name: Build Sphinx Documentation
         run: |
           sphinx-build -b html docs/source docs/build/html

@@ -25,7 +25,12 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinx_autodoc_typehints',
+    'nbsphinx',
 ]
+
+# Never re-execute notebooks during the Sphinx build.
+# Notebooks must be pre-run (outputs saved) before committing.
+nbsphinx_execute = 'never'
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
