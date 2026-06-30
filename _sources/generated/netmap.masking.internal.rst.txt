@@ -1,4 +1,4 @@
-﻿netmap.masking.internal
+netmap.masking.internal
 =======================
 
 .. currentmodule:: netmap.masking.internal
@@ -18,6 +18,8 @@
 
 
    add_cluster_based_candidate_edges
+
+   add_cluster_wise_spearman
 
    add_neighbourhood_expression_mask
 

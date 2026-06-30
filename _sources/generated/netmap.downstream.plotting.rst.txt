@@ -17,6 +17,18 @@ netmap.downstream.plotting
    :nosignatures:
 
 
+   bcrank_entropy
+
+   compute_bcrank_metrics
+
+   draw_inset_graph
+
+   get_grn_from_regulon
+
+   plot_bcrank_entropy
+
+   plot_regulon_comparison
+
    rank_regulon_groups_dotplot
 
 

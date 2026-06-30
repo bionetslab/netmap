@@ -1,0 +1,6 @@
+netmap.downstream.markers.plot\_jaccard\_comparison
+===================================================
+
+.. currentmodule:: netmap.downstream.markers
+
+.. autofunction:: plot_jaccard_comparison

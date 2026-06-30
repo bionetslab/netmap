@@ -1,4 +1,4 @@
-netmap.masking
+﻿netmap.masking
 ==============
 
 .. currentmodule:: netmap.masking

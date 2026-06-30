@@ -1,0 +1,6 @@
+netmap.grn.inferrence.return\_grn\_adata\_to\_memory
+====================================================
+
+.. currentmodule:: netmap.grn.inferrence
+
+.. autofunction:: return_grn_adata_to_memory

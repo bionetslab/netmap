@@ -1,0 +1,6 @@
+netmap.grn.inferrence.inferrence\_model\_wise
+=============================================
+
+.. currentmodule:: netmap.grn.inferrence
+
+.. autofunction:: inferrence_model_wise

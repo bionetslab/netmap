@@ -35,6 +35,10 @@
 
    gene_clustering
 
+   markers
+
    plotting
+
+   regulon
 
 

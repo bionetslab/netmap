@@ -1,4 +1,4 @@
-netmap.utils
+﻿netmap.utils
 ============
 
 .. currentmodule:: netmap.utils

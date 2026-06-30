@@ -1,0 +1,6 @@
+netmap.downstream.markers.calculate\_jaccard\_scores
+====================================================
+
+.. currentmodule:: netmap.downstream.markers
+
+.. autofunction:: calculate_jaccard_scores

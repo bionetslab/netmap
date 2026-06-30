@@ -1,0 +1,6 @@
+netmap.downstream.markers.get\_grn\_targets
+===========================================
+
+.. currentmodule:: netmap.downstream.markers
+
+.. autofunction:: get_grn_targets

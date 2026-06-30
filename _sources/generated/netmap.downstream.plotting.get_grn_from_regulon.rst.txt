@@ -1,0 +1,6 @@
+netmap.downstream.plotting.get\_grn\_from\_regulon
+==================================================
+
+.. currentmodule:: netmap.downstream.plotting
+
+.. autofunction:: get_grn_from_regulon

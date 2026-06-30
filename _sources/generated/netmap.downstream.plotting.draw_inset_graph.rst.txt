@@ -1,0 +1,6 @@
+netmap.downstream.plotting.draw\_inset\_graph
+=============================================
+
+.. currentmodule:: netmap.downstream.plotting
+
+.. autofunction:: draw_inset_graph

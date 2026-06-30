@@ -1,0 +1,6 @@
+netmap.grn.inferrence.attribution\_one\_target
+==============================================
+
+.. currentmodule:: netmap.grn.inferrence
+
+.. autofunction:: attribution_one_target

@@ -1,0 +1,1279 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>netmap.grn.inferrence - Netmap 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Netmap 0.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <span class="sidebar-brand-text">Netmap 0.1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../generated/netmap.model.html">netmap.model</a><input aria-label="Toggle navigation of netmap.model" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.model.nbautoencoder.html">netmap.model.nbautoencoder</a><input aria-label="Toggle navigation of netmap.model.nbautoencoder" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.nbautoencoder.get_mus.html">netmap.model.nbautoencoder.get_mus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.nbautoencoder.get_mus_grouping.html">netmap.model.nbautoencoder.get_mus_grouping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.nbautoencoder.get_thetas.html">netmap.model.nbautoencoder.get_thetas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.nbautoencoder.get_thetas_grouping.html">netmap.model.nbautoencoder.get_thetas_grouping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.nbautoencoder.NegativeBinomialAutoencoder.html">netmap.model.nbautoencoder.NegativeBinomialAutoencoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.nbautoencoder.NegativeBinomialLoss.html">netmap.model.nbautoencoder.NegativeBinomialLoss</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.model.standardautoencoder.html">netmap.model.standardautoencoder</a><input aria-label="Toggle navigation of netmap.model.standardautoencoder" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.standardautoencoder.Autoencoder.html">netmap.model.standardautoencoder.Autoencoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.standardautoencoder.LogCoshLoss.html">netmap.model.standardautoencoder.LogCoshLoss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.standardautoencoder.MSELoss.html">netmap.model.standardautoencoder.MSELoss</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.model.train_model.html">netmap.model.train_model</a><input aria-label="Toggle navigation of netmap.model.train_model" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.train_model.create_model_zoo.html">netmap.model.train_model.create_model_zoo</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.model.zinbautoencoder.html">netmap.model.zinbautoencoder</a><input aria-label="Toggle navigation of netmap.model.zinbautoencoder" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.zinbautoencoder.get_mus.html">netmap.model.zinbautoencoder.get_mus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.zinbautoencoder.get_mus_grouping.html">netmap.model.zinbautoencoder.get_mus_grouping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.zinbautoencoder.get_thetas.html">netmap.model.zinbautoencoder.get_thetas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.zinbautoencoder.get_thetas_grouping.html">netmap.model.zinbautoencoder.get_thetas_grouping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.zinbautoencoder.ZINBAutoencoder.html">netmap.model.zinbautoencoder.ZINBAutoencoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.model.zinbautoencoder.ZINBLoss.html">netmap.model.zinbautoencoder.ZINBLoss</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../generated/netmap.grn.html">netmap.grn</a><input aria-label="Toggle navigation of netmap.grn" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.html">netmap.grn.inferrence</a><input aria-label="Toggle navigation of netmap.grn.inferrence" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.aggregate_attributions.html">netmap.grn.inferrence.aggregate_attributions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.attribution_one_model.html">netmap.grn.inferrence.attribution_one_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.attribution_one_target.html">netmap.grn.inferrence.attribution_one_target</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.inferrence.html">netmap.grn.inferrence.inferrence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.inferrence_h5py.html">netmap.grn.inferrence.inferrence_h5py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.inferrence_model_wise.html">netmap.grn.inferrence.inferrence_model_wise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.inferrence_model_wise_level.html">netmap.grn.inferrence.inferrence_model_wise_level</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.return_grn_adata_to_memory.html">netmap.grn.inferrence.return_grn_adata_to_memory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.grn.inferrence.shuffle_each_column_independently.html">netmap.grn.inferrence.shuffle_each_column_independently</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../generated/netmap.masking.html">netmap.masking</a><input aria-label="Toggle navigation of netmap.masking" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.masking.external.html">netmap.masking.external</a><input aria-label="Toggle navigation of netmap.masking.external" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.external.add_external_grn.html">netmap.masking.external.add_external_grn</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.external.add_genome_information_to_anndata.html">netmap.masking.external.add_genome_information_to_anndata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.external.get_genome_annotation_from_gtf.html">netmap.masking.external.get_genome_annotation_from_gtf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.external.get_regulators.html">netmap.masking.external.get_regulators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.external.preprocess_bed_file.html">netmap.masking.external.preprocess_bed_file</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.masking.internal.html">netmap.masking.internal</a><input aria-label="Toggle navigation of netmap.masking.internal" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.internal.add_cluster_based_candidate_edges.html">netmap.masking.internal.add_cluster_based_candidate_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.internal.add_cluster_wise_spearman.html">netmap.masking.internal.add_cluster_wise_spearman</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.internal.add_neighbourhood_expression_mask.html">netmap.masking.internal.add_neighbourhood_expression_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.internal.binarize_adata.html">netmap.masking.internal.binarize_adata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.internal.create_pairwise_binary_mask.html">netmap.masking.internal.create_pairwise_binary_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.internal.find_consistent_pairs.html">netmap.masking.internal.find_consistent_pairs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.masking.internal.get_neighborhood_expression.html">netmap.masking.internal.get_neighborhood_expression</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.html">netmap.downstream</a><input aria-label="Toggle navigation of netmap.downstream" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.clustering.html">netmap.downstream.clustering</a><input aria-label="Toggle navigation of netmap.downstream.clustering" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.clustering.downstream_recipe.html">netmap.downstream.clustering.downstream_recipe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.clustering.process.html">netmap.downstream.clustering.process</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.clustering.spectral_clustering.html">netmap.downstream.clustering.spectral_clustering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.clustering.unify_group_labelling.html">netmap.downstream.clustering.unify_group_labelling</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.edge_selection.html">netmap.downstream.edge_selection</a><input aria-label="Toggle navigation of netmap.downstream.edge_selection" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.edge_selection.add_top_edge_annotation_cluster.html">netmap.downstream.edge_selection.add_top_edge_annotation_cluster</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.edge_selection.add_top_edge_annotation_global.html">netmap.downstream.edge_selection.add_top_edge_annotation_global</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.edge_selection.chunked_argsort.html">netmap.downstream.edge_selection.chunked_argsort</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.html">netmap.downstream.final_downstream</a><input aria-label="Toggle navigation of netmap.downstream.final_downstream" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.aggregate_edges.html">netmap.downstream.final_downstream.aggregate_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.compute_edge_overlaps_simple.html">netmap.downstream.final_downstream.compute_edge_overlaps_simple</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.compute_signatures_UCell_scores.html">netmap.downstream.final_downstream.compute_signatures_UCell_scores</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.create_regulon_activity_adata.html">netmap.downstream.final_downstream.create_regulon_activity_adata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.curate_network.html">netmap.downstream.final_downstream.curate_network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.filter_clusters_by_cell_count.html">netmap.downstream.final_downstream.filter_clusters_by_cell_count</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.filter_grn_by_top_signatures.html">netmap.downstream.final_downstream.filter_grn_by_top_signatures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.filter_signatures_by_Ucell.html">netmap.downstream.final_downstream.filter_signatures_by_Ucell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.get_top_targets.html">netmap.downstream.final_downstream.get_top_targets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.make_cluster_regulon_dataframe.html">netmap.downstream.final_downstream.make_cluster_regulon_dataframe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.plot_reg.html">netmap.downstream.final_downstream.plot_reg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.plot_reg_curated.html">netmap.downstream.final_downstream.plot_reg_curated</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.plot_shared_targets_heatmap.html">netmap.downstream.final_downstream.plot_shared_targets_heatmap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.process_cell_edges.html">netmap.downstream.final_downstream.process_cell_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.final_downstream.select_top_edges.html">netmap.downstream.final_downstream.select_top_edges</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.gene_clustering.html">netmap.downstream.gene_clustering</a><input aria-label="Toggle navigation of netmap.downstream.gene_clustering" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.gene_clustering.add_clusters_to_adata.html">netmap.downstream.gene_clustering.add_clusters_to_adata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.gene_clustering.compute_regression.html">netmap.downstream.gene_clustering.compute_regression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.gene_clustering.get_hierarchical_clustering.html">netmap.downstream.gene_clustering.get_hierarchical_clustering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.gene_clustering.plot_regression_and_dendrogram.html">netmap.downstream.gene_clustering.plot_regression_and_dendrogram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.gene_clustering.plot_scatter_plot.html">netmap.downstream.gene_clustering.plot_scatter_plot</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.markers.html">netmap.downstream.markers</a><input aria-label="Toggle navigation of netmap.downstream.markers" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.markers.calculate_jaccard_scores.html">netmap.downstream.markers.calculate_jaccard_scores</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.markers.get_grn_targets.html">netmap.downstream.markers.get_grn_targets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.markers.plot_jaccard_comparison.html">netmap.downstream.markers.plot_jaccard_comparison</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.markers.prepare_jaccard_analysis_df.html">netmap.downstream.markers.prepare_jaccard_analysis_df</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.html">netmap.downstream.plotting</a><input aria-label="Toggle navigation of netmap.downstream.plotting" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.bcrank_entropy.html">netmap.downstream.plotting.bcrank_entropy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.compute_bcrank_metrics.html">netmap.downstream.plotting.compute_bcrank_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.draw_inset_graph.html">netmap.downstream.plotting.draw_inset_graph</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.get_grn_from_regulon.html">netmap.downstream.plotting.get_grn_from_regulon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.plot_bcrank_entropy.html">netmap.downstream.plotting.plot_bcrank_entropy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.plot_regulon_comparison.html">netmap.downstream.plotting.plot_regulon_comparison</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.rank_regulon_groups_dotplot.html">netmap.downstream.plotting.rank_regulon_groups_dotplot</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.html">netmap.downstream.regulon</a><input aria-label="Toggle navigation of netmap.downstream.regulon" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.aggregate_edges.html">netmap.downstream.regulon.aggregate_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.aggregate_edges_arbitrary.html">netmap.downstream.regulon.aggregate_edges_arbitrary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.compute_signatures_UCell_scores.html">netmap.downstream.regulon.compute_signatures_UCell_scores</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.get_overlapping_signatures.html">netmap.downstream.regulon.get_overlapping_signatures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.get_sourcewise_jaccard_regulons.html">netmap.downstream.regulon.get_sourcewise_jaccard_regulons</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.jaccard_similarity.html">netmap.downstream.regulon.jaccard_similarity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.load_edge_dict_from_dataframe.html">netmap.downstream.regulon.load_edge_dict_from_dataframe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.make_cluster_regulon_dataframe.html">netmap.downstream.regulon.make_cluster_regulon_dataframe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.make_global_target_similarity_plot.html">netmap.downstream.regulon.make_global_target_similarity_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.process_cell_edges.html">netmap.downstream.regulon.process_cell_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.process_cell_edges_signed.html">netmap.downstream.regulon.process_cell_edges_signed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.select_top_edges.html">netmap.downstream.regulon.select_top_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.downstream.regulon.select_top_edges_signed.html">netmap.downstream.regulon.select_top_edges_signed</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../generated/netmap.utils.html">netmap.utils</a><input aria-label="Toggle navigation of netmap.utils" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.html">netmap.utils.data_utils</a><input aria-label="Toggle navigation of netmap.utils.data_utils" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.attribution_to_anndata.html">netmap.utils.data_utils.attribution_to_anndata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.create_output_directory.html">netmap.utils.data_utils.create_output_directory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.merge_all_to_obs.html">netmap.utils.data_utils.merge_all_to_obs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.remove_Ucell_columns.html">netmap.utils.data_utils.remove_Ucell_columns</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.remove_regulon_columns.html">netmap.utils.data_utils.remove_regulon_columns</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.retrieve_edges_by_index.html">netmap.utils.data_utils.retrieve_edges_by_index</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.retrieve_top_edges.html">netmap.utils.data_utils.retrieve_top_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.data_utils.save_anndata.html">netmap.utils.data_utils.save_anndata</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.utils.misc.html">netmap.utils.misc</a><input aria-label="Toggle navigation of netmap.utils.misc" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.misc.write_config.html">netmap.utils.misc.write_config</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.utils.netmap_config.html">netmap.utils.netmap_config</a><input aria-label="Toggle navigation of netmap.utils.netmap_config" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.netmap_config.NetmapConfig.html">netmap.utils.netmap_config.NetmapConfig</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../generated/netmap.utils.tf_utils.html">netmap.utils.tf_utils</a><input aria-label="Toggle navigation of netmap.utils.tf_utils" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.tf_utils.filter_tf_names.html">netmap.utils.tf_utils.filter_tf_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.tf_utils.get_tf_index.html">netmap.utils.tf_utils.get_tf_index</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../generated/netmap.utils.tf_utils.load_tf_names.html">netmap.utils.tf_utils.load_tf_names</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for netmap.grn.inferrence</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;GRN inference via Captum attributions over an autoencoder ensemble.</span>
+
+<span class="sd">The main entry point :func:`inferrence` iterates over all target genes,</span>
+<span class="sd">applies the XAI method across all models in the zoo, aggregates attributions,</span>
+<span class="sd">and writes one Parquet shard per gene to ``&lt;output_dir&gt;/grn/``.  The returned</span>
+<span class="sd">:class:`~anndata.AnnData` object (``grn_adata``) has cells as observations and</span>
+<span class="sd">directed edges (``SourceGene_TargetGene``) as variables; ``X`` is an empty</span>
+<span class="sd">placeholder backed by those Parquet files until loaded with</span>
+<span class="sd">:func:`~netmap.utils.data_utils.retrieve_top_edges`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">captum.attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">GuidedBackprop</span><span class="p">,</span> <span class="n">GradientShap</span><span class="p">,</span> <span class="n">Deconvolution</span>
+<span class="c1">#import pingouin as pingu</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.dataset</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ds</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.ipc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ipc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.parquet</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">netmap.utils.data_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">attribution_to_anndata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">integrate</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">anndata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ad</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">op</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_quantile_partitioning</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs quantile partitioning on a 1D NumPy array.</span>
+
+<span class="sd">    The method orders the data and divides it into &#39;q&#39; equal-sized partitions.</span>
+<span class="sd">    A new array (mask) is created where each element is assigned a value</span>
+<span class="sd">    of k/q, where k is the quantile that the element belongs to.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (np.ndarray): A 1D NumPy array of numerical data.</span>
+<span class="sd">        q (int): The number of quantiles to partition the data into. Must be a</span>
+<span class="sd">                 positive integer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: A new array of the same shape as the input data, with</span>
+<span class="sd">                    values representing the quantile partition.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If q is not a positive integer or if the input data is not</span>
+<span class="sd">                    a 1D NumPy array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data must be a 1D NumPy array.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">q</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The number of quantiles &#39;q&#39; must be a positive integer.&quot;</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+    <span class="c1"># 1. Order data using argsort to get the indices that would sort the array</span>
+    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># 2. Cut into q equal pieces by calculating the size of each partition</span>
+    <span class="c1"># We use float division to handle cases where n is not perfectly divisible by q.</span>
+    <span class="n">partition_size</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">q</span>
+
+    <span class="c1"># 3. Initialize mask with same dimension as data</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># 4. With k=current quantile add k/q to all cells belonging to k</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">start_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">partition_size</span><span class="p">)</span>
+        <span class="n">end_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">partition_size</span><span class="p">)</span>
+
+        <span class="c1"># Get the original indices that belong to the current quantile</span>
+        <span class="n">quantile_indices</span> <span class="o">=</span> <span class="n">sorted_indices</span><span class="p">[</span><span class="n">start_index</span><span class="p">:</span><span class="n">end_index</span><span class="p">]</span>
+
+        <span class="c1"># Assign the value k/q to the corresponding positions in the mask</span>
+        <span class="n">mask</span><span class="p">[</span><span class="n">quantile_indices</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span> <span class="o">/</span> <span class="n">q</span>
+
+    <span class="k">return</span> <span class="n">mask</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_quantile_partitioning_2d</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs quantile partitioning row-wise on a 2D NumPy array using</span>
+<span class="sd">    np.apply_along_axis for efficiency.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (np.ndarray): A 2D NumPy array of numerical data.</span>
+<span class="sd">        q (int): The number of quantiles to partition each row into.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: A new 2D array with the same shape as the input,</span>
+<span class="sd">                    where each row contains the quantile partitions.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the input data is not a 2D NumPy array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data must be a 2D NumPy array.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Use np.apply_along_axis to apply the 1D function to each row (axis=1).</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">_quantile_partitioning</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+
+<span class="c1"># def compute_correlation_metric(data, cor_type):</span>
+<span class="c1">#     # Compute gene correlation measure</span>
+<span class="c1">#     #  &#39;pingouin.pcorr&#39;, &#39;np.cov&#39;, &#39;np.corcoeff&#39;</span>
+<span class="c1">#     if cor_type ==  &#39;pingouin.pcorr&#39;:</span>
+<span class="c1">#         cov = pingu.pcorr(pd.DataFrame(data))</span>
+<span class="c1">#     elif cor_type == &#39;np.cov&#39;:</span>
+<span class="c1">#         cov = np.cov(data.T)</span>
+<span class="c1">#     elif cor_type == &#39;np.corrcoeff&#39;:</span>
+<span class="c1">#         cov = np.corrcoef(data.T)</span>
+<span class="c1">#     elif cor_type == &#39;None&#39;:</span>
+<span class="c1">#         cov = 1</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         cov = 1</span>
+<span class="c1">#     return cov</span>
+
+<div class="viewcode-block" id="aggregate_attributions">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.aggregate_attributions.html#netmap.grn.inferrence.aggregate_attributions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">aggregate_attributions</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aggregate a list of per-model attribution arrays into a single array.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        attributions (list of numpy.ndarray): List of attribution matrices,</span>
+<span class="sd">            each of shape ``(n_cells, n_genes)``.</span>
+<span class="sd">        strategy (str): Aggregation method — ``&#39;mean&#39;`` (default), ``&#39;sum&#39;``,</span>
+<span class="sd">            or ``&#39;median&#39;``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: Aggregated attribution matrix of shape</span>
+<span class="sd">            ``(n_cells, n_genes)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Default to mean aggregation</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_explainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">explainer_type</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap a model in the requested Captum explainer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): Trained autoencoder with a single-tensor</span>
+<span class="sd">            forward pass (mode flag already set).</span>
+<span class="sd">        explainer_type (str): One of ``&#39;GradientShap&#39;``, ``&#39;GuidedBackprop&#39;``,</span>
+<span class="sd">            ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">        raw (bool): For ``GradientShap`` only — if ``True``, sets</span>
+<span class="sd">            ``multiply_by_inputs=False``. Defaults to ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(explainer, explainer_mode)`` where ``explainer_mode`` is</span>
+<span class="sd">            ``&#39;shap-like&#39;`` for GradientShap or ``&#39;lrp-like&#39;`` for the others.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If ``explainer_type`` is not recognised.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">explainer_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;GuidedBackprop&#39;</span><span class="p">,</span> <span class="s1">&#39;Deconvolution&#39;</span><span class="p">]:</span>
+        <span class="n">explainer_mode</span> <span class="o">=</span> <span class="s1">&#39;lrp-like&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">explainer_mode</span> <span class="o">=</span> <span class="s1">&#39;shap-like&#39;</span>
+
+
+    <span class="k">if</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">&#39;GuidedBackprop&#39;</span><span class="p">:</span> <span class="c1">#fast</span>
+        <span class="n">explainer</span> <span class="o">=</span> <span class="n">GuidedBackprop</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">&#39;GradientShap&#39;</span><span class="p">:</span> <span class="c1">#fast</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="n">explainer</span> <span class="o">=</span> <span class="n">GradientShap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">multiply_by_inputs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">explainer</span> <span class="o">=</span> <span class="n">GradientShap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">multiply_by_inputs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">&#39;Deconvolution&#39;</span><span class="p">:</span> <span class="c1">#fast</span>
+        <span class="n">explainer</span> <span class="o">=</span> <span class="n">Deconvolution</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;no such method&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">explainer</span><span class="p">,</span> <span class="n">explainer_mode</span>
+
+
+
+<div class="viewcode-block" id="shuffle_each_column_independently">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.shuffle_each_column_independently.html#netmap.grn.inferrence.shuffle_each_column_independently">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">shuffle_each_column_independently</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shuffles each column of a 2D PyTorch tensor independently.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor (torch.Tensor): The input tensor.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: A new tensor with each of its columns independently shuffled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input tensor must be 2-dimensional to shuffle columns.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create an empty tensor of the same size to store the shuffled columns</span>
+    <span class="n">shuffled_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+
+    <span class="c1"># Iterate through each column, shuffle it, and place it in the new tensor</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">nelement</span><span class="p">())</span>
+        <span class="n">shuffled_tensor</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">column</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">shuffled_tensor</span></div>
+
+
+
+<div class="viewcode-block" id="attribution_one_target">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.attribution_one_target.html#netmap.grn.inferrence.attribution_one_target">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">attribution_one_target</span><span class="p">(</span>
+        <span class="n">target_gene</span><span class="p">,</span>
+        <span class="n">lrp_model</span><span class="p">,</span>
+        <span class="n">input_data</span><span class="p">,</span>
+        <span class="n">xai_type</span><span class="o">=</span><span class="s1">&#39;lrp-like&#39;</span><span class="p">,</span>
+        <span class="n">background_type</span> <span class="o">=</span> <span class="s1">&#39;zeros&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Captum attributions for a single target gene across all models.</span>
+
+<span class="sd">    Iterates over every explainer in ``lrp_model`` and calls ``.attribute()``</span>
+<span class="sd">    with the appropriate signature depending on ``xai_type``. The background</span>
+<span class="sd">    tensor used for SHAP-style attribution is constructed from ``input_data``</span>
+<span class="sd">    according to ``background_type``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target_gene (int): Index of the target gene in the expression matrix.</span>
+<span class="sd">        lrp_model (list): List of Captum explainer objects (one per model in zoo).</span>
+<span class="sd">        input_data (torch.Tensor): Input data tensor on CUDA, shape</span>
+<span class="sd">            ``(n_cells, n_genes)``.</span>
+<span class="sd">        xai_type (str): ``&#39;lrp-like&#39;`` or ``&#39;shap-like&#39;``.</span>
+<span class="sd">        background_type (str): Background for SHAP-like methods —</span>
+<span class="sd">            ``&#39;zeros&#39;`` (default), ``&#39;randomize&#39;`` (shuffle columns), or</span>
+<span class="sd">            ``&#39;data&#39;`` (use input as its own baseline).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list of numpy.ndarray: One attribution matrix per model, each of shape</span>
+<span class="sd">            ``(n_cells, n_genes)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;randomize&#39;</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">shuffle_each_column_independently</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">input_data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+
+    <span class="n">attributions_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lrp_model</span><span class="p">)):</span>
+        <span class="c1"># Randomize backgorund for each round</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">lrp_model</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+        <span class="c1">#for _ in range(num_iterations):</span>
+        <span class="k">if</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">&#39;lrp-like&#39;</span><span class="p">:</span>
+            <span class="n">attribution</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_gene</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">&#39;shap-like&#39;</span><span class="p">:</span>
+            <span class="n">attribution</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">baselines</span> <span class="o">=</span> <span class="n">background</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">target_gene</span><span class="p">)</span>
+
+        <span class="n">attributions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribution</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">attributions_list</span></div>
+
+
+
+
+<div class="viewcode-block" id="inferrence">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.inferrence.html#netmap.grn.inferrence.inferrence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inferrence</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">&#39;GradientShap&#39;</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">backing_file</span><span class="o">=</span><span class="s1">&#39;grn_adata.h5&#39;</span><span class="p">,</span> <span class="n">return_in_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the full GRN for all target genes using an autoencoder ensemble.</span>
+
+<span class="sd">    For each gene acting as an attribution target, attribution scores are</span>
+<span class="sd">    computed across all models in the ensemble, aggregated by mean, and either</span>
+<span class="sd">    written as a Parquet shard or collected in memory. The resulting AnnData</span>
+<span class="sd">    object has cells as observations and directed edges (SourceGene_TargetGene)</span>
+<span class="sd">    as variables.</span>
+
+<span class="sd">    When ``backing_file`` is not ``None``, one Parquet file per target gene is</span>
+<span class="sd">    written to ``&lt;dirname(backing_file)&gt;/grn/&lt;gene&gt;.parquet`` and ``grn_adata.X``</span>
+<span class="sd">    is a zero-shape placeholder. Use ``retrieve_top_edges()`` from</span>
+<span class="sd">    ``netmap.utils.data_utils`` to load attribution values on demand.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        models (list): List of trained autoencoder model instances.</span>
+<span class="sd">        data_train_full_tensor (torch.Tensor): Input expression data on CUDA.</span>
+<span class="sd">        gene_names (numpy.ndarray): Gene name array; order must match tensor columns.</span>
+<span class="sd">        xai_method (str): XAI method — ``&#39;GradientShap&#39;`` (default),</span>
+<span class="sd">            ``&#39;GuidedBackprop&#39;``, or ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">        background_type (str): Background for SHAP-like attributions.</span>
+<span class="sd">            Defaults to ``&#39;zeros&#39;``.</span>
+<span class="sd">        backing_file (str or None): Path prefix for output. Parquet shards are</span>
+<span class="sd">            written to ``&lt;dirname(backing_file)&gt;/grn/&lt;gene&gt;.parquet``.</span>
+<span class="sd">            Set to ``None`` to keep the full matrix in memory (high RAM usage).</span>
+<span class="sd">        return_in_memory (bool): If ``backing_file`` is set and this is ``True``,</span>
+<span class="sd">            load the HDF5 file back into memory before returning. Defaults to</span>
+<span class="sd">            ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        anndata.AnnData: GRN object with cells as obs and edges as var; ``X`` is</span>
+<span class="sd">            an empty placeholder when backed by Parquet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">name_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">target_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+    <span class="k">for</span> <span class="n">trained_model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="n">trained_model</span><span class="o">.</span><span class="n">forward_mu_only</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">explainer</span><span class="p">,</span> <span class="n">xai_type</span> <span class="o">=</span> <span class="n">_get_explainer</span><span class="p">(</span><span class="n">trained_model</span><span class="p">,</span> <span class="n">xai_method</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">explainer</span><span class="p">)</span>
+
+    <span class="n">attributions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">data_train_full_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">data_train_full_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">cols_grn</span> <span class="o">=</span> <span class="n">cols</span><span class="o">*</span><span class="n">cols</span>
+
+    <span class="n">collect_sums</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">collect_means</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+
+    <span class="k">if</span> <span class="n">backing_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># Configuration</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">backing_file</span><span class="p">)</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s1">&#39;grn&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">name_list</span> <span class="o">=</span>  <span class="p">[]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;attr&#39;</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+            <span class="c1">## Create name vector</span>
+            <span class="n">name_list</span> <span class="o">=</span> <span class="n">name_list</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
+            <span class="n">target_names</span> <span class="o">=</span> <span class="n">target_names</span><span class="o">+</span><span class="p">[</span><span class="n">gene_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
+
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">schema</span><span class="p">([(</span><span class="n">name</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">float32</span><span class="p">())</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">])</span>
+
+        <span class="c1"># Loop through your column-wise groups</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">data_train_full_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+            <span class="c1"># Generate your column-wise chunk (shape: [rows, cols])</span>
+            <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">attribution_one_target</span><span class="p">(</span>
+                <span class="n">g</span><span class="p">,</span> <span class="n">tms</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span>
+                <span class="n">xai_type</span><span class="o">=</span><span class="n">xai_type</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="n">background_type</span>
+            <span class="p">)</span>
+
+            <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+
+            <span class="n">collect_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">collect_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+            <span class="c1"># 2. Convert the column-chunk to a PyArrow Table</span>
+            <span class="c1"># Map the numpy chunk to the specific column names for this group &#39;g&#39;</span>
+            <span class="n">current_col_names</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">[</span><span class="n">g</span><span class="o">*</span><span class="n">cols</span> <span class="p">:</span> <span class="p">(</span><span class="n">g</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">cols</span><span class="p">]</span>
+
+            <span class="c1"># We create a table where each slice of the numpy array is a column</span>
+            <span class="n">chunk_table</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">table</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">attributions_list</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">attributions_list</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])],</span>
+                <span class="n">names</span><span class="o">=</span><span class="n">current_col_names</span>
+            <span class="p">)</span>
+
+            <span class="c1"># 3. Write this specific column-group to a Parquet file</span>
+            <span class="c1"># In a dataset, these will be &quot;sharded&quot; columns</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gene_names</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
+            <span class="n">pq</span><span class="o">.</span><span class="n">write_table</span><span class="p">(</span><span class="n">chunk_table</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+
+
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">data_train_full_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">attribution_one_target</span><span class="p">(</span>
+                    <span class="n">g</span><span class="p">,</span>
+                    <span class="n">tms</span><span class="p">,</span>
+                    <span class="n">data_train_full_tensor</span><span class="p">,</span>
+                    <span class="n">xai_type</span><span class="o">=</span><span class="n">xai_type</span><span class="p">,</span>
+                    <span class="n">background_type</span><span class="o">=</span> <span class="n">background_type</span><span class="p">)</span>
+
+
+
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+                <span class="n">collect_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="n">collect_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
+
+                <span class="n">attributions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">)</span>
+
+        <span class="n">attributions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">attributions</span><span class="p">)</span>
+
+    <span class="n">name_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">target_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+        <span class="c1">## Create name vector</span>
+        <span class="n">name_list</span> <span class="o">=</span> <span class="n">name_list</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
+        <span class="n">target_names</span> <span class="o">=</span> <span class="n">target_names</span><span class="o">+</span><span class="p">[</span><span class="n">gene_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
+
+
+    <span class="n">index_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">index_list</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">:</span><span class="n">name_list</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span><span class="n">target_names</span><span class="p">})</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+    <span class="n">cou</span><span class="p">[</span><span class="s1">&#39;edge_sums&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_sums</span><span class="p">)</span>
+    <span class="n">cou</span><span class="p">[</span><span class="s1">&#39;edge_means&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_means</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">backing_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_in_memory</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+                <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">dset</span><span class="p">,</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backing_file&#39;</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
+                <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">to_memory</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols_grn</span><span class="p">),</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backing_file&#39;</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">attribution_to_anndata</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">cou</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grn_adata</span></div>
+
+
+
+<div class="viewcode-block" id="inferrence_h5py">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.inferrence_h5py.html#netmap.grn.inferrence.inferrence_h5py">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_h5py</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">&#39;GradientShap&#39;</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">backing_file</span><span class="o">=</span><span class="s1">&#39;grn_adata.h5&#39;</span><span class="p">,</span> <span class="n">return_in_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the full GRN and back it with an HDF5 file instead of Parquet.</span>
+
+<span class="sd">    Functionally equivalent to ``inferrence()``, but attribution data is</span>
+<span class="sd">    written into a single HDF5 dataset (key ``&#39;data&#39;``, shape</span>
+<span class="sd">    ``(cells, genes^2)``, chunked by ``(cells, genes)``) rather than</span>
+<span class="sd">    per-gene Parquet shards.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        models (list): List of trained PyTorch autoencoder models. The</span>
+<span class="sd">            ``forward_mu_only`` flag is set to ``True`` on each model</span>
+<span class="sd">            internally before wrapping it in a Captum explainer.</span>
+<span class="sd">        data_train_full_tensor (torch.Tensor): Expression data tensor of shape</span>
+<span class="sd">            ``(cells, genes)`` on CUDA.</span>
+<span class="sd">        gene_names (array-like): Ordered gene names corresponding to columns</span>
+<span class="sd">            of ``data_train_full_tensor``.</span>
+<span class="sd">        xai_method (str): Captum XAI method to use. One of</span>
+<span class="sd">            ``&#39;GradientShap&#39;`` (default), ``&#39;GuidedBackprop&#39;``,</span>
+<span class="sd">            ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">        background_type (str): Baseline strategy for SHAP-style attribution.</span>
+<span class="sd">            One of ``&#39;zeros&#39;`` (default), ``&#39;randomize&#39;``, ``&#39;data&#39;``.</span>
+<span class="sd">        backing_file (str or None): Path to the HDF5 output file. If not</span>
+<span class="sd">            ``None``, the file is created (overwriting any existing file) and</span>
+<span class="sd">            attribution data is streamed into it column-block by column-block.</span>
+<span class="sd">            The path is stored in ``grn_adata.uns[&#39;backing_file&#39;]`` so that</span>
+<span class="sd">            ``return_grn_adata_to_memory()`` can reload it. If ``None``, all</span>
+<span class="sd">            attributions are accumulated in memory.</span>
+<span class="sd">        return_in_memory (bool): Only relevant when ``backing_file`` is not</span>
+<span class="sd">            ``None``. If ``True``, the HDF5 dataset is read back into memory</span>
+<span class="sd">            and ``grn_adata.X`` is fully populated before returning.</span>
+<span class="sd">            Default ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        anndata.AnnData: GRN object with shape ``(cells, genes^2)``.</span>
+<span class="sd">            ``obs`` corresponds to cells; ``var`` contains directed edge</span>
+<span class="sd">            metadata with columns ``source``, ``target``, ``edge_sums``, and</span>
+<span class="sd">            ``edge_means``. When backed by HDF5 and ``return_in_memory=False``,</span>
+<span class="sd">            ``X`` is a zero-shape placeholder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">name_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">target_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+    <span class="k">for</span> <span class="n">trained_model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="n">trained_model</span><span class="o">.</span><span class="n">forward_mu_only</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">explainer</span><span class="p">,</span> <span class="n">xai_type</span> <span class="o">=</span> <span class="n">_get_explainer</span><span class="p">(</span><span class="n">trained_model</span><span class="p">,</span> <span class="n">xai_method</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">explainer</span><span class="p">)</span>
+
+    <span class="n">attributions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">data_train_full_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">data_train_full_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">cols_grn</span> <span class="o">=</span> <span class="n">cols</span><span class="o">*</span><span class="n">cols</span>
+
+    <span class="n">collect_sums</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">collect_means</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">backing_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+            <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols_grn</span><span class="p">),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span>
+                <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">data_train_full_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">attribution_one_target</span><span class="p">(</span>
+                    <span class="n">g</span><span class="p">,</span>
+                    <span class="n">tms</span><span class="p">,</span>
+                    <span class="n">data_train_full_tensor</span><span class="p">,</span>
+                    <span class="n">xai_type</span><span class="o">=</span><span class="n">xai_type</span><span class="p">,</span>
+                    <span class="n">background_type</span><span class="o">=</span> <span class="n">background_type</span><span class="p">)</span>
+
+
+
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+                <span class="n">collect_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="n">collect_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="n">dset</span><span class="p">[:,</span> <span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">cols</span><span class="p">):</span> <span class="p">((</span><span class="n">g</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">cols</span><span class="p">)]</span> <span class="o">=</span> <span class="n">attributions_list</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">data_train_full_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">attribution_one_target</span><span class="p">(</span>
+                    <span class="n">g</span><span class="p">,</span>
+                    <span class="n">tms</span><span class="p">,</span>
+                    <span class="n">data_train_full_tensor</span><span class="p">,</span>
+                    <span class="n">xai_type</span><span class="o">=</span><span class="n">xai_type</span><span class="p">,</span>
+                    <span class="n">background_type</span><span class="o">=</span> <span class="n">background_type</span><span class="p">)</span>
+
+
+
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+                <span class="n">collect_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="n">collect_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
+
+                <span class="n">attributions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">)</span>
+
+        <span class="n">attributions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">attributions</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+        <span class="c1">## Create name vector</span>
+        <span class="n">name_list</span> <span class="o">=</span> <span class="n">name_list</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
+        <span class="n">target_names</span> <span class="o">=</span> <span class="n">target_names</span><span class="o">+</span><span class="p">[</span><span class="n">gene_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
+
+
+    <span class="n">index_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">index_list</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">:</span><span class="n">name_list</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span><span class="n">target_names</span><span class="p">})</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+    <span class="n">cou</span><span class="p">[</span><span class="s1">&#39;edge_sums&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_sums</span><span class="p">)</span>
+    <span class="n">cou</span><span class="p">[</span><span class="s1">&#39;edge_means&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_means</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">backing_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_in_memory</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+                <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">dset</span><span class="p">,</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backing_file&#39;</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
+                <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">to_memory</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols_grn</span><span class="p">),</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backing_file&#39;</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">attribution_to_anndata</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">cou</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grn_adata</span></div>
+
+
+
+<div class="viewcode-block" id="return_grn_adata_to_memory">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.return_grn_adata_to_memory.html#netmap.grn.inferrence.return_grn_adata_to_memory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">return_grn_adata_to_memory</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the full attribution matrix from the HDF5 backing file into memory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with ``uns[&#39;backing_file&#39;]``</span>
+<span class="sd">            pointing to an HDF5 file written by :func:`inferrence_h5py`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        anndata.AnnData: The same object with ``X`` populated in memory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">uns</span><span class="p">[</span><span class="s1">&#39;backing_file&#39;</span><span class="p">],</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">dset</span>
+        <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">to_memory</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">grn_adata</span></div>
+
+
+
+<div class="viewcode-block" id="attribution_one_model">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.attribution_one_model.html#netmap.grn.inferrence.attribution_one_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">attribution_one_model</span><span class="p">(</span>
+        <span class="n">lrp_model</span><span class="p">,</span>
+        <span class="n">input_data</span><span class="p">,</span>
+        <span class="n">xai_type</span><span class="o">=</span><span class="s1">&#39;lrp-like&#39;</span><span class="p">,</span>
+        <span class="n">background_type</span> <span class="o">=</span> <span class="s1">&#39;randomize&#39;</span><span class="p">):</span>
+
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute attributions for all target genes using a single model.</span>
+
+<span class="sd">    Iterates over every gene index as an attribution target and calls</span>
+<span class="sd">    ``lrp_model.attribute()`` with the appropriate signature, then</span>
+<span class="sd">    horizontally stacks the per-target arrays into one complete attribution</span>
+<span class="sd">    matrix for the model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lrp_model: A single Captum explainer instance (e.g. GradientShap or</span>
+<span class="sd">            GuidedBackprop) wrapping one trained autoencoder.</span>
+<span class="sd">        input_data (torch.Tensor): Expression tensor of shape</span>
+<span class="sd">            ``(cells, genes)`` on CUDA.</span>
+<span class="sd">        xai_type (str): Explainer mode. One of ``&#39;lrp-like&#39;`` (no baseline</span>
+<span class="sd">            needed) or ``&#39;shap-like&#39;`` (baseline required). Default</span>
+<span class="sd">            ``&#39;lrp-like&#39;``.</span>
+<span class="sd">        background_type (str): Strategy for constructing the baseline tensor</span>
+<span class="sd">            used by SHAP-style methods. One of:</span>
+
+<span class="sd">            - ``&#39;randomize&#39;``: ``input_data`` with each column independently</span>
+<span class="sd">              shuffled (default).</span>
+<span class="sd">            - ``&#39;zeros&#39;``: a single all-zero row on CUDA.</span>
+<span class="sd">            - ``&#39;data&#39;``: use ``input_data`` itself as the baseline.</span>
+
+<span class="sd">            Any unrecognised value falls back to ``&#39;zeros&#39;``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Attribution matrix of shape ``(cells, genes^2)`` where</span>
+<span class="sd">        columns are ordered by target gene (outer) then source gene (inner),</span>
+<span class="sd">        matching the edge ordering used in ``grn_adata.var``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">attributions_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Randomize backgorund for each round</span>
+    <span class="k">if</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;randomize&#39;</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">shuffle_each_column_independently</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">input_data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+
+    <span class="k">for</span> <span class="n">target_gene</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+
+        <span class="c1">#for _ in range(num_iterations):</span>
+        <span class="k">if</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">&#39;lrp-like&#39;</span><span class="p">:</span>
+            <span class="n">attribution</span> <span class="o">=</span> <span class="n">lrp_model</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_gene</span><span class="p">)</span>
+
+
+        <span class="k">elif</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">&#39;shap-like&#39;</span><span class="p">:</span>
+            <span class="n">attribution</span> <span class="o">=</span> <span class="n">lrp_model</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">baselines</span> <span class="o">=</span> <span class="n">background</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">target_gene</span><span class="p">)</span>
+
+        <span class="n">attributions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribution</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+    <span class="n">attributions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">attributions</span></div>
+
+
+
+<div class="viewcode-block" id="inferrence_model_wise">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.inferrence_model_wise.html#netmap.grn.inferrence.inferrence_model_wise">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_model_wise</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">&#39;GradientShap&#39;</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the full GRN by processing one complete model at a time.</span>
+
+<span class="sd">    Unlike ``inferrence()``, which iterates over target genes across all</span>
+<span class="sd">    models, this function processes each model in full (all target genes) and</span>
+<span class="sd">    accumulates a running sum of attribution matrices. The final matrix is</span>
+<span class="sd">    normalised implicitly by the last model added. This approach may reduce</span>
+<span class="sd">    peak memory when the number of genes is small relative to the number of</span>
+<span class="sd">    models.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        models (list): List of trained PyTorch autoencoder models. The</span>
+<span class="sd">            ``forward_mu_only`` flag is set to ``True`` on each model</span>
+<span class="sd">            internally.</span>
+<span class="sd">        data_train_full_tensor (torch.Tensor): Expression tensor of shape</span>
+<span class="sd">            ``(cells, genes)`` on CUDA.</span>
+<span class="sd">        gene_names (array-like): Ordered gene names corresponding to columns</span>
+<span class="sd">            of ``data_train_full_tensor``.</span>
+<span class="sd">        xai_method (str): Captum XAI method to use. One of</span>
+<span class="sd">            ``&#39;GradientShap&#39;`` (default), ``&#39;GuidedBackprop&#39;``,</span>
+<span class="sd">            ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">        background_type (str): Baseline strategy for SHAP-style attribution.</span>
+<span class="sd">            One of ``&#39;zeros&#39;`` (default), ``&#39;randomize&#39;``, ``&#39;data&#39;``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        anndata.AnnData: In-memory GRN object with shape</span>
+<span class="sd">        ``(cells, genes^2)``. ``var`` contains directed edge metadata with</span>
+<span class="sd">        columns ``source`` and ``target``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tms</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">cou</span>  <span class="o">=</span> <span class="p">[[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">gene_names</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">)]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cou</span><span class="p">)</span>
+    <span class="n">cou</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+
+
+    <span class="k">for</span> <span class="n">trained_model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="n">trained_model</span><span class="o">.</span><span class="n">forward_mu_only</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">explainer</span><span class="p">,</span> <span class="n">xai_type</span> <span class="o">=</span> <span class="n">_get_explainer</span><span class="p">(</span><span class="n">trained_model</span><span class="p">,</span> <span class="n">xai_method</span><span class="p">)</span>
+        <span class="n">tms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">explainer</span><span class="p">)</span>
+
+    <span class="n">attributions</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">attribution_collector</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">keynames</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tms</span><span class="p">)):</span>
+
+        <span class="c1"># get one complete attribution</span>
+        <span class="n">current_attribution</span> <span class="o">=</span> <span class="n">attribution_one_model</span><span class="p">(</span>
+            <span class="n">tms</span><span class="p">[</span><span class="n">m</span><span class="p">],</span>
+            <span class="n">data_train_full_tensor</span><span class="p">,</span>
+            <span class="n">xai_type</span><span class="o">=</span><span class="n">xai_type</span><span class="p">,</span>
+            <span class="n">background_type</span> <span class="o">=</span> <span class="n">background_type</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="n">attribution_collector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># add current attribution to the collector</span>
+            <span class="n">attribution_collector</span> <span class="o">=</span>  <span class="n">aggregate_attributions</span><span class="p">([</span><span class="n">attribution_collector</span><span class="p">,</span> <span class="n">current_attribution</span><span class="p">],</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attribution_collector</span> <span class="o">=</span> <span class="n">current_attribution</span>
+
+
+    <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">attribution_to_anndata</span><span class="p">(</span><span class="n">attribution_collector</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">cou</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grn_adata</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="inferrence_model_wise_level">
+<a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.inferrence_model_wise_level.html#netmap.grn.inferrence.inferrence_model_wise_level">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_model_wise_level</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">&#39;GradientShap&#39;</span><span class="p">,</span> <span class="n">n_models</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the GRN model-wise and save intermediate aggregates as layers.</span>
+
+<span class="sd">    Processes one complete model at a time (same order as</span>
+<span class="sd">    ``inferrence_model_wise()``), but additionally saves a snapshot of the</span>
+<span class="sd">    mean attribution matrix at each model-count checkpoint listed in</span>
+<span class="sd">    ``n_models``. Snapshots after the first checkpoint are stored as named</span>
+<span class="sd">    layers in the returned AnnData object so that downstream analysis can</span>
+<span class="sd">    compare GRN stability across ensemble sizes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        models (list): List of trained PyTorch autoencoder models. The</span>
+<span class="sd">            ``forward_mu_only`` flag is set to ``True`` on each model</span>
+<span class="sd">            internally.</span>
+<span class="sd">        data_train_full_tensor (torch.Tensor): Expression tensor of shape</span>
+<span class="sd">            ``(cells, genes)`` on CUDA.</span>
+<span class="sd">        gene_names (array-like): Ordered gene names corresponding to columns</span>
+<span class="sd">            of ``data_train_full_tensor``.</span>
+<span class="sd">        xai_method (str): Captum XAI method to use. One of</span>
+<span class="sd">            ``&#39;GradientShap&#39;`` (default), ``&#39;GuidedBackprop&#39;``,</span>
+<span class="sd">            ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">        n_models (list of int): Checkpoints (1-based model counts) at which</span>
+<span class="sd">            the current running mean attribution matrix is saved as a layer.</span>
+<span class="sd">            For example, ``[10, 25, 50]`` saves snapshots after models 10,</span>
+<span class="sd">            25, and 50 have been processed. The first checkpoint becomes</span>
+<span class="sd">            ``grn_adata.X``; subsequent checkpoints are stored as</span>
+<span class="sd">            ``grn_adata.layers[&#39;aggregated_&lt;n&gt;&#39;]``. Default ``[10, 25, 50]``.</span>
+<span class="sd">        background_type (str): Baseline strategy for SHAP-style attribution.</span>
+<span class="sd">            One of ``&#39;zeros&#39;`` (default), ``&#39;randomize&#39;``, ``&#39;data&#39;``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        anndata.AnnData or None: GRN object with shape ``(cells, genes^2)``</span>
+<span class="sd">        where ``X`` holds the mean attributions at the first checkpoint and</span>
+<span class="sd">        each additional checkpoint is stored as a named layer. Returns</span>
+<span class="sd">        ``None`` if no checkpoint in ``n_models`` was reached (e.g. fewer</span>
+<span class="sd">        models were provided than the smallest value in ``n_models``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tms</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">cou</span>  <span class="o">=</span> <span class="p">[[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">gene_names</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">)]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cou</span><span class="p">)</span>
+    <span class="n">cou</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+
+
+    <span class="k">for</span> <span class="n">trained_model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="n">trained_model</span><span class="o">.</span><span class="n">forward_mu_only</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">explainer</span><span class="p">,</span> <span class="n">xai_type</span> <span class="o">=</span> <span class="n">_get_explainer</span><span class="p">(</span><span class="n">trained_model</span><span class="p">,</span> <span class="n">xai_method</span><span class="p">)</span>
+        <span class="n">tms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">explainer</span><span class="p">)</span>
+
+    <span class="n">attributions</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">attribution_collector</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">keynames</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tms</span><span class="p">)):</span>
+
+        <span class="c1"># get one complete attribution</span>
+        <span class="n">current_attribution</span> <span class="o">=</span> <span class="n">attribution_one_model</span><span class="p">(</span>
+            <span class="n">tms</span><span class="p">[</span><span class="n">m</span><span class="p">],</span>
+            <span class="n">data_train_full_tensor</span><span class="p">,</span>
+            <span class="n">xai_type</span><span class="o">=</span><span class="n">xai_type</span><span class="p">,</span>
+            <span class="n">background_type</span> <span class="o">=</span> <span class="n">background_type</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="n">attribution_collector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># add current attribution to the collector</span>
+            <span class="n">attribution_collector</span> <span class="o">=</span>  <span class="n">aggregate_attributions</span><span class="p">([</span><span class="n">attribution_collector</span><span class="p">,</span> <span class="n">current_attribution</span><span class="p">],</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attribution_collector</span> <span class="o">=</span> <span class="n">current_attribution</span>
+
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">n_models</span><span class="p">:</span>
+                <span class="c1"># dont reset, just save the correct matrix</span>
+                <span class="n">attributions</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;aggregated_</span><span class="si">{</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attribution_collector</span><span class="o">/</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">keynames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;aggregated_</span><span class="si">{</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+    <span class="c1"># top_egde_collector = pd.DataFrame(top_egde_collector)</span>
+    <span class="c1"># top_egde_collector[&#39;variance_area&#39;] = top_egde_collector.iloc[:, 0:10].var(axis=1)</span>
+    <span class="c1"># top_egde_collector[&#39;mean_area&#39;] = top_egde_collector.iloc[:, 0:10].mean(axis=1)</span>
+    <span class="c1"># top_egde_collector[&#39;zscore&#39;] = scipy.stats.zscore(top_egde_collector[&#39;mean_area&#39;])</span>
+
+    <span class="c1"># cou = cou.merge(top_egde_collector, left_index = True, right_on=&#39;edge_key&#39;)</span>
+
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keynames</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">attribution_to_anndata</span><span class="p">(</span><span class="n">attributions</span><span class="p">[</span><span class="n">keynames</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">var</span><span class="o">=</span><span class="n">cou</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keynames</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">keynames</span><span class="p">)]:</span>
+            <span class="c1"># add remaining versions as masks</span>
+            <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">attributions</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">grn_adata</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Anne Hartebrodt, Mhaned Oubounyt
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=1b390748"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

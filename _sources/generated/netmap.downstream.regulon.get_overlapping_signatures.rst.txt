@@ -1,0 +1,6 @@
+netmap.downstream.regulon.get\_overlapping\_signatures
+======================================================
+
+.. currentmodule:: netmap.downstream.regulon
+
+.. autofunction:: get_overlapping_signatures

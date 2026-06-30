@@ -1,0 +1,6 @@
+netmap.grn.inferrence.inferrence\_h5py
+======================================
+
+.. currentmodule:: netmap.grn.inferrence
+
+.. autofunction:: inferrence_h5py

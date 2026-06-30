@@ -1,0 +1,6 @@
+netmap.masking.internal.add\_cluster\_wise\_spearman
+====================================================
+
+.. currentmodule:: netmap.masking.internal
+
+.. autofunction:: add_cluster_wise_spearman

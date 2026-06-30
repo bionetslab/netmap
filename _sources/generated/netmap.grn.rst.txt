@@ -1,0 +1,32 @@
+﻿netmap.grn
+==========
+
+.. currentmodule:: netmap.grn
+
+
+.. automodule:: netmap.grn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+   :template: autosummary/module.rst
+
+
+   inferrence
+
+

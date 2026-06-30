@@ -1,0 +1,6 @@
+netmap.downstream.markers.prepare\_jaccard\_analysis\_df
+========================================================
+
+.. currentmodule:: netmap.downstream.markers
+
+.. autofunction:: prepare_jaccard_analysis_df

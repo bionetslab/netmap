@@ -1,0 +1,6 @@
+netmap.downstream.regulon.load\_edge\_dict\_from\_dataframe
+===========================================================
+
+.. currentmodule:: netmap.downstream.regulon
+
+.. autofunction:: load_edge_dict_from_dataframe

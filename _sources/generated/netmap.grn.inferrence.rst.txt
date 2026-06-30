@@ -1,0 +1,48 @@
+netmap.grn.inferrence
+=====================
+
+.. currentmodule:: netmap.grn.inferrence
+
+
+.. automodule:: netmap.grn.inferrence
+
+
+
+
+.. rubric:: Functions
+
+.. autosummary::
+   :toctree:                          
+   :template: autosummary/function.rst
+   :nosignatures:
+
+
+   aggregate_attributions
+
+   attribution_one_model
+
+   attribution_one_target
+
+   inferrence
+
+   inferrence_h5py
+
+   inferrence_model_wise
+
+   inferrence_model_wise_level
+
+   return_grn_adata_to_memory
+
+   shuffle_each_column_independently
+
+
+
+
+
+
+
+
+
+
+
+

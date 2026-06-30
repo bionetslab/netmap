@@ -1,4 +1,4 @@
-netmap.model
+﻿netmap.model
 ============
 
 .. currentmodule:: netmap.model

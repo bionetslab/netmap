@@ -1,0 +1,6 @@
+netmap.grn.inferrence.shuffle\_each\_column\_independently
+==========================================================
+
+.. currentmodule:: netmap.grn.inferrence
+
+.. autofunction:: shuffle_each_column_independently

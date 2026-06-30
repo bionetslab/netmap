@@ -1,0 +1,6 @@
+netmap.grn.inferrence.aggregate\_attributions
+=============================================
+
+.. currentmodule:: netmap.grn.inferrence
+
+.. autofunction:: aggregate_attributions
