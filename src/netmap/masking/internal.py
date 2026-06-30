@@ -1,3 +1,11 @@
+"""Neighbourhood-expression masking for GRN edges.
+
+Functions in this module build binary cell×edge masks that indicate whether
+both the source and target genes of an edge are expressed in the local kNN
+neighbourhood of each cell.  The masks are stored in ``grn_adata.layers['mask']``
+and used downstream to filter low-confidence edges.
+"""
+
 import numpy as np
 import pandas as pd
 from scipy.sparse import issparse
@@ -14,19 +22,30 @@ import itertools
 
 
 def get_neighborhood_expression(adata, knn_neighbours =10, required_neighbours = 1, expression_threshold = 0, layer = 'X'):
-    """
-    Checks if each gene is expressed in the k-nearest neighbors (kNN) of each cell.
+    """Checks if each gene is expressed in the k-nearest neighbors (kNN) of each cell.
+
+    Computes a kNN graph on adata, then for each cell counts how many neighbours
+    express each gene above expression_threshold. Returns a binary matrix where
+    1 indicates the gene is expressed in at least required_neighbours neighbours.
 
     Args:
-        adata (anndata.AnnData): An AnnData object with a kNN graph in
-                                 `adata.obsp['connectivities']`.
+        adata (anndata.AnnData): Expression AnnData with PCA in ``obsm['X_pca']``.
+            A kNN graph is computed internally via ``sc.pp.neighbors``.
+        knn_neighbours (int): Number of nearest neighbours for the kNN graph.
+            Defaults to 10.
+        required_neighbours (int): Minimum number of neighbours that must express
+            a gene for the cell to be considered in the neighbourhood. Defaults to 1.
+        expression_threshold (float): Minimum value to consider a gene expressed.
+            Defaults to 0.
+        layer (str): Layer to use for expression values — ``'X'`` or a named
+            layer. Defaults to ``'X'``.
 
     Returns:
-        pd.DataFrame: A cell x gene binary DataFrame where a value of 1 indicates
-                      that the gene is expressed in at least one of the cell's
-                      nearest neighbors, and 0 otherwise.
+        scipy.sparse matrix or numpy.ndarray: Binary matrix of shape
+            ``(n_cells, n_genes)`` where 1 means the gene is expressed in at
+            least ``required_neighbours`` neighbours.
     """
-    
+
     # Compute knn graph with low number of neighbours
     # in practice, the number may not be equal
 
@@ -50,15 +69,14 @@ def get_neighborhood_expression(adata, knn_neighbours =10, required_neighbours =
 
 
 def create_pairwise_binary_mask(binary_matrix, gene_list, ordered_pair_list):
-    """
-    Creates a dense 2D array of pairwise masks using preallocation.
-    
+    """Creates a dense 2D array of pairwise masks using preallocation.
+
     Args:
         binary_matrix (np.ndarray): Rows=cells, Cols=genes.
         gene_list (list): The names of the genes in binary_matrix columns.
-        ordered_pair_list (list): The specific order of "GeneA_GeneB" strings 
+        ordered_pair_list (list): The specific order of "GeneA_GeneB" strings
                                   requested for the final output columns.
-                                  
+
     Returns:
         np.ndarray: A 2D array of shape (num_cells, len(ordered_pair_list)).
     """
@@ -68,33 +86,45 @@ def create_pairwise_binary_mask(binary_matrix, gene_list, ordered_pair_list):
     binary_matrix = np.asarray(binary_matrix)
 
     result = np.zeros((num_cells, num_pairs), dtype=np.int8)
-    
+
 
     # 2. Map gene names to their original column indices for O(1) lookup
     gene_to_idx = {name: i for i, name in enumerate(gene_list)}
-    
+
     # 3. Fill the matrix column by column
     for col_idx, pair_str in enumerate(ordered_pair_list):
         g1_name, g2_name = pair_str.split('_')
-        
-        # Self-pairs (e.g., GeneA_GeneA) are skipped because 
+
+        # Self-pairs (e.g., GeneA_GeneA) are skipped because
         # the matrix is already initialized to zeros.
         if g1_name != g2_name:
             idx1 = gene_to_idx[g1_name]
             idx2 = gene_to_idx[g2_name]
-            
+
 
             res = np.multiply(
-                binary_matrix[:, idx1], 
-                binary_matrix[:, idx2], 
+                binary_matrix[:, idx1],
+                binary_matrix[:, idx2],
             )
             result[:, col_idx] = np.array(res)
-            
+
     return result
 
 
 
 def binarize_adata(adata, expression_threshold = 0, layer = 'X'):
+    """Binarize gene expression to 0/1 based on an expression threshold.
+
+    Args:
+        adata (anndata.AnnData): Expression AnnData object.
+        expression_threshold (float): Values above this are set to 1. Defaults to 0.
+        layer (str): ``'X'`` to use ``adata.X``, otherwise the name of a layer in
+            ``adata.layers``. Defaults to ``'X'``.
+
+    Returns:
+        numpy.ndarray or numpy.matrix: Binary expression matrix of shape
+            ``(n_cells, n_genes)``.
+    """
 
     if layer == 'X':
         if issparse(adata.X):
@@ -111,15 +141,22 @@ def binarize_adata(adata, expression_threshold = 0, layer = 'X'):
 
 
 def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X'):
-    """ Create a mask indicating whether the edge is likely actually
-    expressed or not.
+    """Create a binary cell×edge co-expression mask and add it to the GRN AnnData.
+
+    The mask indicates whether both the source and target genes of each edge are
+    expressed in the kNN neighbourhood of each cell.
 
     Args:
-        adata (_type_): _description_
-        grn_adata (_type_): _description_
+        adata (anndata.AnnData): Expression AnnData; must have ``obsm['X_pca']``.
+        grn_adata (anndata.AnnData): GRN AnnData whose ``var_names`` are
+            ``SourceGene_TargetGene`` edge identifiers.
+        strict (bool): If ``True``, use direct binarization of ``adata.X`` instead
+            of neighbourhood expression. Defaults to ``False``.
+        layer (str): Layer to use for expression values. Defaults to ``'X'``.
 
     Returns:
-        _type_: _description_
+        anndata.AnnData: ``grn_adata`` with ``layers['mask']`` (int8) and
+            ``var['count_nonzero']`` added.
     """
 
     if 'X_pca' not in adata.obsm:
@@ -132,30 +169,29 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X
     grn_genes = set()
     for pair in grn_adata.var_names:
         grn_genes.update(pair.split('_'))
-    
+
     adata_genes = set(adata.var_names)
     missing_genes = grn_genes - adata_genes
-    
+
     if missing_genes:
 
         print(f"Warning: {len(missing_genes)} genes from grn_adata are missing from adata.")
         if len(missing_genes) == len(grn_genes):
             raise ValueError("Zero overlap between GRN genes and adata.var_names.")
-    
+
     if not strict:
         ne = get_neighborhood_expression(adata, required_neighbours=5, layer = layer)
     else:
         ne = binarize_adata(adata, layer = layer)
     mask = create_pairwise_binary_mask(ne, list(adata.var.index), grn_adata.var_names)
-    
+
     grn_adata.layers['mask'] = mask
     grn_adata.var['count_nonzero'] = np.sum(grn_adata.layers['mask'], axis =0)
     return grn_adata
 
 
 def add_cluster_wise_spearman(grn_adata, adata, cluster_column='leiden_remap'):
-    """
-    Compute cluster-wise Spearman rank correlation between source and target gene
+    """Compute cluster-wise Spearman rank correlation between source and target gene
     expression for each edge in grn_adata, adding a '{cluster}_spearman' column
     to grn_adata.var for every cluster.
 
@@ -223,6 +259,26 @@ def add_cluster_wise_spearman(grn_adata, adata, cluster_column='leiden_remap'):
 
 
 def add_cluster_based_candidate_edges(grn_adata, cluster_column = 'leiden_remap', threshold = 0.5):
+    """Annotate edges with per-cluster mask support fractions and candidacy flags.
+
+    For each Leiden cluster, computes the fraction of cluster cells in which the
+    edge mask is 1, adds a ``{cluster}_nonzero`` column, and marks an edge as a
+    candidate (``{cluster}_candidate_edge = True``) when support exceeds
+    ``threshold``.  A global ``candidate_edge`` column summing candidacies across
+    clusters is also added.
+
+    Args:
+        grn_adata (anndata.AnnData): GRN AnnData with ``layers['mask']`` and
+            ``var['count_nonzero']``.
+        cluster_column (str): Column in ``grn_adata.obs`` with cluster labels.
+            Defaults to ``'leiden_remap'``.
+        threshold (float): Minimum mask support fraction for an edge to be a
+            candidate. Defaults to 0.5.
+
+    Returns:
+        anndata.AnnData: ``grn_adata`` with per-cluster and global candidacy
+            columns added to ``.var``.
+    """
     vc = grn_adata.obs[cluster_column].value_counts()
     grn_adata.var[f'count_nonzero_norm'] = grn_adata.var[f'count_nonzero']/grn_adata.obs.shape[0]
     for ps in list(vc.index):
@@ -238,20 +294,19 @@ def add_cluster_based_candidate_edges(grn_adata, cluster_column = 'leiden_remap'
 
 
 def find_consistent_pairs(grn_adata, gene_names):
-    """
-    Creates a dictionary of binary masks for each cell and pair of genes,
-    including both forward, reverse, and self-pairs (which are all zeros).
+    """Compute Spearman correlation between forward and reverse edge attribution scores.
+
+    For every pair of genes (A, B), computes the Spearman correlation between
+    the attribution columns ``A_B`` and ``B_A`` in ``grn_adata.X`` across all
+    cells. Both directions receive the same correlation value.
 
     Args:
-        matrix_cells_x_genes (np.ndarray): A 2D numpy array where rows are cells
-                                          and columns are genes.
-        gene_list (list): A list of strings containing the names of the genes,
-                          in the same order as the columns in the matrix.
+        grn_adata (anndata.AnnData): GRN AnnData with attribution values in ``X``.
+        gene_names (list of str): Gene names to form pairs from.
 
     Returns:
-        dict: A dictionary where keys are gene pair strings (e.g., 'GeneA_GeneB')
-              and values are 1D numpy arrays representing the binary mask for that pair
-              across all cells.
+        dict: Mapping ``{edge_str: spearman_r}`` for all forward and reverse
+            pairs. Self-pairs are not included.
     """
 
     num_cells, num_edges = grn_adata.X.shape

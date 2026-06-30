@@ -1,3 +1,10 @@
+"""Autoencoder ensemble training utilities.
+
+This module provides functions to train a zoo of independent autoencoder
+models with early stopping, forming the ensemble used by the GRN inference
+stage. Training is hardcoded to CUDA GPU.
+"""
+
 from sklearn.model_selection import train_test_split
 from netmap.model.nbautoencoder import NegativeBinomialAutoencoder
 from netmap.model.zinbautoencoder import ZINBAutoencoder
@@ -8,20 +15,40 @@ from tqdm import tqdm
 
 
 def create_model_zoo(data_tensor, n_models = 10, n_epochs = 10000, model_type = 'ZINBAutoencoder', dropout_rate = 0.1, latent_dim=8, hidden_dim=[64]):
-    """ Creates a set of Autoencoders of the data using the speicified architecture. The architecture of the encoder can be specified using 
-    the `hidden_dim` parameter, the decoder architecture is mirrored. Early stopping is used by default.
+    """Create an ensemble of autoencoders (model zoo) trained on the supplied data.
+
+    Each model is initialised with a fresh random seed, trained on an independent
+    80/20 train/validation split, and added to the zoo only if training converges.
+    Models that fail to converge (i.e. ``_train_autoencoder_early_stopping()``
+    returns ``None``) are skipped; training retries until ``n_models`` succeed or
+    5 consecutive failures occur, after which the loop is aborted.
 
     Args:
-        data_tensor (torch.tensor): The raw gene expression data
-        n_models (int, optional): The number of models to compute. Defaults to 10.
-        n_epochs (int, optional): Maximum number of epochs, if early stopping is not triggered. Defaults to 10000. Use
-        model_type (str, optional): Model type, one of [ZINBAutoencoder, NegativeBinomialAutoencoder] Defaults to 'ZINBAutoencoder'.
-        dropout_rate (float, optional): Dropout rate used during training. Defaults to 0.02.
-        latent_dim (int, optional): Number of neurons in the latent dimension. Defaults to 8.
-        hidden_dim (list, optional): Architecture specification, list of ints. Defaults to [128].
+        data_tensor (torch.Tensor): Raw gene expression data of shape
+            ``(n_cells, n_genes)``.  Must be a floating-point tensor on CPU;
+            it is moved to CUDA internally.
+        n_models (int, optional): Number of successfully trained models to
+            collect in the zoo.  Defaults to 10.
+        n_epochs (int, optional): Maximum number of training epochs per model
+            before early stopping would have been triggered.  Defaults to 10000.
+        model_type (str, optional): Architecture to instantiate.  One of
+            ``'ZINBAutoencoder'`` (zero-inflated negative binomial) or
+            ``'NegativeBinomialAutoencoder'``.  Any unrecognised value falls
+            back to ``NegativeBinomialAutoencoder``.  Defaults to
+            ``'ZINBAutoencoder'``.
+        dropout_rate (float, optional): Dropout probability applied during
+            training in each encoder/decoder layer.  Defaults to 0.1.
+        latent_dim (int, optional): Dimensionality of the bottleneck latent
+            space.  Defaults to 8.
+        hidden_dim (list of int, optional): Encoder layer sizes, specified as a
+            list of integers from the input layer towards the bottleneck (e.g.
+            ``[128, 64]`` produces two encoder layers of width 128 and 64).  The
+            decoder mirrors this sequence in reverse.  Defaults to ``[64]``.
 
     Returns:
-        Model )list): The list of trained models.
+        list: A list of trained autoencoder model instances.  Length is at most
+        ``n_models``; may be shorter if the 5-consecutive-failure limit is
+        reached before enough models converge.
     """
     model_zoo = []
     counter = 0
@@ -65,16 +92,27 @@ def _train_autoencoder(
     batch_size=32,  # Minibatch size
     num_epochs=100,
 ):
-    """Legacy version of the training loop without early stopping
+    """Legacy training loop without early stopping.
+
+    Trains the model for a fixed number of epochs using minibatch gradient
+    descent.  Validation and early stopping are not performed.  Prefer
+    ``_train_autoencoder_early_stopping()`` for production use.
 
     Args:
-        model (_type_): The model to be trained
-        data_train (_type_): Trianing data
-        optimizer (_type_): optimizer to be used
-        batch_size (int, optional): Batch size. Defaults to 32.
+        model (torch.nn.Module): An initialised autoencoder instance (e.g.
+            ``NegativeBinomialAutoencoder`` or ``ZINBAutoencoder``) that
+            exposes a ``compute_loss(batch)`` method.
+        data_train (torch.Tensor): Training data of shape
+            ``(n_cells, n_genes)``.
+        optimizer (torch.optim.Optimizer): Optimiser to use for parameter
+            updates (e.g. ``torch.optim.Adam``).
+        batch_size (int, optional): Minibatch size for the DataLoader.
+            Defaults to 32.
+        num_epochs (int, optional): Total number of training epochs.
+            Defaults to 100.
 
     Returns:
-        Model: trained model
+        torch.nn.Module: The trained model after ``num_epochs`` epochs.
     """
     # Prepare DataLoader for training
     train_dataset = TensorDataset(data_train)
@@ -107,30 +145,55 @@ def _train_autoencoder(
 def _train_autoencoder_early_stopping(
     model,
     data_train,
-    data_val,  
+    data_val,
     optimizer,
     batch_size=32,
     num_epochs=10000,
-    patience=10,  
-    min_delta=0.001,  
+    patience=10,
+    min_delta=0.001,
     validation_freq = 10,
 ):
-    """Training loop for the autoencoders.
+    """Training loop with early stopping based on validation loss.
+
+    Trains the model using minibatch gradient descent and evaluates on the
+    validation set every ``validation_freq`` epochs.  The best model state
+    (lowest validation loss) is tracked throughout training.  Training halts
+    early when the validation loss fails to improve by more than ``min_delta``
+    for ``patience`` consecutive validation checks.  Before returning, the
+    best recorded model state is loaded back into the model via
+    ``model.load_state_dict(best_model_state)``, so the returned model
+    corresponds to the checkpoint with the lowest observed validation loss
+    rather than the final epoch.
 
     Args:
-        model (_type_): An instance of an autoencoder model
-        data_train (_type_): Training data split
-        data_val (_type_): Validation data split used for early stopping
-        optimizer (_type_): Optimizer used
-        batch_size (int, optional): Minibatch size. Defaults to 32.
-        num_epochs (int, optional): Number of epochs. Defaults to 10000.
-        patience (int, optional): Number of epochs with delta loss smaller 
-            than min delta before early stopping is triggered. Defaults to 10.
-        min_delta (float, optional): Loss delta for early stopping. Defaults to 0.001.
-        validation_freq (int, optional): Number of epochs before validation is run. Defaults to 10.
+        model (torch.nn.Module): An initialised autoencoder instance (e.g.
+            ``NegativeBinomialAutoencoder`` or ``ZINBAutoencoder``) that
+            exposes a ``compute_loss(batch)`` method.
+        data_train (torch.Tensor): Training data of shape
+            ``(n_cells, n_genes)``.
+        data_val (torch.Tensor): Validation data of shape
+            ``(n_cells, n_genes)`` used exclusively for early stopping
+            decisions; not used for gradient updates.
+        optimizer (torch.optim.Optimizer): Optimiser to use for parameter
+            updates (e.g. ``torch.optim.Adam``).
+        batch_size (int, optional): Minibatch size for both DataLoaders.
+            Defaults to 32.
+        num_epochs (int, optional): Maximum number of training epochs before
+            the loop terminates regardless of early stopping.  Defaults to
+            10000.
+        patience (int, optional): Number of validation checks without
+            sufficient improvement before early stopping is triggered.
+            Defaults to 10.
+        min_delta (float, optional): Minimum absolute decrease in validation
+            loss required to count as an improvement and reset the patience
+            counter.  Defaults to 0.001.
+        validation_freq (int, optional): Interval in epochs between validation
+            evaluations.  Defaults to 10.
 
     Returns:
-        Model: Trained model with the parametrization of the best loss.
+        torch.nn.Module or None: The trained model loaded with the best
+        observed ``state_dict``, or ``None`` if a ``TypeError`` is raised
+        during the early-stopping comparison (indicating a training failure).
     """
     # Prepare DataLoaders
     train_dataset = TensorDataset(data_train)
@@ -143,7 +206,7 @@ def _train_autoencoder_early_stopping(
     best_model_state = None
 
     epoch_iterator = tqdm(range(num_epochs), desc="Training Autoencoder")
-    
+
     for epoch in epoch_iterator:
         # --- Training loop ---
         model.train()
@@ -154,14 +217,14 @@ def _train_autoencoder_early_stopping(
             loss = model.compute_loss(data_batch)
             loss.backward()
             optimizer.step()
-            
+
             current_loss = loss.item()
             epoch_train_loss += current_loss
 
         avg_train_loss = epoch_train_loss / len(train_loader)
-        
+
         avg_val_loss = None # Reset for the current epoch
-        
+
         if (epoch + 1) % validation_freq == 0:
             model.eval()
             epoch_val_loss = 0
@@ -175,7 +238,7 @@ def _train_autoencoder_early_stopping(
 
             # 1. Update the overall epoch progress bar description
             epoch_iterator.set_postfix(
-                train_loss=f"{avg_train_loss:.4f}", 
+                train_loss=f"{avg_train_loss:.4f}",
                 val_loss=f"{avg_val_loss:.4f}",
                 best_val=f"{best_val_loss:.4f}"
             )
