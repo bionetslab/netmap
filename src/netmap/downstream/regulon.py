@@ -256,9 +256,7 @@ def _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutra
 def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='leiden_remap',
                              min_reg_size=10, verbose=True, tf_column=None,
                              min_edge_support=0.5, neutral_threshold=0.05, ascending = False):
-    """
-    Select top edges per source TF per cluster and split them into positive and
-                             min_edge_support=0.5, neutral_threshold=0.05):
+
     """Select top edges per source TF per cluster and split them into positive and
     negative regulons based on cluster-wise Spearman correlation.
 
@@ -328,7 +326,7 @@ def compute_signatures_UCell_scores(selected_edges, adata, key='unique') -> pd.D
         selected_edges (dict): Nested edge dict from :func:`select_top_edges`.
         adata (anndata.AnnData): Expression AnnData; UCell scores are added to
             ``adata.obs``.
-        key (str): Top-level key of ``selected_edges`` to use — ``'unique'`` or
+        key (str): Top-level key of ``selected_edges`` to use ``'unique'`` or
             ``'all'``. Defaults to ``'unique'``.
 
     Returns:
