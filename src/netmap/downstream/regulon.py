@@ -254,7 +254,7 @@ def _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutra
 
 
 def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='leiden_remap',
-                             min_reg_size=10, verbose=True, tf_column=None,
+                             min_reg_size=1, verbose=True, tf_column=None,
                              min_edge_support=0.5, neutral_threshold=0.05, ascending = False):
 
     """Select top edges per source TF per cluster and split them into positive and
