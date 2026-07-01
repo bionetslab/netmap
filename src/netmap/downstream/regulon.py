@@ -196,7 +196,7 @@ def _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutra
 
 def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='leiden_remap',
                              min_reg_size=10, verbose=True, tf_column=None,
-                             min_edge_support=0.5, neutral_threshold=0.05):
+                             min_edge_support=0.5, neutral_threshold=0.05, ascending = False):
     """
     Select top edges per source TF per cluster and split them into positive and
     negative regulons based on cluster-wise Spearman correlation.
@@ -248,7 +248,7 @@ def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='le
                 (gene_inter_adata.var['edge_support_c'] >= min_edge_support)
             ].copy()
             df_targets['sum_of_edge'] = gene_inter_adata[cells_c, df_targets.index].X.mean(axis=0)
-            df_targets = df_targets.sort_values('sum_of_edge', ascending=False).head(top_per_source)
+            df_targets = df_targets.sort_values('sum_of_edge', ascending=ascending).head(top_per_source)
 
             pos, neg = _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutral_threshold)
             pos_edges.extend(pos)
@@ -394,6 +394,20 @@ def make_cluster_regulon_dataframe(keep_edges):
                 df['cluster'] = clu
                 df['set_type'] = un 
                 all_regulons.append(df)
+    all_regulons = pd.concat(all_regulons)
+    return all_regulons
+
+def make_cluster_regulon_dataframe_directional(keep_edges):
+    all_regulons = []
+    for un in keep_edges:
+        for clu in keep_edges[un] :
+            for direction in keep_edges[un][clu]:
+                df = keep_edges[un][clu][direction]['edges']
+                if df.shape[0]>0:
+                    df['cluster'] = clu
+                    df['set_type'] = un 
+                    df['direction'] = direction
+                    all_regulons.append(df)
     all_regulons = pd.concat(all_regulons)
     return all_regulons
     
