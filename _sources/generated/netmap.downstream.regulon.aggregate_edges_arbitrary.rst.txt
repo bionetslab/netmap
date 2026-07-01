@@ -1,0 +1,6 @@
+netmap.downstream.regulon.aggregate\_edges\_arbitrary
+=====================================================
+
+.. currentmodule:: netmap.downstream.regulon
+
+.. autofunction:: aggregate_edges_arbitrary

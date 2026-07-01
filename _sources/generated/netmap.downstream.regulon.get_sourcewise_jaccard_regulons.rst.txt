@@ -1,0 +1,6 @@
+netmap.downstream.regulon.get\_sourcewise\_jaccard\_regulons
+============================================================
+
+.. currentmodule:: netmap.downstream.regulon
+
+.. autofunction:: get_sourcewise_jaccard_regulons

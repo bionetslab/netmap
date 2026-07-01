@@ -1,0 +1,6 @@
+netmap.downstream.regulon.make\_cluster\_regulon\_dataframe\_directional
+========================================================================
+
+.. currentmodule:: netmap.downstream.regulon
+
+.. autofunction:: make_cluster_regulon_dataframe_directional
