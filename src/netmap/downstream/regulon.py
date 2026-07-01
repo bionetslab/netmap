@@ -158,9 +158,9 @@ def process_cell_edges_signed(keep_edges_pos, keep_edges_neg):
 
     Args:
         keep_edges_pos (dict): Mapping of cluster label to a list of
-            ``(edge_str, attribution_value)`` tuples for positively correlated edges.
+            ``(edge_str, sum_of_edge, spearman)`` tuples for positively correlated edges.
         keep_edges_neg (dict): Mapping of cluster label to a list of
-            ``(edge_str, attribution_value)`` tuples for negatively correlated edges.
+            ``(edge_str, sum_of_edge, spearman)`` tuples for negatively correlated edges.
 
     Returns:
         dict: Nested result with keys ``'unique'`` and ``'all'``, each mapping cluster
@@ -168,29 +168,34 @@ def process_cell_edges_signed(keep_edges_pos, keep_edges_neg):
         contains:
 
             - ``'edges'`` (pd.DataFrame): Columns ``source``, ``target``,
-              ``sum_of_edge``.
-            - ``'summary'`` (pd.DataFrame): Columns ``source``, ``count``.
+              ``sum_of_edge``, ``spearman``.
+            - ``'summary'`` (pd.DataFrame): Columns ``source``, ``count``,
+              ``mean_spearman``.
     """
     results = {'unique': {}, 'all': {}}
     all_cells = list(keep_edges_pos.keys())
-
-    def get_source_summary(edge_list):
-        sources = [e[0].split('_')[0] for e in edge_list]
-        source_dict = dict(Counter(sources))
-        return pd.DataFrame(
-            {'source': list(source_dict.keys()), 'count': list(source_dict.values())}
-        ).sort_values('count', ascending=False)
 
     def build_df(name_set, lookup_dict):
         data = []
         for name in name_set:
             source, target = name.split('_', 1)
-            data.append([source, target, lookup_dict[name]])
-        return pd.DataFrame(data, columns=['source', 'target', 'sum_of_edge'])
+            val, sp = lookup_dict[name]
+            data.append([source, target, val, sp])
+        return pd.DataFrame(data, columns=['source', 'target', 'sum_of_edge', 'spearman'])
+
+    def get_source_summary(edges_df):
+        if edges_df.empty:
+            return pd.DataFrame(columns=['source', 'count', 'mean_spearman'])
+        return (
+            edges_df.groupby('source')
+            .agg(count=('spearman', 'count'), mean_spearman=('spearman', 'mean'))
+            .reset_index()
+            .sort_values('count', ascending=False)
+        )
 
     for cell in all_cells:
-        pos_dict = dict(keep_edges_pos[cell])
-        neg_dict = dict(keep_edges_neg[cell])
+        pos_dict = {name: (val, sp) for name, val, sp in keep_edges_pos[cell]}
+        neg_dict = {name: (val, sp) for name, val, sp in keep_edges_neg[cell]}
 
         others_pos = set()
         others_neg = set()
@@ -202,73 +207,41 @@ def process_cell_edges_signed(keep_edges_pos, keep_edges_neg):
         unique_pos = set(pos_dict.keys()) - others_pos
         unique_neg = set(neg_dict.keys()) - others_neg
 
+        pos_all_df = build_df(pos_dict.keys(), pos_dict)
+        neg_all_df = build_df(neg_dict.keys(), neg_dict)
+        pos_unique_df = build_df(unique_pos, pos_dict)
+        neg_unique_df = build_df(unique_neg, neg_dict)
+
         results['unique'][cell] = {
-            'positive': {
-                'edges': build_df(unique_pos, pos_dict),
-                'summary': get_source_summary([(n, pos_dict[n]) for n in unique_pos]),
-            },
-            'negative': {
-                'edges': build_df(unique_neg, neg_dict),
-                'summary': get_source_summary([(n, neg_dict[n]) for n in unique_neg]),
-            },
+            'positive': {'edges': pos_unique_df, 'summary': get_source_summary(pos_unique_df)},
+            'negative': {'edges': neg_unique_df, 'summary': get_source_summary(neg_unique_df)},
         }
         results['all'][cell] = {
-            'positive': {
-                'edges': build_df(pos_dict.keys(), pos_dict),
-                'summary': get_source_summary(keep_edges_pos[cell]),
-            },
-            'negative': {
-                'edges': build_df(neg_dict.keys(), neg_dict),
-                'summary': get_source_summary(keep_edges_neg[cell]),
-            },
+            'positive': {'edges': pos_all_df, 'summary': get_source_summary(pos_all_df)},
+            'negative': {'edges': neg_all_df, 'summary': get_source_summary(neg_all_df)},
         }
 
     return results
 
 
-def _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutral_threshold):
-    """Split a source gene's target edges into positive and negative lists by Spearman sign.
-
-    Args:
-        df_targets (pd.DataFrame): Edge candidates for one source with a ``spearman_col``
-            column and ``sum_of_edge``.
-        source (str): Source TF gene name.
-        spearman_col (str): Column name in df_targets containing Spearman values.
-        min_reg_size (int): Minimum edges per sign group; empty list returned if not met.
-        neutral_threshold (float): Edges with |spearman| < this are excluded.
-
-    Returns:
-        tuple: ``(pos_edges, neg_edges)`` each a list of ``(edge_str, mean_val)`` tuples.
-    """
-    df_pos = df_targets[df_targets[spearman_col] >= neutral_threshold]
-    df_neg = df_targets[df_targets[spearman_col] <= -neutral_threshold]
-    pos = (
-        [(f"{source}_{r['target']}", r['sum_of_edge']) for _, r in df_pos.iterrows()]
-        if len(df_pos) >= min_reg_size else []
-    )
-    neg = (
-        [(f"{source}_{r['target']}", r['sum_of_edge']) for _, r in df_neg.iterrows()]
-        if len(df_neg) >= min_reg_size else []
-    )
-    return pos, neg
-
-
 def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='leiden_remap',
                              min_reg_size=10, verbose=True, tf_column=None,
-                             min_edge_support=0.5, neutral_threshold=0.05, ascending = False):
-
+                             min_edge_support=0.5, neutral_threshold=0.05):
     """Select top edges per source TF per cluster and split them into positive and
     negative regulons based on cluster-wise Spearman correlation.
 
     Requires ``add_cluster_wise_spearman`` to have been called first so that
     ``{cluster}_spearman`` columns are present in ``gene_inter_adata.var``.
 
-    Edges with |spearman| < neutral_threshold are excluded (neutral effect).
+    Positive regulons contain edges with Spearman >= neutral_threshold, ranked by
+    highest mean attribution. Negative regulons contain edges with Spearman <=
+    -neutral_threshold, ranked by most negative mean attribution. Edges with
+    |spearman| < neutral_threshold are excluded.
 
     Args:
         gene_inter_adata (anndata.AnnData): GRN AnnData with mask layer and
             '{cluster}_spearman' columns in .var.
-        top_per_source (int): Maximum edges to consider per source TF per cluster.
+        top_per_source (int): Maximum edges per source TF per sign group per cluster.
         col_cluster (str): Cluster column in obs.
         min_reg_size (int): Minimum edges a sign-group must have to be kept.
         verbose (bool): Print progress.
@@ -302,16 +275,21 @@ def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='le
 
         pos_edges, neg_edges = [], []
         for source in source_list:
-            df_targets = gene_inter_adata.var[
+            df_candidates = gene_inter_adata.var[
                 (gene_inter_adata.var['source'] == source) &
                 (gene_inter_adata.var['edge_support_c'] >= min_edge_support)
             ].copy()
-            df_targets['sum_of_edge'] = gene_inter_adata[cells_c, df_targets.index].X.mean(axis=0)
-            df_targets = df_targets.sort_values('sum_of_edge', ascending=ascending).head(top_per_source)
+            df_candidates['sum_of_edge'] = gene_inter_adata[cells_c, df_candidates.index].X.mean(axis=0)
 
-            pos, neg = _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutral_threshold)
-            pos_edges.extend(pos)
-            neg_edges.extend(neg)
+            df_pos = df_candidates[df_candidates[spearman_col] >= neutral_threshold] \
+                         .sort_values('sum_of_edge', ascending=False).head(top_per_source)
+            df_neg = df_candidates[df_candidates[spearman_col] <= -neutral_threshold] \
+                         .sort_values('sum_of_edge', ascending=True).head(top_per_source)
+
+            if len(df_pos) >= min_reg_size:
+                pos_edges.extend([(f"{source}_{r['target']}", r['sum_of_edge'], r[spearman_col]) for _, r in df_pos.iterrows()])
+            if len(df_neg) >= min_reg_size:
+                neg_edges.extend([(f"{source}_{r['target']}", r['sum_of_edge'], r[spearman_col]) for _, r in df_neg.iterrows()])
 
         keep_edges_pos[c] = pos_edges
         keep_edges_neg[c] = neg_edges
