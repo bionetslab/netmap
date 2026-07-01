@@ -551,9 +551,9 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        keep_edges_pos (dict): Mapping of cluster label to a list of</span>
-<span class="sd">            ``(edge_str, attribution_value)`` tuples for positively correlated edges.</span>
+<span class="sd">            ``(edge_str, sum_of_edge, spearman)`` tuples for positively correlated edges.</span>
 <span class="sd">        keep_edges_neg (dict): Mapping of cluster label to a list of</span>
-<span class="sd">            ``(edge_str, attribution_value)`` tuples for negatively correlated edges.</span>
+<span class="sd">            ``(edge_str, sum_of_edge, spearman)`` tuples for negatively correlated edges.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Nested result with keys ``&#39;unique&#39;`` and ``&#39;all&#39;``, each mapping cluster</span>
@@ -561,29 +561,34 @@
 <span class="sd">        contains:</span>
 
 <span class="sd">            - ``&#39;edges&#39;`` (pd.DataFrame): Columns ``source``, ``target``,</span>
-<span class="sd">              ``sum_of_edge``.</span>
-<span class="sd">            - ``&#39;summary&#39;`` (pd.DataFrame): Columns ``source``, ``count``.</span>
+<span class="sd">              ``sum_of_edge``, ``spearman``.</span>
+<span class="sd">            - ``&#39;summary&#39;`` (pd.DataFrame): Columns ``source``, ``count``,</span>
+<span class="sd">              ``mean_spearman``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;unique&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="p">{}}</span>
     <span class="n">all_cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">keep_edges_pos</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_source_summary</span><span class="p">(</span><span class="n">edge_list</span><span class="p">):</span>
-        <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">]</span>
-        <span class="n">source_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">sources</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="p">{</span><span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">source_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">source_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())}</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">build_df</span><span class="p">(</span><span class="n">name_set</span><span class="p">,</span> <span class="n">lookup_dict</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_set</span><span class="p">:</span>
             <span class="n">source</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">lookup_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]])</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;sum_of_edge&#39;</span><span class="p">])</span>
+            <span class="n">val</span><span class="p">,</span> <span class="n">sp</span> <span class="o">=</span> <span class="n">lookup_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">sp</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;sum_of_edge&#39;</span><span class="p">,</span> <span class="s1">&#39;spearman&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_source_summary</span><span class="p">(</span><span class="n">edges_df</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">edges_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_spearman&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">edges_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;spearman&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">),</span> <span class="n">mean_spearman</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;spearman&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">all_cells</span><span class="p">:</span>
-        <span class="n">pos_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">keep_edges_pos</span><span class="p">[</span><span class="n">cell</span><span class="p">])</span>
-        <span class="n">neg_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">keep_edges_neg</span><span class="p">[</span><span class="n">cell</span><span class="p">])</span>
+        <span class="n">pos_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">sp</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">keep_edges_pos</span><span class="p">[</span><span class="n">cell</span><span class="p">]}</span>
+        <span class="n">neg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">sp</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">keep_edges_neg</span><span class="p">[</span><span class="n">cell</span><span class="p">]}</span>
 
         <span class="n">others_pos</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">others_neg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -595,76 +600,44 @@
         <span class="n">unique_pos</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pos_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">others_pos</span>
         <span class="n">unique_neg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">neg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">others_neg</span>
 
+        <span class="n">pos_all_df</span> <span class="o">=</span> <span class="n">build_df</span><span class="p">(</span><span class="n">pos_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">pos_dict</span><span class="p">)</span>
+        <span class="n">neg_all_df</span> <span class="o">=</span> <span class="n">build_df</span><span class="p">(</span><span class="n">neg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">neg_dict</span><span class="p">)</span>
+        <span class="n">pos_unique_df</span> <span class="o">=</span> <span class="n">build_df</span><span class="p">(</span><span class="n">unique_pos</span><span class="p">,</span> <span class="n">pos_dict</span><span class="p">)</span>
+        <span class="n">neg_unique_df</span> <span class="o">=</span> <span class="n">build_df</span><span class="p">(</span><span class="n">unique_neg</span><span class="p">,</span> <span class="n">neg_dict</span><span class="p">)</span>
+
         <span class="n">results</span><span class="p">[</span><span class="s1">&#39;unique&#39;</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;positive&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">build_df</span><span class="p">(</span><span class="n">unique_pos</span><span class="p">,</span> <span class="n">pos_dict</span><span class="p">),</span>
-                <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">pos_dict</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">unique_pos</span><span class="p">]),</span>
-            <span class="p">},</span>
-            <span class="s1">&#39;negative&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">build_df</span><span class="p">(</span><span class="n">unique_neg</span><span class="p">,</span> <span class="n">neg_dict</span><span class="p">),</span>
-                <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">neg_dict</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">unique_neg</span><span class="p">]),</span>
-            <span class="p">},</span>
+            <span class="s1">&#39;positive&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">pos_unique_df</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">pos_unique_df</span><span class="p">)},</span>
+            <span class="s1">&#39;negative&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">neg_unique_df</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">neg_unique_df</span><span class="p">)},</span>
         <span class="p">}</span>
         <span class="n">results</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;positive&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">build_df</span><span class="p">(</span><span class="n">pos_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">pos_dict</span><span class="p">),</span>
-                <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">keep_edges_pos</span><span class="p">[</span><span class="n">cell</span><span class="p">]),</span>
-            <span class="p">},</span>
-            <span class="s1">&#39;negative&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">build_df</span><span class="p">(</span><span class="n">neg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">neg_dict</span><span class="p">),</span>
-                <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">keep_edges_neg</span><span class="p">[</span><span class="n">cell</span><span class="p">]),</span>
-            <span class="p">},</span>
+            <span class="s1">&#39;positive&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">pos_all_df</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">pos_all_df</span><span class="p">)},</span>
+            <span class="s1">&#39;negative&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">neg_all_df</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">neg_all_df</span><span class="p">)},</span>
         <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">results</span></div>
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_collect_signed_edges</span><span class="p">(</span><span class="n">df_targets</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">spearman_col</span><span class="p">,</span> <span class="n">min_reg_size</span><span class="p">,</span> <span class="n">neutral_threshold</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split a source gene&#39;s target edges into positive and negative lists by Spearman sign.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        df_targets (pd.DataFrame): Edge candidates for one source with a ``spearman_col``</span>
-<span class="sd">            column and ``sum_of_edge``.</span>
-<span class="sd">        source (str): Source TF gene name.</span>
-<span class="sd">        spearman_col (str): Column name in df_targets containing Spearman values.</span>
-<span class="sd">        min_reg_size (int): Minimum edges per sign group; empty list returned if not met.</span>
-<span class="sd">        neutral_threshold (float): Edges with |spearman| &lt; this are excluded.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple: ``(pos_edges, neg_edges)`` each a list of ``(edge_str, mean_val)`` tuples.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df_pos</span> <span class="o">=</span> <span class="n">df_targets</span><span class="p">[</span><span class="n">df_targets</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">neutral_threshold</span><span class="p">]</span>
-    <span class="n">df_neg</span> <span class="o">=</span> <span class="n">df_targets</span><span class="p">[</span><span class="n">df_targets</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">neutral_threshold</span><span class="p">]</span>
-    <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">[(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df_pos</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_pos</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_reg_size</span> <span class="k">else</span> <span class="p">[]</span>
-    <span class="p">)</span>
-    <span class="n">neg</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">[(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df_neg</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_neg</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_reg_size</span> <span class="k">else</span> <span class="p">[]</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span>
-
-
 <div class="viewcode-block" id="select_top_edges_signed">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.select_top_edges_signed.html#netmap.downstream.regulon.select_top_edges_signed">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">select_top_edges_signed</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="p">,</span> <span class="n">top_per_source</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">col_cluster</span><span class="o">=</span><span class="s1">&#39;leiden_remap&#39;</span><span class="p">,</span>
                              <span class="n">min_reg_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tf_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                             <span class="n">min_edge_support</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">neutral_threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-
+                             <span class="n">min_edge_support</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">neutral_threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Select top edges per source TF per cluster and split them into positive and</span>
 <span class="sd">    negative regulons based on cluster-wise Spearman correlation.</span>
 
 <span class="sd">    Requires ``add_cluster_wise_spearman`` to have been called first so that</span>
 <span class="sd">    ``{cluster}_spearman`` columns are present in ``gene_inter_adata.var``.</span>
 
-<span class="sd">    Edges with |spearman| &lt; neutral_threshold are excluded (neutral effect).</span>
+<span class="sd">    Positive regulons contain edges with Spearman &gt;= neutral_threshold, ranked by</span>
+<span class="sd">    highest mean attribution. Negative regulons contain edges with Spearman &lt;=</span>
+<span class="sd">    -neutral_threshold, ranked by most negative mean attribution. Edges with</span>
+<span class="sd">    |spearman| &lt; neutral_threshold are excluded.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        gene_inter_adata (anndata.AnnData): GRN AnnData with mask layer and</span>
 <span class="sd">            &#39;{cluster}_spearman&#39; columns in .var.</span>
-<span class="sd">        top_per_source (int): Maximum edges to consider per source TF per cluster.</span>
+<span class="sd">        top_per_source (int): Maximum edges per source TF per sign group per cluster.</span>
 <span class="sd">        col_cluster (str): Cluster column in obs.</span>
 <span class="sd">        min_reg_size (int): Minimum edges a sign-group must have to be kept.</span>
 <span class="sd">        verbose (bool): Print progress.</span>
@@ -698,16 +671,21 @@
 
         <span class="n">pos_edges</span><span class="p">,</span> <span class="n">neg_edges</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">source_list</span><span class="p">:</span>
-            <span class="n">df_targets</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span>
+            <span class="n">df_candidates</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span>
                 <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">source</span><span class="p">)</span> <span class="o">&amp;</span>
                 <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;edge_support_c&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_edge_support</span><span class="p">)</span>
             <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">df_targets</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="p">[</span><span class="n">cells_c</span><span class="p">,</span> <span class="n">df_targets</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">df_targets</span> <span class="o">=</span> <span class="n">df_targets</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="n">ascending</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
+            <span class="n">df_candidates</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="p">[</span><span class="n">cells_c</span><span class="p">,</span> <span class="n">df_candidates</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-            <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span> <span class="o">=</span> <span class="n">_collect_signed_edges</span><span class="p">(</span><span class="n">df_targets</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">spearman_col</span><span class="p">,</span> <span class="n">min_reg_size</span><span class="p">,</span> <span class="n">neutral_threshold</span><span class="p">)</span>
-            <span class="n">pos_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-            <span class="n">neg_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">neg</span><span class="p">)</span>
+            <span class="n">df_pos</span> <span class="o">=</span> <span class="n">df_candidates</span><span class="p">[</span><span class="n">df_candidates</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">neutral_threshold</span><span class="p">]</span> \
+                         <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
+            <span class="n">df_neg</span> <span class="o">=</span> <span class="n">df_candidates</span><span class="p">[</span><span class="n">df_candidates</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">neutral_threshold</span><span class="p">]</span> \
+                         <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_pos</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_reg_size</span><span class="p">:</span>
+                <span class="n">pos_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df_pos</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_neg</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_reg_size</span><span class="p">:</span>
+                <span class="n">neg_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df_neg</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()])</span>
 
         <span class="n">keep_edges_pos</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos_edges</span>
         <span class="n">keep_edges_neg</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg_edges</span>

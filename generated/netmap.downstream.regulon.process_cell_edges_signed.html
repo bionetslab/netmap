@@ -399,9 +399,9 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>keep_edges_pos</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Mapping of cluster label to a list of
-<code class="docutils literal notranslate"><span class="pre">(edge_str,</span> <span class="pre">attribution_value)</span></code> tuples for positively correlated edges.</p></li>
+<code class="docutils literal notranslate"><span class="pre">(edge_str,</span> <span class="pre">sum_of_edge,</span> <span class="pre">spearman)</span></code> tuples for positively correlated edges.</p></li>
 <li><p><strong>keep_edges_neg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Mapping of cluster label to a list of
-<code class="docutils literal notranslate"><span class="pre">(edge_str,</span> <span class="pre">attribution_value)</span></code> tuples for negatively correlated edges.</p></li>
+<code class="docutils literal notranslate"><span class="pre">(edge_str,</span> <span class="pre">sum_of_edge,</span> <span class="pre">spearman)</span></code> tuples for negatively correlated edges.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -411,8 +411,9 @@ contains:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'edges'</span></code> (pd.DataFrame): Columns <code class="docutils literal notranslate"><span class="pre">source</span></code>, <code class="docutils literal notranslate"><span class="pre">target</span></code>,
-<code class="docutils literal notranslate"><span class="pre">sum_of_edge</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'summary'</span></code> (pd.DataFrame): Columns <code class="docutils literal notranslate"><span class="pre">source</span></code>, <code class="docutils literal notranslate"><span class="pre">count</span></code>.</p></li>
+<code class="docutils literal notranslate"><span class="pre">sum_of_edge</span></code>, <code class="docutils literal notranslate"><span class="pre">spearman</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'summary'</span></code> (pd.DataFrame): Columns <code class="docutils literal notranslate"><span class="pre">source</span></code>, <code class="docutils literal notranslate"><span class="pre">count</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mean_spearman</span></code>.</p></li>
 </ul>
 </div></blockquote>
 </p>
