@@ -255,11 +255,14 @@ def _collect_signed_edges(df_targets, source, spearman_col, min_reg_size, neutra
 
 def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='leiden_remap',
                              min_reg_size=10, verbose=True, tf_column=None,
+<<<<<<< HEAD
                              min_edge_support=0.5, neutral_threshold=0.05, ascending = False):
     """
     Select top edges per source TF per cluster and split them into positive and
+=======
                              min_edge_support=0.5, neutral_threshold=0.05):
     """Select top edges per source TF per cluster and split them into positive and
+>>>>>>> ce5e02ed40904aa94a70dc4790cee2aa64117884
     negative regulons based on cluster-wise Spearman correlation.
 
     Requires ``add_cluster_wise_spearman`` to have been called first so that
@@ -482,6 +485,7 @@ def make_cluster_regulon_dataframe(keep_edges):
     all_regulons = pd.concat(all_regulons)
     return all_regulons
 
+<<<<<<< HEAD
 def make_cluster_regulon_dataframe_directional(keep_edges):
     all_regulons = []
     for un in keep_edges:
@@ -496,7 +500,9 @@ def make_cluster_regulon_dataframe_directional(keep_edges):
     all_regulons = pd.concat(all_regulons)
     return all_regulons
     
+=======
 
+>>>>>>> ce5e02ed40904aa94a70dc4790cee2aa64117884
 def load_edge_dict_from_dataframe(all_regulons):
     """Reconstruct a nested edge dictionary from a flat regulon DataFrame.
 
