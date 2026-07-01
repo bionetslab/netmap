@@ -1,6 +1,0 @@
-netmap.downstream.regulon.process\_cell\_edges
-==============================================
-
-.. currentmodule:: netmap.downstream.regulon
-
-.. autofunction:: process_cell_edges

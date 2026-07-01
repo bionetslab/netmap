@@ -1,6 +1,0 @@
-netmap.downstream.regulon.make\_global\_target\_similarity\_plot
-================================================================
-
-.. currentmodule:: netmap.downstream.regulon
-
-.. autofunction:: make_global_target_similarity_plot

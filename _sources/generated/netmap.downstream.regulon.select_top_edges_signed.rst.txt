@@ -1,6 +1,0 @@
-netmap.downstream.regulon.select\_top\_edges\_signed
-====================================================
-
-.. currentmodule:: netmap.downstream.regulon
-
-.. autofunction:: select_top_edges_signed

@@ -1,6 +1,0 @@
-netmap.downstream.regulon.compute\_signatures\_UCell\_scores
-============================================================
-
-.. currentmodule:: netmap.downstream.regulon
-
-.. autofunction:: compute_signatures_UCell_scores
