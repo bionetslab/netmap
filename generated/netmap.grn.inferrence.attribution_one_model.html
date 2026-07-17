@@ -404,7 +404,7 @@ matrix for the model.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lrp_model</strong> – A single Captum explainer instance (e.g. GradientShap or
 GuidedBackprop) wrapping one trained autoencoder.</p></li>
-<li><p><strong>input_data</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.12)"><em>torch.Tensor</em></a>) – Expression tensor of shape
+<li><p><strong>input_data</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><em>torch.Tensor</em></a>) – Expression tensor of shape
 <code class="docutils literal notranslate"><span class="pre">(cells,</span> <span class="pre">genes)</span></code> on CUDA.</p></li>
 <li><p><strong>xai_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Explainer mode. One of <code class="docutils literal notranslate"><span class="pre">'lrp-like'</span></code> (no baseline
 needed) or <code class="docutils literal notranslate"><span class="pre">'shap-like'</span></code> (baseline required). Default
