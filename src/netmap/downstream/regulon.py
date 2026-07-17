@@ -20,7 +20,6 @@ import pandas as pd
 import scanpy as sc
 import seaborn as sns
 from scipy.stats import pearsonr, ranksums
-#from scipy.stats import mannwhitneyu
 from statsmodels.stats.multitest import multipletests
 import networkx as nx
 import requests
