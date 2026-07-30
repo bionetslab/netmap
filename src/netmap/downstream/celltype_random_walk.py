@@ -1,3 +1,4 @@
+
 """Random-walk marker-gene celltype classifier (simplified CellWalker2-style).
 
 For each cell, assembles a graph from that cell's GRN (``grn_adata``) plus a
@@ -6,9 +7,12 @@ random walk with restart (:func:`netmap.downstream.random_walk.random_walk_with_
 seeded at the cell's own regulon activity. The converged probability mass on
 celltype nodes, renormalized, is that cell's celltype probability vector.
 
-Edge weights are taken as ``abs(weight)`` throughout: GRN edges are directed and
-signed (activation/repression), but for this walk both signs simply indicate
-"these genes are functionally linked" and are treated identically.
+GRN edges are directed and signed (activation/repression). The two places
+that consume edge weights treat sign differently: :func:`compute_seed_activity`
+uses ``abs(weight)`` (both directions indicate regulatory activity for seeding
+purposes), while :func:`assemble_cell_adjacency` clips negative weights to 0
+(repressive edges don't propagate random-walk mass — they're simply absent
+from that cell's graph).
 """
 
 import logging
@@ -16,8 +20,8 @@ import logging
 import numpy as np
 import scipy.sparse as scs
 from joblib import Parallel, delayed
-
-from netmap.downstream.random_walk import random_walk_with_restart
+import numpy as np
+import scipy.sparse as scs
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +90,73 @@ def build_marker_incidence(gene_to_idx, marker_dict):
     return b_matrix, celltypes
 
 
+
+
+def compute_edge_idf_weights(X, count_nonzero=None, smoothing=1.0, log_scale=False):
+    """Compute an inverse-document-frequency-style weight per edge.
+
+    Edges that are nonzero in many cells (common across the dataset — likely
+    generic/uninformative regulatory relationships) get down-weighted; edges
+    nonzero in only a few cells (rare, likely cell-type-specific) keep close
+    to full weight. Meant to always be computed from the *raw*, unsmoothed
+    edge-weight matrix — running this after :func:`smooth_grn_with_knn` would
+    inflate the counts, since smoothing spreads nonzero values to neighboring
+    cells that didn't originally have that edge.
+
+    Args:
+        X: The raw ``grn_adata.X``, shape ``(n_cells, n_edges)``. Only used
+            to derive ``count_nonzero`` when it isn't supplied directly.
+        count_nonzero (np.ndarray, optional): Precomputed per-edge count of
+            cells with a nonzero weight, shape ``(n_edges,)`` — e.g.
+            ``grn_adata.var['count_nonzero'].to_numpy()``, which
+            ``retrieve_top_edges``/``retrieve_edges_by_index`` already
+            populate. If ``None``, derived from ``X`` directly.
+        smoothing (float): Added to ``count_nonzero`` before dividing, to
+            avoid division by zero and cap the multiplier for edges present
+            in only a handful of cells. Defaults to 1.0.
+        log_scale (bool): If ``True``, use
+            ``log(n_cells / (count_nonzero + smoothing))`` (classic log-IDF,
+            compressed range) instead of the raw ratio
+            ``n_cells / (count_nonzero + smoothing)``. Defaults to ``False``
+            — weight decreases directly proportional to how often the edge
+            appears, as opposed to logarithmically.
+
+    Returns:
+        np.ndarray: Per-edge IDF weight, shape ``(n_edges,)``.
+    """
+    n_cells = X.shape[0]
+    if count_nonzero is None:
+        if scs.issparse(X):
+            count_nonzero = np.asarray((X != 0).sum(axis=0)).flatten()
+        else:
+            count_nonzero = np.count_nonzero(X, axis=0)
+    else:
+        count_nonzero = np.asarray(count_nonzero).flatten()
+
+    idf = n_cells / (count_nonzero + smoothing)
+    if log_scale:
+        idf = np.log(idf)
+    return idf
+
+
+def apply_edge_idf(X, idf):
+    """Rescale each edge's weight by its IDF weight, broadcasting over cells.
+
+    Args:
+        X: ``grn_adata.X`` (or an already kNN-smoothed version of it), shape
+            ``(n_cells, n_edges)``. Dense or sparse.
+        idf (np.ndarray): Per-edge weight, shape ``(n_edges,)``, as returned
+            by :func:`compute_edge_idf_weights`.
+
+    Returns:
+        Reweighted edge-weight matrix, same shape and sparse/dense-ness as
+        ``X``.
+    """
+    if scs.issparse(X):
+        return X.multiply(idf[None, :]).tocsr()
+    return X * idf[None, :]
+
+
 def compute_seed_activity(X, src_idx, tgt_idx, n_genes):
     """Compute per-cell, per-gene regulon activity as an RWR seed vector.
 
@@ -136,13 +207,17 @@ def compute_seed_activity(X, src_idx, tgt_idx, n_genes):
     return normalized
 
 
-def assemble_cell_adjacency(row_weights, src_idx, tgt_idx, n_genes, b_matrix):
+def assemble_cell_adjacency(row_weights, src_idx, tgt_idx, n_genes, b_matrix, top_k=None):
     """Assemble one cell's joint gene+celltype adjacency matrix.
 
     Combines that cell's GRN edges (gene-gene block) with the static
     gene-celltype bipartite layer (``b_matrix`` / ``b_matrix.T``). The
     celltype-celltype block is all zero — in this simplified model, celltypes
     are connected to the graph only via their marker genes.
+
+    Negative edge weights (repression) are clipped to 0 rather than taken as
+    ``abs(weight)`` — repressive edges don't propagate random-walk mass in
+    this model, they're simply absent from the graph for that cell.
 
     Args:
         row_weights (np.ndarray): One cell's edge weights, shape
@@ -153,6 +228,10 @@ def assemble_cell_adjacency(row_weights, src_idx, tgt_idx, n_genes, b_matrix):
         b_matrix (scipy.sparse matrix): Gene-celltype incidence matrix, shape
             ``(n_genes, n_celltypes)``, as returned by
             :func:`build_marker_incidence`.
+        top_k (int, optional): If set, keep only the ``top_k`` highest-weight
+            edges for this cell (by the clipped weight) and drop the rest
+            entirely from the gene-gene block, instead of using all edges.
+            ``None`` (default) keeps every edge.
 
     Returns:
         scipy.sparse matrix: Joint adjacency matrix, shape
@@ -160,9 +239,11 @@ def assemble_cell_adjacency(row_weights, src_idx, tgt_idx, n_genes, b_matrix):
         then celltype nodes.
     """
     n_celltypes = b_matrix.shape[1]
-    weights = np.abs(np.asarray(row_weights).flatten())
+    weights = np.asarray(row_weights).flatten().clip(min=0)
+    edge_src, edge_tgt = src_idx, tgt_idx
 
-    gene_gene = scs.coo_matrix((weights, (src_idx, tgt_idx)), shape=(n_genes, n_genes))
+
+    gene_gene = scs.coo_matrix((weights, (edge_src, edge_tgt)), shape=(n_genes, n_genes))
     celltype_celltype = scs.csr_matrix((n_celltypes, n_celltypes))
 
     adjacency = scs.bmat(
@@ -172,7 +253,17 @@ def assemble_cell_adjacency(row_weights, src_idx, tgt_idx, n_genes, b_matrix):
 
 
 def run_celltype_random_walk(
-    grn_adata, marker_dict, restart_prob=0.2, tol=1e-6, max_iter=200, n_jobs=-1
+    grn_adata,
+    marker_dict,
+    restart_prob=0.2,
+    tol=1e-6,
+    max_iter=200,
+    n_jobs=-1,
+    edge_idf=False,
+    idf_smoothing=1.0,
+    idf_log_scale=False,
+    scale_by_marker_count=False,
+    top_genes_k=None,
 ):
     """Run the per-cell celltype random walk over an entire ``grn_adata``.
 
@@ -189,6 +280,34 @@ def run_celltype_random_walk(
         n_jobs (int): Number of parallel jobs (``joblib.Parallel`` semantics,
             ``-1`` uses all cores). Cells are independent, so this is
             embarrassingly parallel. Defaults to -1.
+        edge_idf (bool): If ``True``, rescale edge weights by an
+            inverse-document-frequency-style weight (see
+            :func:`compute_edge_idf_weights`) before seed-activity and
+            adjacency construction — edges common across many cells are
+            down-weighted, rare/cell-type-specific edges keep their weight.
+            Computed from the raw ``grn_adata.X`` (and
+            ``grn_adata.var['count_nonzero']`` when present) regardless of
+            whether ``cell_knn`` smoothing is also enabled. Defaults to
+            ``False``.
+        idf_smoothing (float): Passed through to
+            :func:`compute_edge_idf_weights` when ``edge_idf`` is set.
+            Defaults to 1.0.
+        idf_log_scale (bool): Passed through to
+            :func:`compute_edge_idf_weights` when ``edge_idf`` is set.
+            Defaults to ``False``.
+        scale_by_marker_count (bool): If ``True``, divide each celltype's
+            converged probability mass by that celltype node's in-degree in
+            ``b_matrix`` (its marker count, after gene-universe filtering)
+            before the final sum-to-1 renormalization. Corrects for celltypes
+            with more markers otherwise accumulating more mass purely from
+            having more incoming edges, independent of actual fit to the
+            cell. Defaults to ``False``.
+        top_genes_k (int, optional): If set, also compute each cell's
+            ``top_genes_k`` most-visited gene nodes (by that cell's own
+            converged probability mass, i.e. ``p[:n_genes]`` from the same
+            walk that produces its celltype probabilities — no extra walk is
+            run). ``None`` (default) skips this and keeps the original
+            2-tuple return signature; setting it adds a third return value.
 
     Returns:
         tuple:
@@ -196,16 +315,36 @@ def run_celltype_random_walk(
               ``(n_cells, n_celltypes)``, each row summing to 1.
             - celltypes (list): Celltype labels, in the column order of
               ``proba``.
+            - top_genes (list, only present if ``top_genes_k`` is set): One
+              entry per cell, each a list of ``(gene_name, score)`` tuples of
+              length ``min(top_genes_k, n_genes)``, sorted descending by
+              score.
     """
     var = grn_adata.var
     gene_to_idx, src_idx, tgt_idx = build_gene_index(var)
     n_genes = len(gene_to_idx)
+    idx_to_gene = {i: g for g, i in gene_to_idx.items()} if top_genes_k is not None else None
 
     b_matrix, celltypes = build_marker_incidence(gene_to_idx, marker_dict)
     n_celltypes = len(celltypes)
 
-    x = grn_adata.X
+    celltype_in_degree = np.asarray(b_matrix.sum(axis=0)).flatten()
+    safe_in_degree = np.where(celltype_in_degree == 0, 1.0, celltype_in_degree)
+
+    x = np.multiply(grn_adata.X, grn_adata.layers['mask'])
+
+
+    if edge_idf:
+        count_nonzero = (
+            var["count_nonzero"].to_numpy() if "count_nonzero" in var.columns else None
+        )
+        idf = compute_edge_idf_weights(
+            grn_adata.X, count_nonzero=count_nonzero, smoothing=idf_smoothing, log_scale=idf_log_scale
+        )
+        x = apply_edge_idf(x, idf)
+
     seed_activity = compute_seed_activity(x, src_idx, tgt_idx, n_genes)
+    print(seed_activity)
 
     def _get_row(i):
         row = x[i]
@@ -217,7 +356,9 @@ def run_celltype_random_walk(
 
     def _one_cell(i):
         row_weights = _get_row(i)
-        adjacency = assemble_cell_adjacency(row_weights, src_idx, tgt_idx, n_genes, b_matrix)
+        adjacency = assemble_cell_adjacency(
+            row_weights, src_idx, tgt_idx, n_genes, b_matrix,
+        )
         seed_vec = np.concatenate([seed_activity[i], np.zeros(n_celltypes)])
 
         p = random_walk_with_restart(
@@ -225,14 +366,88 @@ def run_celltype_random_walk(
         )
 
         celltype_proba = p[n_genes:]
+        if scale_by_marker_count:
+            celltype_proba = celltype_proba / safe_in_degree
         total = celltype_proba.sum()
         if total > 0:
             celltype_proba = celltype_proba / total
         else:
             celltype_proba = np.full(n_celltypes, 1.0 / n_celltypes)
-        return celltype_proba
 
+        if top_genes_k is None:
+            return celltype_proba
+
+        gene_scores = p[:n_genes]
+        k = min(top_genes_k, n_genes)
+        top_idx = np.argpartition(gene_scores, -k)[-k:]
+        top_idx = top_idx[np.argsort(gene_scores[top_idx])[::-1]]
+        top_genes = [(idx_to_gene[j], float(gene_scores[j])) for j in top_idx]
+        return celltype_proba, top_genes
+
+    print('starting')
     n_cells = grn_adata.n_obs
     results = Parallel(n_jobs=n_jobs)(delayed(_one_cell)(i) for i in range(n_cells))
-    proba = np.vstack(results)
-    return proba, celltypes
+
+    if top_genes_k is None:
+        proba = np.vstack(results)
+        return proba, celltypes
+
+    proba = np.vstack([r[0] for r in results])
+    top_genes_per_cell = [r[1] for r in results]
+    return proba, celltypes, top_genes_per_cell
+
+
+
+def random_walk_with_restart(adjacency, seed_vec, restart_prob=0.2, tol=1e-6, max_iter=200):
+    """Run a random walk with restart (personalized PageRank) to convergence.
+
+    Iterates ``p_{t+1} = (1 - r) * (W^T p_t + dangling_correction) + r * p0``
+    where ``W`` is the row-normalized transition matrix derived from
+    ``adjacency`` and ``p0`` is the (normalized) ``seed_vec``. Nodes with zero
+    out-degree ("dangling" nodes) redistribute their probability mass via
+    ``seed_vec`` each iteration instead of letting it vanish, matching the
+    standard PageRank dangling-node fix.
+
+    Args:
+        adjacency (scipy.sparse matrix): Square, non-negative weighted
+            adjacency matrix, shape ``(n, n)``. ``adjacency[i, j]`` is the
+            weight of the edge from node ``i`` to node ``j``.
+        seed_vec (np.ndarray): Restart/seed distribution, shape ``(n,)``.
+            Renormalized to sum to 1 internally.
+        restart_prob (float): Restart probability ``r`` in ``(0, 1]``.
+            Defaults to 0.2.
+        tol (float): Convergence tolerance on the L1 change between
+            successive iterates. Defaults to 1e-6.
+        max_iter (int): Maximum number of iterations. Defaults to 200.
+
+    Returns:
+        np.ndarray: Converged probability distribution over all ``n`` nodes,
+        shape ``(n,)``, summing to 1.
+    """
+    adjacency = scs.csr_matrix(adjacency)
+    n = adjacency.shape[0]
+
+    seed_vec = np.asarray(seed_vec, dtype=float).flatten()
+    seed_sum = seed_vec.sum()
+    if seed_sum <= 0:
+        raise ValueError("seed_vec must have positive total mass.")
+    seed_vec = seed_vec / seed_sum
+
+    row_sums = np.asarray(adjacency.sum(axis=1)).flatten()
+    dangling_mask = row_sums == 0
+    inv_row_sums = np.zeros(n)
+    inv_row_sums[~dangling_mask] = 1.0 / row_sums[~dangling_mask]
+
+    adjacency_t = adjacency.transpose().tocsr()
+
+    p = seed_vec.copy()
+    for _ in range(max_iter):
+        propagated = adjacency_t @ (p * inv_row_sums)
+        dangling_mass = p[dangling_mask].sum()
+        p_next = (1 - restart_prob) * (propagated + dangling_mass * seed_vec) + restart_prob * seed_vec
+        diff = np.abs(p_next - p).sum()
+        p = p_next
+        if diff < tol:
+            break
+
+    return p
