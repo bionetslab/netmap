@@ -1,6 +1,0 @@
-netmap.downstream.plotting.plot\_bcrank\_entropy
-================================================
-
-.. currentmodule:: netmap.downstream.plotting
-
-.. autofunction:: plot_bcrank_entropy

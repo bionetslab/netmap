@@ -1,6 +1,0 @@
-netmap.downstream.plotting.plot\_regulon\_comparison
-====================================================
-
-.. currentmodule:: netmap.downstream.plotting
-
-.. autofunction:: plot_regulon_comparison

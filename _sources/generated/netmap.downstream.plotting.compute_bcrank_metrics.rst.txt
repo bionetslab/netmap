@@ -1,6 +1,0 @@
-netmap.downstream.plotting.compute\_bcrank\_metrics
-===================================================
-
-.. currentmodule:: netmap.downstream.plotting
-
-.. autofunction:: compute_bcrank_metrics
