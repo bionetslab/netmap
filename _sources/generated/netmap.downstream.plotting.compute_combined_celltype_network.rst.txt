@@ -1,0 +1,6 @@
+netmap.downstream.plotting.compute\_combined\_celltype\_network
+===============================================================
+
+.. currentmodule:: netmap.downstream.plotting
+
+.. autofunction:: compute_combined_celltype_network

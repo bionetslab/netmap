@@ -295,10 +295,14 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.html">netmap.downstream.plotting</a><input aria-label="Toggle navigation of netmap.downstream.plotting" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.bcrank_entropy.html">netmap.downstream.plotting.bcrank_entropy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.combined_celltype_network.html">netmap.downstream.plotting.combined_celltype_network</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.compute_bcrank_metrics.html">netmap.downstream.plotting.compute_bcrank_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.compute_combined_celltype_network.html">netmap.downstream.plotting.compute_combined_celltype_network</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.draw_inset_graph.html">netmap.downstream.plotting.draw_inset_graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.get_grn_from_regulon.html">netmap.downstream.plotting.get_grn_from_regulon</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.plot_bcrank_entropy.html">netmap.downstream.plotting.plot_bcrank_entropy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.plot_celltype_top_gene_networks.html">netmap.downstream.plotting.plot_celltype_top_gene_networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.plot_combined_celltype_network.html">netmap.downstream.plotting.plot_combined_celltype_network</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.plot_regulon_comparison.html">netmap.downstream.plotting.plot_regulon_comparison</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../generated/netmap.downstream.plotting.rank_regulon_groups_dotplot.html">netmap.downstream.plotting.rank_regulon_groups_dotplot</a></li>
 </ul>
@@ -807,6 +811,667 @@
     <span class="k">if</span> <span class="n">return_metrics</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">metrics</span></div>
 
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_celltypes</span><span class="p">(</span><span class="n">celltype_labels</span><span class="p">,</span> <span class="n">celltypes</span><span class="p">,</span> <span class="n">celltype_col</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate and normalize a ``celltypes`` filter against the labels actually present.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: The celltypes to iterate over — every unique label in</span>
+<span class="sd">        ``celltype_labels`` if ``celltypes`` is ``None``, else the requested</span>
+<span class="sd">        subset (after checking every one of them exists).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">available</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">celltype_labels</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">celltypes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">available</span><span class="p">)</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="p">[</span><span class="n">celltypes</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">celltypes</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">celltypes</span><span class="p">)</span>
+    <span class="n">missing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">available</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Celltype(s) </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2"> not found in grn_adata.obs[&#39;</span><span class="si">{</span><span class="n">celltype_col</span><span class="si">}</span><span class="s2">&#39;]. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Available: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">available</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">selected</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_masked_edge_strength</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">edge_col_idx</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sum |masked attribution| over a set of cells, for a set of edge columns.</span>
+
+<span class="sd">    &quot;Masked&quot; means elementwise-multiplied by ``grn_adata.layers[&#39;mask&#39;]`` —</span>
+<span class="sd">    zeroing out edges not co-expressed in a cell&#39;s kNN neighbourhood — before</span>
+<span class="sd">    summing, so an edge only accrues strength from cells where it&#39;s actually</span>
+<span class="sd">    supported, not just theoretically present in the GRN. Mirrors the</span>
+<span class="sd">    ``np.multiply(grn_adata.X, grn_adata.layers[&#39;mask&#39;])`` masking step in</span>
+<span class="sd">    :func:`~netmap.downstream.celltype_random_walk.run_celltype_random_walk`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with a populated ``X`` and a</span>
+<span class="sd">            ``layers[&#39;mask&#39;]`` of matching shape.</span>
+<span class="sd">        cell_idx (np.ndarray): Integer row indices selecting the cells to sum</span>
+<span class="sd">            over.</span>
+<span class="sd">        edge_col_idx (np.ndarray): Integer column indices selecting the edges</span>
+<span class="sd">            to compute strength for.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Summed absolute masked attribution per edge, shape</span>
+<span class="sd">        ``(len(edge_col_idx),)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">][:,</span> <span class="n">edge_col_idx</span><span class="p">]</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">&quot;mask&quot;</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">][:,</span> <span class="n">edge_col_idx</span><span class="p">]</span>
+    <span class="n">masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+    <span class="n">masked_abs</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">masked</span><span class="p">)</span> <span class="k">if</span> <span class="n">scs</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">masked</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">masked</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">masked_abs</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_select_top_genes_for_celltype</span><span class="p">(</span><span class="n">top_genes_per_cell</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">top_n</span><span class="p">,</span> <span class="n">max_nodes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count gene recurrence in the top-``top_n`` list across a celltype&#39;s cells.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(gene_counts, top_genes)`` — a ``Counter`` of recurrence per</span>
+<span class="sd">        gene, and the ``max_nodes`` most recurrent gene names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gene_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cell_idx</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">gene</span><span class="p">,</span> <span class="n">_score</span> <span class="ow">in</span> <span class="n">top_genes_per_cell</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="n">top_n</span><span class="p">]:</span>
+            <span class="n">gene_counts</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">top_genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">gene</span> <span class="k">for</span> <span class="n">gene</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">gene_counts</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">max_nodes</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">gene_counts</span><span class="p">,</span> <span class="n">top_genes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_select_top_edges_for_celltype</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">gene_set</span><span class="p">,</span> <span class="n">top_edges</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pick the ``top_edges`` strongest actually-expressed edges among ``gene_set``.</span>
+
+<span class="sd">    &quot;Candidate&quot; edges are theoretical GRN edges (``grn_adata.var``) with both</span>
+<span class="sd">    endpoints in ``gene_set``, self-loops excluded. Each candidate is scored by</span>
+<span class="sd">    :func:`_masked_edge_strength` over ``cell_idx``, and only the top-scoring</span>
+<span class="sd">    ``top_edges`` survive.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The kept edges (columns from ``grn_adata.var`` plus</span>
+<span class="sd">        ``&#39;strength&#39;``), possibly empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">candidate_edges</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span>
+        <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">gene_set</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">gene_set</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">candidate_edges</span> <span class="o">=</span> <span class="n">candidate_edges</span><span class="p">[</span><span class="n">candidate_edges</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">candidate_edges</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="n">candidate_edges</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">candidate_edges</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">strength</span><span class="o">=</span><span class="p">[])</span>
+
+    <span class="n">edge_col_idx</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_indexer</span><span class="p">(</span><span class="n">candidate_edges</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">strength</span> <span class="o">=</span> <span class="n">_masked_edge_strength</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">edge_col_idx</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">candidate_edges</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">strength</span><span class="o">=</span><span class="n">strength</span><span class="p">)</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="n">top_edges</span><span class="p">,</span> <span class="s2">&quot;strength&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_draw_celltype_graph</span><span class="p">(</span><span class="n">ct</span><span class="p">,</span> <span class="n">top_genes</span><span class="p">,</span> <span class="n">gene_counts</span><span class="p">,</span> <span class="n">kept_edges</span><span class="p">,</span> <span class="n">n_cells_ct</span><span class="p">,</span> <span class="n">min_node_size</span><span class="p">,</span> <span class="n">max_node_size</span><span class="p">,</span> <span class="n">figsize</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the igraph.Graph for one celltype and render it to a new figure.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(fig, graph)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">ig</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_vertices</span><span class="p">(</span><span class="n">top_genes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">kept_edges</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_edges</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">kept_edges</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">],</span> <span class="n">kept_edges</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">])))</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">[</span><span class="s2">&quot;strength&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kept_edges</span><span class="p">[</span><span class="s2">&quot;strength&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">gene_counts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">fraction</span> <span class="o">=</span> <span class="n">counts</span> <span class="o">/</span> <span class="n">n_cells_ct</span>
+    <span class="n">sizes</span> <span class="o">=</span> <span class="n">min_node_size</span> <span class="o">+</span> <span class="n">fraction</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_node_size</span> <span class="o">-</span> <span class="n">min_node_size</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sizes</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;top_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="s2">&quot;fr&quot;</span><span class="p">)</span>
+    <span class="n">ig</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">graph</span><span class="p">,</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
+        <span class="n">vertex_size</span><span class="o">=</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">],</span>
+        <span class="n">vertex_label</span><span class="o">=</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span>
+        <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+        <span class="n">edge_arrow_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;#bdc3c7&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s2"> (top </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">top_genes</span><span class="p">)</span><span class="si">}</span><span class="s2"> genes)&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">graph</span>
+
+
+<div class="viewcode-block" id="plot_celltype_top_gene_networks">
+<a class="viewcode-back" href="../../../generated/netmap.downstream.plotting.plot_celltype_top_gene_networks.html#netmap.downstream.plotting.plot_celltype_top_gene_networks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_celltype_top_gene_networks</span><span class="p">(</span>
+    <span class="n">grn_adata</span><span class="p">,</span>
+    <span class="n">top_genes_per_cell</span><span class="p">,</span>
+    <span class="n">celltype_col</span><span class="o">=</span><span class="s2">&quot;celltype&quot;</span><span class="p">,</span>
+    <span class="n">celltypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">top_n</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">max_nodes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">top_edges</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">min_node_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">max_node_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="n">out_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw one GRN-edge network per celltype, sized by top-20 recurrence.</span>
+
+<span class="sd">    For each celltype (grouped by ``grn_adata.obs[celltype_col]``), counts how</span>
+<span class="sd">    many of that celltype&#39;s cells have each gene in their top-``top_n`` RWR</span>
+<span class="sd">    genes (as returned by</span>
+<span class="sd">    :func:`~netmap.downstream.celltype_random_walk.run_celltype_random_walk`</span>
+<span class="sd">    with ``top_genes_k`` set), and keeps at most ``max_nodes`` genes by that</span>
+<span class="sd">    count as nodes.</span>
+
+<span class="sd">    Edges are not the full theoretical GRN — among candidate edges connecting</span>
+<span class="sd">    two kept genes, each edge&#39;s strength is the summed absolute *masked*</span>
+<span class="sd">    attribution (``grn_adata.X * grn_adata.layers[&#39;mask&#39;]``) over that</span>
+<span class="sd">    celltype&#39;s own cells (see :func:`_masked_edge_strength`), and only the</span>
+<span class="sd">    ``top_edges`` strongest actually-expressed edges are drawn. Self-loops are</span>
+<span class="sd">    dropped. Genes with none of their edges among the kept ``top_edges`` still</span>
+<span class="sd">    appear as isolated nodes.</span>
+
+<span class="sd">    Node size is a fraction of that celltype&#39;s own cell count — a gene in the</span>
+<span class="sd">    top-``top_n`` of every cell in its celltype gets ``max_node_size``, one</span>
+<span class="sd">    that never appears gets ``min_node_size`` — so sizes stay comparable</span>
+<span class="sd">    across celltypes with different numbers of cells.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with ``source``/``target``</span>
+<span class="sd">            columns in ``.var``, a celltype label in ``.obs``, a populated</span>
+<span class="sd">            ``X``, and a ``layers[&#39;mask&#39;]`` of matching shape.</span>
+<span class="sd">        top_genes_per_cell (list): One entry per cell, each a list of</span>
+<span class="sd">            ``(gene_name, score)`` tuples sorted descending by score, as</span>
+<span class="sd">            returned by ``run_celltype_random_walk(..., top_genes_k=...)``.</span>
+<span class="sd">            Must be in the same cell order as ``grn_adata.obs``, and each</span>
+<span class="sd">            entry must contain at least ``top_n`` genes.</span>
+<span class="sd">        celltype_col (str): Column in ``grn_adata.obs`` giving each cell&#39;s</span>
+<span class="sd">            celltype label. Defaults to ``&#39;celltype&#39;``.</span>
+<span class="sd">        celltypes (str or list of str, optional): Restrict plotting to this</span>
+<span class="sd">            celltype (or list of celltypes), instead of every unique value in</span>
+<span class="sd">            ``celltype_col``. Raises ``ValueError`` if any requested celltype</span>
+<span class="sd">            isn&#39;t present. ``None`` (default) plots all of them.</span>
+<span class="sd">        top_n (int): Number of top genes per cell to count towards</span>
+<span class="sd">            recurrence. Must be ``&lt;= len(top_genes_per_cell[i])``. Defaults</span>
+<span class="sd">            to 20.</span>
+<span class="sd">        max_nodes (int): Maximum number of genes (nodes) kept per celltype,</span>
+<span class="sd">            by descending recurrence count. Defaults to 100.</span>
+<span class="sd">        top_edges (int): Maximum number of edges kept per celltype, by</span>
+<span class="sd">            descending masked-attribution strength (summed over that</span>
+<span class="sd">            celltype&#39;s cells). Defaults to 20.</span>
+<span class="sd">        min_node_size (float): Node size for a gene with 0% recurrence in its</span>
+<span class="sd">            celltype. Defaults to 10.</span>
+<span class="sd">        max_node_size (float): Node size for a gene at 100% recurrence in its</span>
+<span class="sd">            celltype. Defaults to 60.</span>
+<span class="sd">        figsize (tuple): Figure size per celltype plot. Defaults to ``(8, 8)``.</span>
+<span class="sd">        out_path (str, optional): Directory to save each celltype&#39;s figure to,</span>
+<span class="sd">            as ``&#39;{out_path}/{celltype}_top_genes_network.png&#39;``. ``None``</span>
+<span class="sd">            (default) skips saving — figures are only returned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: ``{celltype: (fig, igraph.Graph)}`` — the matplotlib figure and</span>
+<span class="sd">        underlying igraph graph (with ``&#39;name&#39;``, ``&#39;size&#39;``, and</span>
+<span class="sd">        ``&#39;top_count&#39;`` vertex attributes, and per-edge ``&#39;strength&#39;``) for</span>
+<span class="sd">        each celltype.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">celltype_labels</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">celltype_col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">top_genes_per_cell</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">celltype_labels</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;top_genes_per_cell has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">top_genes_per_cell</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries but &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;grn_adata has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">celltype_labels</span><span class="p">)</span><span class="si">}</span><span class="s2"> cells.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">selected_celltypes</span> <span class="o">=</span> <span class="n">_resolve_celltypes</span><span class="p">(</span><span class="n">celltype_labels</span><span class="p">,</span> <span class="n">celltypes</span><span class="p">,</span> <span class="n">celltype_col</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">selected_celltypes</span><span class="p">:</span>
+        <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">celltype_labels</span> <span class="o">==</span> <span class="n">ct</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">gene_counts</span><span class="p">,</span> <span class="n">top_genes</span> <span class="o">=</span> <span class="n">_select_top_genes_for_celltype</span><span class="p">(</span>
+            <span class="n">top_genes_per_cell</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">top_n</span><span class="p">,</span> <span class="n">max_nodes</span>
+        <span class="p">)</span>
+        <span class="n">kept_edges</span> <span class="o">=</span> <span class="n">_select_top_edges_for_celltype</span><span class="p">(</span>
+            <span class="n">grn_adata</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">top_genes</span><span class="p">),</span> <span class="n">top_edges</span>
+        <span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">_draw_celltype_graph</span><span class="p">(</span>
+            <span class="n">ct</span><span class="p">,</span> <span class="n">top_genes</span><span class="p">,</span> <span class="n">gene_counts</span><span class="p">,</span> <span class="n">kept_edges</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_idx</span><span class="p">),</span>
+            <span class="n">min_node_size</span><span class="p">,</span> <span class="n">max_node_size</span><span class="p">,</span> <span class="n">figsize</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s2">_top_genes_network.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="n">ct</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gather_combined_celltype_data</span><span class="p">(</span>
+    <span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_genes_per_cell</span><span class="p">,</span> <span class="n">celltype_labels</span><span class="p">,</span> <span class="n">selected_celltypes</span><span class="p">,</span>
+    <span class="n">top_n</span><span class="p">,</span> <span class="n">max_nodes_per_celltype</span><span class="p">,</span> <span class="n">top_edges_per_celltype</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run per-celltype gene/edge selection and merge into combined lookups.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple:</span>
+<span class="sd">            - gene_fractions (dict): ``{gene: {celltype: fraction}}`` — for</span>
+<span class="sd">              each celltype where the gene was among that celltype&#39;s kept top</span>
+<span class="sd">              genes, the fraction of that celltype&#39;s cells having it in their</span>
+<span class="sd">              top-``top_n`` list.</span>
+<span class="sd">            - combined_edges (dict): ``{(source, target): {&#39;n_celltypes&#39;: int,</span>
+<span class="sd">              &#39;strength&#39;: float}}`` — merged across every celltype whose kept</span>
+<span class="sd">              top edges included that pair.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gene_fractions</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">combined_edges</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">selected_celltypes</span><span class="p">:</span>
+        <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">celltype_labels</span> <span class="o">==</span> <span class="n">ct</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_cells_ct</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_idx</span><span class="p">)</span>
+
+        <span class="n">gene_counts</span><span class="p">,</span> <span class="n">top_genes</span> <span class="o">=</span> <span class="n">_select_top_genes_for_celltype</span><span class="p">(</span>
+            <span class="n">top_genes_per_cell</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">top_n</span><span class="p">,</span> <span class="n">max_nodes_per_celltype</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">top_genes</span><span class="p">:</span>
+            <span class="n">gene_fractions</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="p">{})[</span><span class="n">ct</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_counts</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_cells_ct</span>
+
+        <span class="n">kept_edges</span> <span class="o">=</span> <span class="n">_select_top_edges_for_celltype</span><span class="p">(</span>
+            <span class="n">grn_adata</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">top_genes</span><span class="p">),</span> <span class="n">top_edges_per_celltype</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">strength</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">kept_edges</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">],</span> <span class="n">kept_edges</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span> <span class="n">kept_edges</span><span class="p">[</span><span class="s2">&quot;strength&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="n">combined_edges</span><span class="o">.</span><span class="n">setdefault</span><span class="p">((</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="p">{</span><span class="s2">&quot;n_celltypes&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;strength&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;n_celltypes&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;strength&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">strength</span>
+
+    <span class="k">return</span> <span class="n">gene_fractions</span><span class="p">,</span> <span class="n">combined_edges</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_layout_with_isolates_on_rim</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Force-directed layout for the connected part; isolated genes placed on a rim.</span>
+
+<span class="sd">    Spring layout&#39;s repulsion has nothing to balance an isolated node against</span>
+<span class="sd">    (no edge pulls it back in), so isolates tend to drift arbitrarily far out.</span>
+<span class="sd">    That inflates the plot&#39;s bounding box with mostly-empty margin while the</span>
+<span class="sd">    actual connected component stays small and crowded near the centre.</span>
+<span class="sd">    Instead, only the non-isolated nodes go through ``spring_layout``; isolates</span>
+<span class="sd">    are placed evenly on a circle just outside that component&#39;s extent, so the</span>
+<span class="sd">    bounding box stays tight and the connected core gets the full ``k``-driven</span>
+<span class="sd">    spread to itself.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph (networkx.DiGraph): The full graph, isolates included.</span>
+<span class="sd">        seed (int): Random seed for ``spring_layout``.</span>
+<span class="sd">        k (float, optional): Target distance between nodes, passed straight to</span>
+<span class="sd">            ``spring_layout`` — larger spreads nodes further apart, smaller</span>
+<span class="sd">            pulls them tighter. ``None`` (default) auto-scales as</span>
+<span class="sd">            ``3.0 / sqrt(n_connected_nodes)``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: ``{node: (x, y)}`` for every node in ``graph``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">isolates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">isolates</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+    <span class="n">connected_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">isolates</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">connected_nodes</span><span class="p">:</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">isolates</span><span class="p">),</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">isolates</span><span class="p">,</span> <span class="n">angles</span><span class="p">)}</span>
+
+    <span class="n">subgraph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">connected_nodes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">connected_nodes</span><span class="p">))</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">subgraph</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">isolates</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pos</span>
+
+    <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">values</span><span class="p">())),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">max_radius</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">-</span> <span class="n">center</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pos</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">rim_radius</span> <span class="o">=</span> <span class="n">max_radius</span> <span class="o">*</span> <span class="mf">1.25</span> <span class="o">+</span> <span class="mf">0.1</span>
+
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">isolates</span><span class="p">),</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">isolates</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>
+        <span class="n">pos</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">rim_radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)])</span>
+
+    <span class="k">return</span> <span class="n">pos</span>
+
+
+<div class="viewcode-block" id="compute_combined_celltype_network">
+<a class="viewcode-back" href="../../../generated/netmap.downstream.plotting.compute_combined_celltype_network.html#netmap.downstream.plotting.compute_combined_celltype_network">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_combined_celltype_network</span><span class="p">(</span>
+    <span class="n">grn_adata</span><span class="p">,</span>
+    <span class="n">top_genes_per_cell</span><span class="p">,</span>
+    <span class="n">celltype_col</span><span class="o">=</span><span class="s2">&quot;celltype&quot;</span><span class="p">,</span>
+    <span class="n">celltypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">top_n</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">max_nodes_per_celltype</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">top_edges_per_celltype</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">max_total_nodes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select genes/edges across celltypes and build the combined network graph.</span>
+
+<span class="sd">    Runs the same per-celltype selection as :func:`plot_celltype_top_gene_networks`</span>
+<span class="sd">    (top-``top_n`` gene recurrence, ``top_edges_per_celltype`` strongest</span>
+<span class="sd">    masked-attribution edges per celltype — see :func:`_masked_edge_strength`),</span>
+<span class="sd">    then merges the results into one graph:</span>
+
+<span class="sd">    - Every gene selected by at least one celltype is a candidate node; the</span>
+<span class="sd">      ``max_total_nodes`` with the highest summed recurrence fraction (across</span>
+<span class="sd">      all celltypes they were selected in) are kept.</span>
+<span class="sd">    - Every edge kept by at least one celltype (with both endpoints surviving</span>
+<span class="sd">      the node cap) is kept once, annotated with how many celltypes supported</span>
+<span class="sd">      it and their summed strength.</span>
+
+<span class="sd">    Does no plotting — this is the potentially-expensive step (masked edge</span>
+<span class="sd">    strength over every cell). Pass the result to</span>
+<span class="sd">    :func:`plot_combined_celltype_network` to render it, as many times as you</span>
+<span class="sd">    want with different layout/style parameters, without recomputing this.</span>
+<span class="sd">    :func:`combined_celltype_network` does both steps in one call.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with ``source``/``target``</span>
+<span class="sd">            columns in ``.var``, a celltype label in ``.obs``, a populated</span>
+<span class="sd">            ``X``, and a ``layers[&#39;mask&#39;]`` of matching shape.</span>
+<span class="sd">        top_genes_per_cell (list): One entry per cell, each a list of</span>
+<span class="sd">            ``(gene_name, score)`` tuples sorted descending by score, as</span>
+<span class="sd">            returned by ``run_celltype_random_walk(..., top_genes_k=...)``.</span>
+<span class="sd">            Must be in the same cell order as ``grn_adata.obs``.</span>
+<span class="sd">        celltype_col (str): Column in ``grn_adata.obs`` giving each cell&#39;s</span>
+<span class="sd">            celltype label. Defaults to ``&#39;celltype&#39;``.</span>
+<span class="sd">        celltypes (str or list of str, optional): Restrict to this celltype</span>
+<span class="sd">            (or list of celltypes) instead of every unique value in</span>
+<span class="sd">            ``celltype_col``. ``None`` (default) uses all of them.</span>
+<span class="sd">        top_n (int): Number of top genes per cell counted towards recurrence.</span>
+<span class="sd">            Defaults to 20.</span>
+<span class="sd">        max_nodes_per_celltype (int): Per-celltype node cap passed to</span>
+<span class="sd">            :func:`_select_top_genes_for_celltype`. Defaults to 100.</span>
+<span class="sd">        top_edges_per_celltype (int): Per-celltype edge cap passed to</span>
+<span class="sd">            :func:`_select_top_edges_for_celltype`. Defaults to 20.</span>
+<span class="sd">        max_total_nodes (int): Maximum number of genes kept in the combined</span>
+<span class="sd">            network, by descending summed recurrence fraction across</span>
+<span class="sd">            celltypes. Defaults to 100.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: with keys ``&#39;graph&#39;`` (networkx.DiGraph, nodes are the kept</span>
+<span class="sd">        genes, edges the kept GRN edges), ``&#39;gene_fractions&#39;`` (``{gene:</span>
+<span class="sd">        {celltype: fraction}}`` for the kept genes), ``&#39;importance&#39;`` (``{gene:</span>
+<span class="sd">        summed fraction across celltypes}``), ``&#39;edge_items&#39;`` (list of</span>
+<span class="sd">        ``((source, target), {&#39;n_celltypes&#39;, &#39;strength&#39;})`` for the kept</span>
+<span class="sd">        edges), ``&#39;celltypes&#39;`` (the resolved celltype list), and</span>
+<span class="sd">        ``&#39;celltype_col&#39;`` (for the legend title).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">celltype_labels</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">celltype_col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">top_genes_per_cell</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">celltype_labels</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;top_genes_per_cell has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">top_genes_per_cell</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries but &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;grn_adata has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">celltype_labels</span><span class="p">)</span><span class="si">}</span><span class="s2"> cells.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">selected_celltypes</span> <span class="o">=</span> <span class="n">_resolve_celltypes</span><span class="p">(</span><span class="n">celltype_labels</span><span class="p">,</span> <span class="n">celltypes</span><span class="p">,</span> <span class="n">celltype_col</span><span class="p">)</span>
+
+    <span class="n">gene_fractions</span><span class="p">,</span> <span class="n">combined_edges</span> <span class="o">=</span> <span class="n">_gather_combined_celltype_data</span><span class="p">(</span>
+        <span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_genes_per_cell</span><span class="p">,</span> <span class="n">celltype_labels</span><span class="p">,</span> <span class="n">selected_celltypes</span><span class="p">,</span>
+        <span class="n">top_n</span><span class="p">,</span> <span class="n">max_nodes_per_celltype</span><span class="p">,</span> <span class="n">top_edges_per_celltype</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">gene_fractions</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No genes were selected for any of the requested celltypes.&quot;</span><span class="p">)</span>
+
+    <span class="n">importance</span> <span class="o">=</span> <span class="p">{</span><span class="n">gene</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fracs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="k">for</span> <span class="n">gene</span><span class="p">,</span> <span class="n">fracs</span> <span class="ow">in</span> <span class="n">gene_fractions</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">kept_genes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">importance</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">importance</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">max_total_nodes</span><span class="p">]</span>
+    <span class="n">kept_gene_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">kept_genes</span><span class="p">)</span>
+    <span class="n">kept_gene_fractions</span> <span class="o">=</span> <span class="p">{</span><span class="n">gene</span><span class="p">:</span> <span class="n">gene_fractions</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">kept_genes</span><span class="p">}</span>
+
+    <span class="n">kept_edge_items</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">pair</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span> <span class="k">for</span> <span class="n">pair</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">combined_edges</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">kept_gene_set</span> <span class="ow">and</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">kept_gene_set</span>
+    <span class="p">]</span>
+
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">kept_genes</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">pair</span> <span class="k">for</span> <span class="n">pair</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">kept_edge_items</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;graph&quot;</span><span class="p">:</span> <span class="n">graph</span><span class="p">,</span>
+        <span class="s2">&quot;gene_fractions&quot;</span><span class="p">:</span> <span class="n">kept_gene_fractions</span><span class="p">,</span>
+        <span class="s2">&quot;importance&quot;</span><span class="p">:</span> <span class="n">importance</span><span class="p">,</span>
+        <span class="s2">&quot;edge_items&quot;</span><span class="p">:</span> <span class="n">kept_edge_items</span><span class="p">,</span>
+        <span class="s2">&quot;celltypes&quot;</span><span class="p">:</span> <span class="n">selected_celltypes</span><span class="p">,</span>
+        <span class="s2">&quot;celltype_col&quot;</span><span class="p">:</span> <span class="n">celltype_col</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_drop_isolates</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">gene_fractions</span><span class="p">,</span> <span class="n">importance</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove genes with no edges to any other kept gene.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(graph, gene_fractions, importance)`` filtered to exclude</span>
+<span class="sd">        isolated genes. Returned as-is if there are none.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">isolates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">isolates</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">isolates</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">gene_fractions</span><span class="p">,</span> <span class="n">importance</span>
+
+    <span class="n">keep</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">isolates</span><span class="p">]</span>
+    <span class="n">filtered_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">keep</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">filtered_fractions</span> <span class="o">=</span> <span class="p">{</span><span class="n">gene</span><span class="p">:</span> <span class="n">gene_fractions</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">keep</span><span class="p">}</span>
+    <span class="n">filtered_importance</span> <span class="o">=</span> <span class="p">{</span><span class="n">gene</span><span class="p">:</span> <span class="n">importance</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">keep</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">filtered_graph</span><span class="p">,</span> <span class="n">filtered_fractions</span><span class="p">,</span> <span class="n">filtered_importance</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_layout</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute 2D node positions for the combined network under different algorithms.</span>
+
+<span class="sd">    ``&#39;spring&#39;`` is a force simulation: attraction along edges, repulsion</span>
+<span class="sd">    everywhere else. It degrades on genuinely dense graphs (many edges per</span>
+<span class="sd">    node) because the repulsion has too many competing attractions to push</span>
+<span class="sd">    against — no choice of ``k`` fixes that, since the crowding is a property</span>
+<span class="sd">    of the edge/node ratio, not the layout algorithm. The other options don&#39;t</span>
+<span class="sd">    share that failure mode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph (networkx.DiGraph): The graph to lay out.</span>
+<span class="sd">        layout (str): One of:</span>
+
+<span class="sd">            - ``&#39;spring&#39;`` (default): ``spring_layout`` on the connected part,</span>
+<span class="sd">              isolated genes placed on a rim (see</span>
+<span class="sd">              :func:`_layout_with_isolates_on_rim`). Tunable via ``k``.</span>
+<span class="sd">            - ``&#39;kk&#39;``: igraph&#39;s Kamada-Kawai — positions reflect</span>
+<span class="sd">              graph-theoretic shortest-path distances rather than a physical</span>
+<span class="sd">              simulation; tends to spread small-to-medium graphs more evenly.</span>
+<span class="sd">            - ``&#39;drl&#39;``: igraph&#39;s DrL (Distributed Recursive Layout) —</span>
+<span class="sd">              purpose-built for large/dense graphs, generally separates</span>
+<span class="sd">              clusters better than spring or KK when there are many edges.</span>
+<span class="sd">            - ``&#39;circular&#39;``: nodes evenly spaced on a circle. Guarantees zero</span>
+<span class="sd">              node-node overlap regardless of density — edges may cross a</span>
+<span class="sd">              lot, but every node stays legible.</span>
+<span class="sd">        seed (int): Random seed, used only by ``&#39;spring&#39;``.</span>
+<span class="sd">        k (float, optional): Target inter-node distance, used only by</span>
+<span class="sd">            ``&#39;spring&#39;``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: ``{node: (x, y)}`` for every node in ``graph``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">&quot;spring&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_layout_with_isolates_on_rim</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">&quot;circular&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">circular_layout</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">layout</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;kk&quot;</span><span class="p">,</span> <span class="s2">&quot;drl&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown layout </span><span class="si">{</span><span class="n">layout</span><span class="si">!r}</span><span class="s2">; choose &#39;spring&#39;, &#39;kk&#39;, &#39;drl&#39;, or &#39;circular&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="n">node_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="n">ig_graph</span> <span class="o">=</span> <span class="n">ig</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ig_graph</span><span class="o">.</span><span class="n">add_vertices</span><span class="p">(</span><span class="n">node_names</span><span class="p">)</span>
+    <span class="n">ig_graph</span><span class="o">.</span><span class="n">add_edges</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">))</span>
+    <span class="n">ig_pos</span> <span class="o">=</span> <span class="n">ig_graph</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ig_pos</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node_names</span><span class="p">)}</span>
+
+
+<div class="viewcode-block" id="plot_combined_celltype_network">
+<a class="viewcode-back" href="../../../generated/netmap.downstream.plotting.plot_combined_celltype_network.html#netmap.downstream.plotting.plot_combined_celltype_network">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_combined_celltype_network</span><span class="p">(</span>
+    <span class="n">network</span><span class="p">,</span>
+    <span class="n">node_radius_frac</span><span class="o">=</span><span class="p">(</span><span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
+    <span class="n">palette</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;spring&quot;</span><span class="p">,</span>
+    <span class="n">drop_isolates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render a network built by :func:`compute_combined_celltype_network`.</span>
+
+<span class="sd">    Pure rendering — layout plus the per-gene pie charts. Safe to call</span>
+<span class="sd">    repeatedly with different ``node_radius_frac``/``palette``/``seed``/``k``/</span>
+<span class="sd">    ``layout``/``drop_isolates`` against the same precomputed ``network``</span>
+<span class="sd">    without redoing the (expensive) per-celltype gene/edge selection.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        network (dict): As returned by :func:`compute_combined_celltype_network`.</span>
+<span class="sd">        node_radius_frac (tuple): ``(min, max)`` pie radius, each as a fraction</span>
+<span class="sd">            of the layout&#39;s coordinate span — ``min`` for the least-recurrent</span>
+<span class="sd">            kept gene, ``max`` for the most-recurrent. Defaults to</span>
+<span class="sd">            ``(0.015, 0.05)``.</span>
+<span class="sd">        palette (dict, optional): ``{celltype: color}`` mapping. ``None``</span>
+<span class="sd">            (default) assigns colors from matplotlib&#39;s ``tab20`` colormap.</span>
+<span class="sd">        figsize (tuple): Figure size. Defaults to ``(10, 10)``.</span>
+<span class="sd">        seed (int): Random seed for the ``&#39;spring&#39;`` layout, for</span>
+<span class="sd">            reproducibility. Defaults to 42. Unused by other layouts.</span>
+<span class="sd">        k (float, optional): Target distance between nodes in the ``&#39;spring&#39;``</span>
+<span class="sd">            layout — increase to spread nodes further apart, decrease to pull</span>
+<span class="sd">            them tighter. ``None`` (default) auto-scales as</span>
+<span class="sd">            ``3.0 / sqrt(n_connected_nodes)``. Unused by other layouts.</span>
+<span class="sd">        layout (str): One of ``&#39;spring&#39;`` (default), ``&#39;kk&#39;``, ``&#39;drl&#39;``, or</span>
+<span class="sd">            ``&#39;circular&#39;`` — see :func:`_compute_layout`. If the graph still</span>
+<span class="sd">            looks crowded after trying these, the more fundamental fix is</span>
+<span class="sd">            usually to lower ``top_edges_per_celltype`` (fewer edges per kept</span>
+<span class="sd">            gene) rather than change the layout.</span>
+<span class="sd">        drop_isolates (bool): If ``True``, genes with no edge to any other</span>
+<span class="sd">            kept gene are excluded from the plot entirely instead of being</span>
+<span class="sd">            placed on a rim. Defaults to ``False``.</span>
+<span class="sd">        out_path (str, optional): Directory to save the figure to, as</span>
+<span class="sd">            ``&#39;{out_path}/combined_celltype_network.png&#39;``. ``None`` (default)</span>
+<span class="sd">            skips saving.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(fig, ax)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">network</span><span class="p">[</span><span class="s2">&quot;graph&quot;</span><span class="p">]</span>
+    <span class="n">gene_fractions</span> <span class="o">=</span> <span class="n">network</span><span class="p">[</span><span class="s2">&quot;gene_fractions&quot;</span><span class="p">]</span>
+    <span class="n">importance</span> <span class="o">=</span> <span class="n">network</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">drop_isolates</span><span class="p">:</span>
+        <span class="n">graph</span><span class="p">,</span> <span class="n">gene_fractions</span><span class="p">,</span> <span class="n">importance</span> <span class="o">=</span> <span class="n">_drop_isolates</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">gene_fractions</span><span class="p">,</span> <span class="n">importance</span><span class="p">)</span>
+
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">_compute_layout</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">_draw_combined_celltype_graph</span><span class="p">(</span>
+        <span class="n">graph</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">gene_fractions</span><span class="p">,</span> <span class="n">network</span><span class="p">[</span><span class="s2">&quot;edge_items&quot;</span><span class="p">],</span> <span class="n">importance</span><span class="p">,</span>
+        <span class="n">network</span><span class="p">[</span><span class="s2">&quot;celltypes&quot;</span><span class="p">],</span> <span class="n">node_radius_frac</span><span class="p">,</span> <span class="n">palette</span><span class="p">,</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">network</span><span class="p">[</span><span class="s2">&quot;celltype_col&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s2">/combined_celltype_network.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="combined_celltype_network">
+<a class="viewcode-back" href="../../../generated/netmap.downstream.plotting.combined_celltype_network.html#netmap.downstream.plotting.combined_celltype_network">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">combined_celltype_network</span><span class="p">(</span>
+    <span class="n">grn_adata</span><span class="p">,</span>
+    <span class="n">top_genes_per_cell</span><span class="p">,</span>
+    <span class="n">celltype_col</span><span class="o">=</span><span class="s2">&quot;celltype&quot;</span><span class="p">,</span>
+    <span class="n">celltypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">top_n</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">max_nodes_per_celltype</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">top_edges_per_celltype</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">max_total_nodes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute and render the combined celltype gene network in one call.</span>
+
+<span class="sd">    Convenience wrapper around :func:`compute_combined_celltype_network` and</span>
+<span class="sd">    :func:`plot_combined_celltype_network`. If you&#39;re tuning layout or style</span>
+<span class="sd">    (``node_radius_frac``, ``palette``, ``seed``, ``k``), call those two</span>
+<span class="sd">    directly instead and reuse the same computed network — this recomputes</span>
+<span class="sd">    gene/edge selection on every call.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        grn_adata, top_genes_per_cell, celltype_col, celltypes, top_n,</span>
+<span class="sd">            max_nodes_per_celltype, top_edges_per_celltype, max_total_nodes:</span>
+<span class="sd">            Forwarded to :func:`compute_combined_celltype_network`.</span>
+<span class="sd">        **plot_kwargs: Forwarded to :func:`plot_combined_celltype_network`</span>
+<span class="sd">            (``node_radius_frac``, ``palette``, ``figsize``, ``seed``, ``k``,</span>
+<span class="sd">            ``out_path``).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(fig, ax, network)`` — the built network is always returned</span>
+<span class="sd">        alongside the plot, since computing it is unavoidable here anyway;</span>
+<span class="sd">        reuse it with :func:`plot_combined_celltype_network` to re-render</span>
+<span class="sd">        without recomputing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">network</span> <span class="o">=</span> <span class="n">compute_combined_celltype_network</span><span class="p">(</span>
+        <span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_genes_per_cell</span><span class="p">,</span> <span class="n">celltype_col</span><span class="p">,</span> <span class="n">celltypes</span><span class="p">,</span>
+        <span class="n">top_n</span><span class="p">,</span> <span class="n">max_nodes_per_celltype</span><span class="p">,</span> <span class="n">top_edges_per_celltype</span><span class="p">,</span> <span class="n">max_total_nodes</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_combined_celltype_network</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">network</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_draw_combined_celltype_graph</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">gene_fractions</span><span class="p">,</span> <span class="n">edge_items</span><span class="p">,</span> <span class="n">importance</span><span class="p">,</span> <span class="n">selected_celltypes</span><span class="p">,</span>
+    <span class="n">node_radius_frac</span><span class="p">,</span> <span class="n">palette</span><span class="p">,</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">celltype_col</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render the combined graph: edges via networkx, nodes as per-gene pie charts.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(fig, ax)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pos</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pos</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="n">span</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">min_radius</span> <span class="o">=</span> <span class="n">node_radius_frac</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">span</span>
+    <span class="n">max_radius</span> <span class="o">=</span> <span class="n">node_radius_frac</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">span</span>
+    <span class="n">max_importance</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">importance</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">palette</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;tab20&quot;</span><span class="p">)</span>
+        <span class="n">palette</span> <span class="o">=</span> <span class="p">{</span><span class="n">ct</span><span class="p">:</span> <span class="n">cmap</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">20</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">selected_celltypes</span><span class="p">)}</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">edge_items</span><span class="p">:</span>
+        <span class="n">widths</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;n_celltypes&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">edge_items</span><span class="p">]</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span>
+            <span class="n">graph</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;#bdc3c7&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">widths</span><span class="p">,</span>
+            <span class="n">arrows</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">arrowsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">connectionstyle</span><span class="o">=</span><span class="s2">&quot;arc3,rad=0.05&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+        <span class="n">fracs</span> <span class="o">=</span> <span class="n">gene_fractions</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fracs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="o">/</span> <span class="n">total</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fracs</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">palette</span><span class="p">[</span><span class="n">ct</span><span class="p">]</span> <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">fracs</span><span class="p">]</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">min_radius</span> <span class="o">+</span> <span class="p">(</span><span class="n">importance</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="o">/</span> <span class="n">max_importance</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_radius</span> <span class="o">-</span> <span class="n">min_radius</span><span class="p">)</span>
+
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">sizes</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span>
+               <span class="n">wedgeprops</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;linewidth&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">})</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">radius</span> <span class="o">*</span> <span class="mf">1.4</span><span class="p">,</span> <span class="n">gene</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">-</span> <span class="n">span</span> <span class="o">*</span> <span class="mf">0.15</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">+</span> <span class="n">span</span> <span class="o">*</span> <span class="mf">0.15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span> <span class="o">-</span> <span class="n">span</span> <span class="o">*</span> <span class="mf">0.15</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span> <span class="o">+</span> <span class="n">span</span> <span class="o">*</span> <span class="mf">0.15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Combined top-gene network (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span><span class="si">}</span><span class="s2"> genes, </span><span class="si">{</span><span class="n">graph</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">()</span><span class="si">}</span><span class="s2"> edges)&quot;</span><span class="p">)</span>
+
+    <span class="n">legend_handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">palette</span><span class="p">[</span><span class="n">ct</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">ct</span><span class="p">)</span> <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">selected_celltypes</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">celltype_col</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">,</span>
+              <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 </pre></div>
         </article>
       </div>

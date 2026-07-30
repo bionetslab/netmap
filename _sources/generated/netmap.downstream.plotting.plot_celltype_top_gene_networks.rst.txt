@@ -1,0 +1,6 @@
+netmap.downstream.plotting.plot\_celltype\_top\_gene\_networks
+==============================================================
+
+.. currentmodule:: netmap.downstream.plotting
+
+.. autofunction:: plot_celltype_top_gene_networks

@@ -19,13 +19,21 @@
 
    bcrank_entropy
 
+   combined_celltype_network
+
    compute_bcrank_metrics
+
+   compute_combined_celltype_network
 
    draw_inset_graph
 
    get_grn_from_regulon
 
    plot_bcrank_entropy
+
+   plot_celltype_top_gene_networks
+
+   plot_combined_celltype_network
 
    plot_regulon_comparison
 
