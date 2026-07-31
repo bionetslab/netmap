@@ -32,9 +32,6 @@ dependencies = [
 
 ]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["netmap*"]
 
 [project.urls]
 Homepage = "https://github.com/bionetslab/netmap"
