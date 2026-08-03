@@ -147,7 +147,7 @@ def retrieve_top_edges(grn_adata, output_dir, percentage=0.1, inplace=True):
     max_entry = grn_adata.var.shape[0]
     max_index = int(max_entry * percentage)
     sorted_indices = np.sort(grn_adata.uns['edge_sum_original_index'][0:max_index])
-    index_set = set(grn_adata.var['index'][sorted_indices])
+    index_set = set(grn_adata.var['index'].iloc[sorted_indices])
 
     # Map columns to files (fast, reads only metadata)
     col_to_file = {}
