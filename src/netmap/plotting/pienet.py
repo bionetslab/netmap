@@ -11,7 +11,7 @@ import networkx as nx
 
 import seaborn as sns
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
+import scipy.sparse as scs
 
 def _resolve_celltypes(celltype_labels, celltypes, celltype_col):
     """Validate and normalize a ``celltypes`` filter against the labels actually present.
