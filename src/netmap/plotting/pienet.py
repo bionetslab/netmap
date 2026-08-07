@@ -395,6 +395,11 @@ def compute_combined_celltype_network(
         edges), ``'celltypes'`` (the resolved celltype list), and
         ``'celltype_col'`` (for the legend title).
     """
+
+    combined = pd.api.types.union_categoricals([grn_adata.var["source"], grn_adata.var["target"]])
+    grn_adata.var["source"] = grn_adata.var["source"].cat.set_categories(combined.categories)
+    grn_adata.var["target"] = grn_adata.var["target"].cat.set_categories(combined.categories)
+
     celltype_labels = grn_adata.obs[celltype_col].to_numpy()
     if len(top_genes_per_cell) != len(celltype_labels):
         raise ValueError(
@@ -452,7 +457,75 @@ def _drop_isolates(graph, gene_fractions, importance):
     return filtered_graph, filtered_fractions, filtered_importance
 
 
-def _compute_layout(graph, layout, seed, k):
+def _keep_largest_component(graph, gene_fractions, importance):
+    """Restrict to only the largest weakly-connected component.
+
+    Small disconnected pieces have no graph-theoretic distance constraint
+    tying them to the main cluster, so graph-theoretic layouts (``'kk'``,
+    ``'drl'``, ``'sfdp'``) can scatter them arbitrarily far away — inflating
+    the plot's bounding box with mostly-empty space while the actual main
+    component stays cramped in relative terms. Dropping every component but
+    the largest sidesteps that entirely.
+
+    Returns:
+        tuple: ``(graph, gene_fractions, importance)`` filtered to the nodes
+        of the largest weakly-connected component (ties broken arbitrarily).
+        Returned as-is if the graph is already a single component.
+    """
+    if graph.number_of_nodes() == 0:
+        return graph, gene_fractions, importance
+
+    components = list(nx.weakly_connected_components(graph))
+    if len(components) <= 1:
+        return graph, gene_fractions, importance
+
+    largest = max(components, key=len)
+    filtered_graph = graph.subgraph(largest).copy()
+    filtered_fractions = {gene: gene_fractions[gene] for gene in largest}
+    filtered_importance = {gene: importance[gene] for gene in largest}
+    return filtered_graph, filtered_fractions, filtered_importance
+
+
+def _expand_core(graph, pos, core_fraction, core_scale):
+    """Push the most-connected nodes outward from their own centroid, in place.
+
+    Graph-theoretic layouts (``'kk'``, ``'drl'``) size distances by
+    shortest-path length, so a densely connected core — short pairwise
+    distances by construction — ends up crowded regardless of which of those
+    algorithms you pick; there's no single knob like spring's ``k`` to loosen
+    just that part. This is layout-agnostic post-processing instead: take the
+    top ``core_fraction`` of nodes by total degree, compute their centroid
+    from whatever positions the base layout already produced, and scale each
+    core node's offset from that centroid by ``core_scale``. Peripheral nodes
+    are left exactly where the base layout put them.
+
+    Args:
+        graph (networkx.DiGraph): Graph the positions came from.
+        pos (dict): ``{node: (x, y)}`` from the base layout.
+        core_fraction (float): Fraction of nodes (by total in+out degree,
+            highest first) treated as "core".
+        core_scale (float): Factor to scale core nodes' distance from their
+            own centroid. ``1.0`` is a no-op; ``>1`` spreads the core out.
+
+    Returns:
+        dict: ``{node: (x, y)}``, same keys as ``pos``.
+    """
+    if core_scale == 1.0 or len(graph) == 0:
+        return pos
+
+    degrees = dict(graph.degree())
+    n_core = max(1, round(len(graph) * core_fraction))
+    core_nodes = sorted(degrees, key=degrees.get, reverse=True)[:n_core]
+
+    centroid = np.mean([pos[n] for n in core_nodes], axis=0)
+
+    new_pos = dict(pos)
+    for node in core_nodes:
+        new_pos[node] = tuple(centroid + (np.array(pos[node]) - centroid) * core_scale)
+    return new_pos
+
+
+def _compute_layout(graph, layout, seed, k, core_fraction=0.25, core_scale=1.0):
     """Compute 2D node positions for the combined network under different algorithms.
 
     ``'spring'`` is a force simulation: attraction along edges, repulsion
@@ -478,26 +551,50 @@ def _compute_layout(graph, layout, seed, k):
             - ``'circular'``: nodes evenly spaced on a circle. Guarantees zero
               node-node overlap regardless of density — edges may cross a
               lot, but every node stays legible.
+            - ``'sfdp'``: Graphviz's scalable force-directed placement (via
+              ``pygraphviz``) — force-directed like ``'spring'``, but with
+              explicit overlap removal, so it tends to handle a dense core
+              next to a sparse periphery better than spring or KK do.
+              Requires ``pygraphviz`` and the system Graphviz library.
         seed (int): Random seed, used only by ``'spring'``.
         k (float, optional): Target inter-node distance, used only by
             ``'spring'``.
+        core_fraction (float): Fraction of highest-degree nodes treated as
+            "core" by :func:`_expand_core`, applied after the base layout
+            regardless of ``layout``. Defaults to 0.25.
+        core_scale (float): Factor to spread the core out from its own
+            centroid — see :func:`_expand_core`. ``1.0`` (default) is a
+            no-op, leaving the base layout untouched.
 
     Returns:
         dict: ``{node: (x, y)}`` for every node in ``graph``.
     """
     if layout == "spring":
-        return _layout_with_isolates_on_rim(graph, seed, k=k)
-    if layout == "circular":
-        return nx.circular_layout(graph)
-    if layout not in ("kk", "drl"):
-        raise ValueError(f"Unknown layout {layout!r}; choose 'spring', 'kk', 'drl', or 'circular'.")
+        pos = _layout_with_isolates_on_rim(graph, seed, k=k)
+    elif layout == "circular":
+        pos = nx.circular_layout(graph)
+    elif layout == "sfdp":
+        try:
+            from networkx.drawing.nx_agraph import pygraphviz_layout
+        except ImportError as e:
+            raise ImportError(
+                "layout='sfdp' requires pygraphviz (and the system Graphviz "
+                "library) to be installed."
+            ) from e
+        pos = pygraphviz_layout(graph, prog="sfdp")
+    elif layout in ("kk", "drl"):
+        node_names = list(graph.nodes)
+        ig_graph = ig.Graph(directed=True)
+        ig_graph.add_vertices(node_names)
+        ig_graph.add_edges(list(graph.edges))
+        ig_pos = ig_graph.layout(layout)
+        pos = {name: tuple(ig_pos[i]) for i, name in enumerate(node_names)}
+    else:
+        raise ValueError(
+            f"Unknown layout {layout!r}; choose 'spring', 'kk', 'drl', 'circular', or 'sfdp'."
+        )
 
-    node_names = list(graph.nodes)
-    ig_graph = ig.Graph(directed=True)
-    ig_graph.add_vertices(node_names)
-    ig_graph.add_edges(list(graph.edges))
-    ig_pos = ig_graph.layout(layout)
-    return {name: tuple(ig_pos[i]) for i, name in enumerate(node_names)}
+    return _expand_core(graph, pos, core_fraction, core_scale)
 
 
 def plot_combined_celltype_network(
@@ -508,15 +605,19 @@ def plot_combined_celltype_network(
     seed=42,
     k=None,
     layout="spring",
+    core_fraction=0.25,
+    core_scale=1.0,
     drop_isolates=False,
+    only_largest_component=False,
     out_path=None,
 ):
     """Render a network built by :func:`compute_combined_celltype_network`.
 
     Pure rendering — layout plus the per-gene pie charts. Safe to call
     repeatedly with different ``node_radius_frac``/``palette``/``seed``/``k``/
-    ``layout``/``drop_isolates`` against the same precomputed ``network``
-    without redoing the (expensive) per-celltype gene/edge selection.
+    ``layout``/``drop_isolates``/``only_largest_component`` against the same
+    precomputed ``network`` without redoing the (expensive) per-celltype
+    gene/edge selection.
 
     Args:
         network (dict): As returned by :func:`compute_combined_celltype_network`.
@@ -533,14 +634,26 @@ def plot_combined_celltype_network(
             layout — increase to spread nodes further apart, decrease to pull
             them tighter. ``None`` (default) auto-scales as
             ``3.0 / sqrt(n_connected_nodes)``. Unused by other layouts.
-        layout (str): One of ``'spring'`` (default), ``'kk'``, ``'drl'``, or
-            ``'circular'`` — see :func:`_compute_layout`. If the graph still
-            looks crowded after trying these, the more fundamental fix is
-            usually to lower ``top_edges_per_celltype`` (fewer edges per kept
-            gene) rather than change the layout.
+        layout (str): One of ``'spring'`` (default), ``'kk'``, ``'drl'``,
+            ``'circular'``, or ``'sfdp'`` — see :func:`_compute_layout`. If
+            the graph still looks crowded after trying these, the more
+            fundamental fix is usually to lower ``top_edges_per_celltype``
+            (fewer edges per kept gene) rather than change the layout.
+        core_fraction (float): Fraction of highest-degree nodes treated as
+            "core" when spreading it out via ``core_scale`` — see
+            :func:`_expand_core`. Defaults to 0.25. No effect while
+            ``core_scale == 1.0``.
+        core_scale (float): Factor to spread the core's nodes apart from
+            their own centroid, applied after ``layout`` regardless of which
+            algorithm was picked. ``1.0`` (default) is a no-op; try ``1.3``
+            to ``1.6`` if the core looks cramped relative to the periphery.
         drop_isolates (bool): If ``True``, genes with no edge to any other
             kept gene are excluded from the plot entirely instead of being
             placed on a rim. Defaults to ``False``.
+        only_largest_component (bool): If ``True``, keep only the largest
+            weakly-connected component and drop every other gene — including
+            isolates, which are trivially their own size-1 component. See
+            :func:`_keep_largest_component`. Defaults to ``False``.
         out_path (str, optional): Directory to save the figure to, as
             ``'{out_path}/combined_celltype_network.png'``. ``None`` (default)
             skips saving.
@@ -553,8 +666,10 @@ def plot_combined_celltype_network(
     importance = network["importance"]
     if drop_isolates:
         graph, gene_fractions, importance = _drop_isolates(graph, gene_fractions, importance)
+    if only_largest_component:
+        graph, gene_fractions, importance = _keep_largest_component(graph, gene_fractions, importance)
 
-    pos = _compute_layout(graph, layout, seed, k)
+    pos = _compute_layout(graph, layout, seed, k, core_fraction=core_fraction, core_scale=core_scale)
     fig, ax = _draw_combined_celltype_graph(
         graph, pos, gene_fractions, network["edge_items"], importance,
         network["celltypes"], node_radius_frac, palette, figsize, network["celltype_col"],
@@ -607,6 +722,29 @@ def combined_celltype_network(
     return fig, ax, network
 
 
+
+
+def _aspect_matched_figsize(figsize, x_span, y_span):
+    """Rescale a requested figsize to match the data's x:y aspect ratio.
+
+    ``ax.set_aspect('equal')`` doesn't stretch the data — it shrinks the axes
+    box inside the figure until one data-unit is the same physical size on
+    both axes. If the requested ``figsize`` isn't already in the data's x:y
+    ratio, matplotlib pads whichever side over-shoots with blank figure
+    margin. Matching the figsize to the data up front means the axes box
+    fills the whole figure instead of leaving that margin.
+
+    Returns:
+        tuple: ``(width, height)`` with the same longer-side length as
+        ``figsize`` but the shorter side rescaled to ``x_span / y_span``.
+    """
+    target = max(figsize)
+    data_aspect = x_span / y_span
+    if data_aspect >= 1:
+        return target, target / data_aspect
+    return target * data_aspect, target
+
+
 def _draw_combined_celltype_graph(
     graph, pos, gene_fractions, edge_items, importance, selected_celltypes,
     node_radius_frac, palette, figsize, celltype_col,
@@ -618,7 +756,9 @@ def _draw_combined_celltype_graph(
     """
     xs = [p[0] for p in pos.values()]
     ys = [p[1] for p in pos.values()]
-    span = max(max(xs) - min(xs), max(ys) - min(ys), 1e-9)
+    x_span = max(max(xs) - min(xs), 1e-9)
+    y_span = max(max(ys) - min(ys), 1e-9)
+    span = max(x_span, y_span)
     min_radius = node_radius_frac[0] * span
     max_radius = node_radius_frac[1] * span
     max_importance = max(importance[g] for g in graph.nodes)
@@ -627,13 +767,14 @@ def _draw_combined_celltype_graph(
         cmap = plt.get_cmap("tab20")
         palette = {ct: cmap(i % 20) for i, ct in enumerate(selected_celltypes)}
 
-    fig, ax = plt.subplots(figsize=figsize)
+    fig, ax = plt.subplots(figsize=_aspect_matched_figsize(figsize, x_span, y_span))
+
 
     if edge_items:
         widths = [0.5 + info["n_celltypes"] for _, info in edge_items]
         nx.draw_networkx_edges(
             graph, pos, ax=ax, edge_color="#bdc3c7", alpha=0.5, width=widths,
-            arrows=True, arrowsize=8, connectionstyle="arc3,rad=0.05",
+            arrows=False, connectionstyle="arc3,rad=0.05",
         )
 
     for gene in graph.nodes:
@@ -646,13 +787,13 @@ def _draw_combined_celltype_graph(
         x, y = pos[gene]
         ax.pie(sizes, colors=colors, radius=radius, center=(x, y),
                wedgeprops={"linewidth": 0.3, "edgecolor": "white"})
-        ax.text(x, y + radius * 1.4, gene, ha="center", va="bottom", fontsize=6)
+        ax.text(x, y, gene, ha="center", va="center", fontsize=6, fontweight="bold",
+                path_effects=[patheffects.withStroke(linewidth=2, foreground="white")])
 
-    ax.set_xlim(min(xs) - span * 0.15, max(xs) + span * 0.15)
-    ax.set_ylim(min(ys) - span * 0.15, max(ys) + span * 0.15)
+    ax.set_xlim(min(xs) - span * 0.08, max(xs) + span * 0.08)
+    ax.set_ylim(min(ys) - span * 0.08, max(ys) + span * 0.08)
     ax.set_aspect("equal")
     ax.axis("off")
-    ax.set_title(f"Combined top-gene network ({len(graph.nodes)} genes, {graph.number_of_edges()} edges)")
 
     legend_handles = [Patch(color=palette[ct], label=ct) for ct in selected_celltypes]
     ax.legend(handles=legend_handles, title=celltype_col, loc="upper left",
