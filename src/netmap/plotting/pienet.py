@@ -5,15 +5,16 @@ from collections import Counter
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
 import networkx as nx
 import igraph as ig
-import seaborn as sns
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
 import scipy.sparse as scs
 
+import seaborn as sns
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from matplotlib.patches import Patch
 import matplotlib.patheffects as patheffects
+
 
 def _resolve_celltypes(celltype_labels, celltypes, celltype_col):
     """Validate and normalize a ``celltypes`` filter against the labels actually present.
