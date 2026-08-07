@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 
 import networkx as nx
-
+import igraph as ig
 import seaborn as sns
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import scipy.sparse as scs
