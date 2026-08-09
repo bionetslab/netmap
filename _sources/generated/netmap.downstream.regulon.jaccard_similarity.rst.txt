@@ -1,6 +1,0 @@
-netmap.downstream.regulon.jaccard\_similarity
-=============================================
-
-.. currentmodule:: netmap.downstream.regulon
-
-.. autofunction:: jaccard_similarity
