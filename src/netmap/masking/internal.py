@@ -140,7 +140,7 @@ def binarize_adata(adata, expression_threshold = 0, layer = 'X'):
 
 
 
-def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X'):
+def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X', mask_data=True):
     """Create a binary cell×edge co-expression mask and add it to the GRN AnnData.
 
     The mask indicates whether both the source and target genes of each edge are
@@ -153,6 +153,7 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X
         strict (bool): If ``True``, use direct binarization of ``adata.X`` instead
             of neighbourhood expression. Defaults to ``False``.
         layer (str): Layer to use for expression values. Defaults to ``'X'``.
+        mask-data (bool): Return masked data obejct
 
     Returns:
         anndata.AnnData: ``grn_adata`` with ``layers['mask']`` (int8) and
@@ -187,6 +188,9 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X
 
     grn_adata.layers['mask'] = mask
     grn_adata.var['count_nonzero'] = np.sum(grn_adata.layers['mask'], axis =0)
+    if mask_data:
+        grn_adata.layers['masked']  = np.multiply(grn_adata.X, grn_adata.layers['mask'])
+
     return grn_adata
 
 

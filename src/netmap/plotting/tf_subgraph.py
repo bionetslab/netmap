@@ -16,7 +16,6 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 def extract_tf_subgraph(filtered_df, tfs):
     
     g = ig.Graph.TupleList(filtered_df[['source', 'target', 'sum_of_edge']].itertuples(index=False), directed=False, weights=True)
-
     # 7. LAYOUT & PLOTTING
     layout = g.layout_kamada_kawai()
 

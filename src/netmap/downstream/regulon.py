@@ -152,6 +152,37 @@ def process_cell_edges(keep_edges_with_vals):
     return results
 
 
+def aggregate_edges(selected_edges, grn_adata, key='unique', grouping='source') -> pd.DataFrame:
+    """Aggregate regulon attribution scores across edges.
+
+    For each cluster and source gene, averages attribution values over all selected
+    edges to produce a single regulon activity score per cell.
+
+    Args:
+        selected_edges (dict): Nested edge dict from :func:`select_top_edges`.
+        grn_adata (anndata.AnnData): GRN AnnData with attribution values in ``X``.
+        key (str): Top-level key to use — ``'unique'`` or ``'all'``. Defaults to
+            ``'unique'``.
+        grouping (str): Column to group edges by — ``'source'`` or ``'target'``.
+            Defaults to ``'source'``.
+
+    Returns:
+        pd.DataFrame: Regulon activity matrix, shape ``(n_cells, n_regulons)``.
+    """
+    regulons = {}
+    for ct in selected_edges[key]:
+        edges = selected_edges[key][ct]['edges'].copy()
+        edges['edge_id'] = edges['source'] + "_" + edges['target']
+        sign = edges.groupby(grouping)['edge_id'].apply(list).to_dict()
+
+        for g in sign:
+            regulons[f'{ct}_{g}'] = grn_adata[:, sign[g]].layers['masked'].mean(axis=1)
+
+    regulons = pd.DataFrame(regulons)
+    return regulons
+
+    
+
 def process_cell_edges_signed(keep_edges_pos, keep_edges_neg):
     """Build the positive/negative regulon result structure from per-cluster edge lists.
 
@@ -324,62 +355,7 @@ def compute_signatures_UCell_scores(selected_edges, adata, key='unique') -> pd.D
     return data_ucell
 
 
-# def aggregate_edges(selected_edges, grn_adata, key='unique', grouping='source') -> pd.DataFrame:
-#     """Aggregate regulon attribution scores across edges.
 
-#     For each cluster and source gene, averages attribution values over all selected
-#     edges to produce a single regulon activity score per cell.
-
-#     Args:
-#         selected_edges (dict): Nested edge dict from :func:`select_top_edges`.
-#         grn_adata (anndata.AnnData): GRN AnnData with attribution values in ``X``.
-#         key (str): Top-level key to use — ``'unique'`` or ``'all'``. Defaults to
-#             ``'unique'``.
-#         grouping (str): Column to group edges by — ``'source'`` or ``'target'``.
-#             Defaults to ``'source'``.
-
-#     Returns:
-#         pd.DataFrame: Regulon activity matrix, shape ``(n_cells, n_regulons)``.
-#     """
-
-#     regulons = {}
-#     for ct in selected_edges[key]:
-#         print(ct)
-#         sign = selected_edges[key][ct]['edges'].groupby(grouping).apply(lambda x: (x['source'] + "_" + x['target']).tolist()).to_dict()
-#         for g in sign:
-#             regulons[f'{ct}_{g}'] = grn_adata[:, sign[g]].X.mean(axis=1)
-#     regulons = pd.DataFrame(regulons)
-#     return regulons
-
-
-def aggregate_edges(selected_edges, grn_adata, key='unique', grouping='source') -> pd.DataFrame:
-    """Aggregate regulon attribution scores across edges.
-
-    For each cluster and source gene, averages attribution values over all selected
-    edges to produce a single regulon activity score per cell.
-
-    Args:
-        selected_edges (dict): Nested edge dict from :func:`select_top_edges`.
-        grn_adata (anndata.AnnData): GRN AnnData with attribution values in ``X``.
-        key (str): Top-level key to use — ``'unique'`` or ``'all'``. Defaults to
-            ``'unique'``.
-        grouping (str): Column to group edges by — ``'source'`` or ``'target'``.
-            Defaults to ``'source'``.
-
-    Returns:
-        pd.DataFrame: Regulon activity matrix, shape ``(n_cells, n_regulons)``.
-    """
-    regulons = {}
-    for ct in selected_edges[key]:
-        edges = selected_edges[key][ct]['edges'].copy()
-        edges['edge_id'] = edges['source'] + "_" + edges['target']
-        sign = edges.groupby(grouping)['edge_id'].apply(list).to_dict()
-
-        for g in sign:
-            regulons[f'{ct}_{g}'] = grn_adata[:, sign[g]].X.mean(axis=1)
-
-    regulons = pd.DataFrame(regulons)
-    return regulons
 
 def aggregate_edges_arbitrary(grn_adata, edge_dict) -> pd.DataFrame:
     """Aggregate attribution scores for arbitrary named edge sets.
@@ -395,10 +371,9 @@ def aggregate_edges_arbitrary(grn_adata, edge_dict) -> pd.DataFrame:
     regulons = {}
     for name in edge_dict:
         if scs.issparse(grn_adata.X):
-            regulons[f'{name}'] = np.asarray(grn_adata[:, list(edge_dict[name])].X.mean(axis=1))[:,0]
+            regulons[f'{name}'] = np.asarray(grn_adata[:, list(edge_dict[name])].layers['masked'].mean(axis=1))[:,0]
         else:
-            regulons[f'{name}'] = grn_adata[:, list(edge_dict[name])].X.mean(axis=1)
-
+            regulons[f'{name}'] = grn_adata[:, list(edge_dict[name])].layers['masked'].mean(axis=1)
 
     regulons = pd.DataFrame(regulons)
     return regulons
@@ -440,6 +415,34 @@ def get_overlapping_signatures(all_regulons):
             if gene in genes1 and gene in genes2:
                 status = 'both'
             elif gene in genes1:
+def aggregate_edges(selected_edges, grn_adata, key='unique', grouping='source') -> pd.DataFrame:
+    """Aggregate regulon attribution scores across edges.
+
+    For each cluster and source gene, averages attribution values over all selected
+    edges to produce a single regulon activity score per cell.
+
+    Args:
+        selected_edges (dict): Nested edge dict from :func:`select_top_edges`.
+        grn_adata (anndata.AnnData): GRN AnnData with attribution values in ``X``.
+        key (str): Top-level key to use — ``'unique'`` or ``'all'``. Defaults to
+            ``'unique'``.
+        grouping (str): Column to group edges by — ``'source'`` or ``'target'``.
+            Defaults to ``'source'``.
+
+    Returns:
+        pd.DataFrame: Regulon activity matrix, shape ``(n_cells, n_regulons)``.
+    """
+    regulons = {}
+    for ct in selected_edges[key]:
+        edges = selected_edges[key][ct]['edges'].copy()
+        edges['edge_id'] = edges['source'] + "_" + edges['target']
+        sign = edges.groupby(grouping)['edge_id'].apply(list).to_dict()
+
+        for g in sign:
+            regulons[f'{ct}_{g}'] = grn_adata[:, sign[g]].layers['masked'].mean(axis=1)
+
+    regulons = pd.DataFrame(regulons)
+    return regulons
                 status = f'only {ct1}'
             else:
                 status = f'only {ct2}'

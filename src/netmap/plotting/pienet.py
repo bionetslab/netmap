@@ -60,8 +60,7 @@ def _masked_edge_strength(grn_adata, cell_idx, edge_col_idx):
         ``(len(edge_col_idx),)``.
     """
     x = grn_adata.X[cell_idx][:, edge_col_idx]
-    mask = grn_adata.layers["mask"][cell_idx][:, edge_col_idx]
-    masked = np.multiply(x, mask)
+    mask = grn_adata.layers["masked"][cell_idx][:, edge_col_idx]
     masked_abs = abs(masked) if scs.issparse(masked) else np.abs(masked)
     return np.asarray(masked_abs.sum(axis=0)).flatten()
 
@@ -169,7 +168,6 @@ def plot_celltype_top_gene_networks(
     ``top_edges`` strongest actually-expressed edges are drawn. Self-loops are
     dropped. Genes with none of their edges among the kept ``top_edges`` still
     appear as isolated nodes.
-
     Node size is a fraction of that celltype's own cell count — a gene in the
     top-``top_n`` of every cell in its celltype gets ``max_node_size``, one
     that never appears gets ``min_node_size`` — so sizes stay comparable

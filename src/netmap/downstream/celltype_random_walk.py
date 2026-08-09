@@ -331,7 +331,7 @@ def run_celltype_random_walk(
     celltype_in_degree = np.asarray(b_matrix.sum(axis=0)).flatten()
     safe_in_degree = np.where(celltype_in_degree == 0, 1.0, celltype_in_degree)
 
-    x = np.multiply(grn_adata.X, grn_adata.layers['mask'])
+    x = grn_adata.layers['masked']
 
 
     if edge_idf:
