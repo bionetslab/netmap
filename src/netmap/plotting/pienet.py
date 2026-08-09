@@ -59,8 +59,7 @@ def _masked_edge_strength(grn_adata, cell_idx, edge_col_idx):
         np.ndarray: Summed absolute masked attribution per edge, shape
         ``(len(edge_col_idx),)``.
     """
-    x = grn_adata.X[cell_idx][:, edge_col_idx]
-    mask = grn_adata.layers["masked"][cell_idx][:, edge_col_idx]
+    masked = grn_adata.layers["masked"][cell_idx][:, edge_col_idx]
     masked_abs = abs(masked) if scs.issparse(masked) else np.abs(masked)
     return np.asarray(masked_abs.sum(axis=0)).flatten()
 
