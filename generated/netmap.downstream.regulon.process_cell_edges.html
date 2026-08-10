@@ -295,7 +295,6 @@
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="netmap.downstream.regulon.html">netmap.downstream.regulon</a><input aria-label="Toggle navigation of netmap.downstream.regulon" checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges.html">netmap.downstream.regulon.aggregate_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html">netmap.downstream.regulon.aggregate_edges_arbitrary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.compute_signatures_UCell_scores.html">netmap.downstream.regulon.compute_signatures_UCell_scores</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.get_overlapping_signatures.html">netmap.downstream.regulon.get_overlapping_signatures</a></li>
@@ -389,9 +388,12 @@
 and <code class="docutils literal notranslate"><span class="pre">'all'</span></code> (all selected edges). Each cluster entry contains an <code class="docutils literal notranslate"><span class="pre">'edges'</span></code>
 DataFrame with <code class="docutils literal notranslate"><span class="pre">source</span></code>, <code class="docutils literal notranslate"><span class="pre">target</span></code>, <code class="docutils literal notranslate"><span class="pre">sum_of_edge</span></code> columns and a <code class="docutils literal notranslate"><span class="pre">'summary'</span></code>
 DataFrame with source gene counts.</p>
+<p>Edges are identified by <code class="docutils literal notranslate"><span class="pre">(source,</span> <span class="pre">target)</span></code> tuples rather than a joined
+“source_target” string, since gene names may themselves contain underscores
+and would make re-splitting such a string ambiguous.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>keep_edges_with_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Mapping <code class="docutils literal notranslate"><span class="pre">{cluster:</span> <span class="pre">[(edge_str,</span> <span class="pre">mean_val),</span> <span class="pre">...]}</span></code></p>
+<dd class="field-odd"><p><strong>keep_edges_with_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Mapping <code class="docutils literal notranslate"><span class="pre">{cluster:</span> <span class="pre">[(source,</span> <span class="pre">target,</span> <span class="pre">mean_val),</span> <span class="pre">...]}</span></code></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">{'unique':</span> <span class="pre">{cluster:</span> <span class="pre">{'edges':</span> <span class="pre">DataFrame,</span> <span class="pre">'summary':</span> <span class="pre">DataFrame}},</span> <span class="pre">'all':</span> <span class="pre">...}</span></code>.</p>

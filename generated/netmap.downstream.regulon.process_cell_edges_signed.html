@@ -295,7 +295,6 @@
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="netmap.downstream.regulon.html">netmap.downstream.regulon</a><input aria-label="Toggle navigation of netmap.downstream.regulon" checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges.html">netmap.downstream.regulon.aggregate_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html">netmap.downstream.regulon.aggregate_edges_arbitrary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.compute_signatures_UCell_scores.html">netmap.downstream.regulon.compute_signatures_UCell_scores</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.get_overlapping_signatures.html">netmap.downstream.regulon.get_overlapping_signatures</a></li>
@@ -385,13 +384,16 @@
 <dt class="sig sig-object py" id="netmap.downstream.regulon.process_cell_edges_signed">
 <span class="sig-prename descclassname"><span class="pre">netmap.downstream.regulon.</span></span><span class="sig-name descname"><span class="pre">process_cell_edges_signed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keep_edges_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_edges_neg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netmap/downstream/regulon.html#process_cell_edges_signed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netmap.downstream.regulon.process_cell_edges_signed" title="Link to this definition">¶</a></dt>
 <dd><p>Build the positive/negative regulon result structure from per-cluster edge lists.</p>
+<p>Edges are identified by <code class="docutils literal notranslate"><span class="pre">(source,</span> <span class="pre">target)</span></code> tuples rather than a joined
+“source_target” string, since gene names may themselves contain underscores
+and would make re-splitting such a string ambiguous.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>keep_edges_pos</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Mapping of cluster label to a list of
-<code class="docutils literal notranslate"><span class="pre">(edge_str,</span> <span class="pre">sum_of_edge,</span> <span class="pre">spearman)</span></code> tuples for positively correlated edges.</p></li>
+<code class="docutils literal notranslate"><span class="pre">(source,</span> <span class="pre">target,</span> <span class="pre">sum_of_edge,</span> <span class="pre">spearman)</span></code> tuples for positively correlated edges.</p></li>
 <li><p><strong>keep_edges_neg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Mapping of cluster label to a list of
-<code class="docutils literal notranslate"><span class="pre">(edge_str,</span> <span class="pre">sum_of_edge,</span> <span class="pre">spearman)</span></code> tuples for negatively correlated edges.</p></li>
+<code class="docutils literal notranslate"><span class="pre">(source,</span> <span class="pre">target,</span> <span class="pre">sum_of_edge,</span> <span class="pre">spearman)</span></code> tuples for negatively correlated edges.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

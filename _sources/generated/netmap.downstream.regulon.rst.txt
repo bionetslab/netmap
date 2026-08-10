@@ -17,8 +17,6 @@
    :nosignatures:
 
 
-   aggregate_edges
-
    aggregate_edges_arbitrary
 
    compute_signatures_UCell_scores

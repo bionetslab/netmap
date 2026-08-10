@@ -1,6 +1,0 @@
-netmap.downstream.regulon.aggregate\_edges
-==========================================
-
-.. currentmodule:: netmap.downstream.regulon
-
-.. autofunction:: aggregate_edges

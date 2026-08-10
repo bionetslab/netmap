@@ -295,7 +295,6 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="netmap.downstream.regulon.html">netmap.downstream.regulon</a><input aria-label="Toggle navigation of netmap.downstream.regulon" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges.html">netmap.downstream.regulon.aggregate_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html">netmap.downstream.regulon.aggregate_edges_arbitrary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.compute_signatures_UCell_scores.html">netmap.downstream.regulon.compute_signatures_UCell_scores</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.get_overlapping_signatures.html">netmap.downstream.regulon.get_overlapping_signatures</a></li>
@@ -383,19 +382,24 @@
 <h1>netmap.masking.internal.create_pairwise_binary_mask<a class="headerlink" href="#netmap-masking-internal-create-pairwise-binary-mask" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="netmap.masking.internal.create_pairwise_binary_mask">
-<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">create_pairwise_binary_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered_pair_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netmap/masking/internal.html#create_pairwise_binary_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netmap.masking.internal.create_pairwise_binary_mask" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">netmap.masking.internal.</span></span><span class="sig-name descname"><span class="pre">create_pairwise_binary_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netmap/masking/internal.html#create_pairwise_binary_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netmap.masking.internal.create_pairwise_binary_mask" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a dense 2D array of pairwise masks using preallocation.</p>
+<p>Edge genes are passed as separate <code class="docutils literal notranslate"><span class="pre">source_list</span></code>/<code class="docutils literal notranslate"><span class="pre">target_list</span></code> arrays rather
+than parsed from “GeneA_GeneB” strings, since gene names may themselves contain
+underscores and would make that split ambiguous.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary_matrix</strong> (<em>np.ndarray</em>) – Rows=cells, Cols=genes.</p></li>
 <li><p><strong>gene_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – The names of the genes in binary_matrix columns.</p></li>
-<li><p><strong>ordered_pair_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – The specific order of “GeneA_GeneB” strings
-requested for the final output columns.</p></li>
+<li><p><strong>source_list</strong> (<em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Source gene of each requested edge, in the
+order the output columns should follow.</p></li>
+<li><p><strong>target_list</strong> (<em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Target gene of each requested edge, aligned
+with <code class="docutils literal notranslate"><span class="pre">source_list</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A 2D array of shape (num_cells, len(ordered_pair_list)).</p>
+<dd class="field-even"><p>A 2D array of shape (num_cells, len(source_list)).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
