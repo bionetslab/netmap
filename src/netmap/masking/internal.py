@@ -68,39 +68,42 @@ def get_neighborhood_expression(adata, knn_neighbours =10, required_neighbours =
     return neighborhood_expression
 
 
-def create_pairwise_binary_mask(binary_matrix, gene_list, ordered_pair_list):
+
+def create_pairwise_binary_mask(binary_matrix, gene_list, source_list, target_list):
     """Creates a dense 2D array of pairwise masks using preallocation.
+
+    Edge genes are passed as separate ``source_list``/``target_list`` arrays rather
+    than parsed from "GeneA_GeneB" strings, since gene names may themselves contain
+    underscores and would make that split ambiguous.
 
     Args:
         binary_matrix (np.ndarray): Rows=cells, Cols=genes.
         gene_list (list): The names of the genes in binary_matrix columns.
-        ordered_pair_list (list): The specific order of "GeneA_GeneB" strings
-                                  requested for the final output columns.
+        source_list (Sequence[str]): Source gene of each requested edge, in the
+                                  order the output columns should follow.
+        target_list (Sequence[str]): Target gene of each requested edge, aligned
+                                  with ``source_list``.
 
     Returns:
-        np.ndarray: A 2D array of shape (num_cells, len(ordered_pair_list)).
+        np.ndarray: A 2D array of shape (num_cells, len(source_list)).
     """
     num_cells = binary_matrix.shape[0]
-    num_pairs = len(ordered_pair_list)
+    num_pairs = len(source_list)
 
     binary_matrix = np.asarray(binary_matrix)
 
     result = np.zeros((num_cells, num_pairs), dtype=np.int8)
 
-
-    # 2. Map gene names to their original column indices for O(1) lookup
+    # Map gene names to their original column indices for O(1) lookup
     gene_to_idx = {name: i for i, name in enumerate(gene_list)}
 
-    # 3. Fill the matrix column by column
-    for col_idx, pair_str in enumerate(ordered_pair_list):
-        g1_name, g2_name = pair_str.split('_')
-
+    # Fill the matrix column by column
+    for col_idx, (g1_name, g2_name) in enumerate(zip(source_list, target_list)):
         # Self-pairs (e.g., GeneA_GeneA) are skipped because
         # the matrix is already initialized to zeros.
         if g1_name != g2_name:
             idx1 = gene_to_idx[g1_name]
             idx2 = gene_to_idx[g2_name]
-
 
             res = np.multiply(
                 binary_matrix[:, idx1],
@@ -149,11 +152,14 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X
     Args:
         adata (anndata.AnnData): Expression AnnData; must have ``obsm['X_pca']``.
         grn_adata (anndata.AnnData): GRN AnnData whose ``var_names`` are
-            ``SourceGene_TargetGene`` edge identifiers.
+            ``SourceGene_TargetGene`` edge identifiers, and whose ``var`` must
+            contain unambiguous ``source``/``target`` gene columns (as produced
+            by ``netmap.grn.inferrence.inferrence()``) — edge genes are read
+            from these columns rather than parsed from ``var_names``, since gene
+            names may themselves contain underscores.
         strict (bool): If ``True``, use direct binarization of ``adata.X`` instead
             of neighbourhood expression. Defaults to ``False``.
         layer (str): Layer to use for expression values. Defaults to ``'X'``.
-        mask-data (bool): Return masked data obejct
 
     Returns:
         anndata.AnnData: ``grn_adata`` with ``layers['mask']`` (int8) and
@@ -166,10 +172,15 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X
                 "before calling this function to enable neighborhood calculations."
             )
 
+    if 'source' not in grn_adata.var.columns or 'target' not in grn_adata.var.columns:
+        raise KeyError(
+            "grn_adata.var must contain 'source' and 'target' columns (as produced "
+            "by netmap.grn.inferrence.inferrence()) to identify edge genes, since "
+            "edge names cannot be reliably split on '_' when gene names themselves "
+            "contain underscores."
+        )
 
-    grn_genes = set()
-    for pair in grn_adata.var_names:
-        grn_genes.update(pair.split('_'))
+    grn_genes = set(grn_adata.var['source']) | set(grn_adata.var['target'])
 
     adata_genes = set(adata.var_names)
     missing_genes = grn_genes - adata_genes
@@ -184,13 +195,14 @@ def add_neighbourhood_expression_mask(adata, grn_adata, strict=False, layer = 'X
         ne = get_neighborhood_expression(adata, required_neighbours=5, layer = layer)
     else:
         ne = binarize_adata(adata, layer = layer)
-    mask = create_pairwise_binary_mask(ne, list(adata.var.index), grn_adata.var_names)
+    mask = create_pairwise_binary_mask(
+        ne, list(adata.var.index), grn_adata.var['source'].to_numpy(), grn_adata.var['target'].to_numpy()
+    )
 
     grn_adata.layers['mask'] = mask
     grn_adata.var['count_nonzero'] = np.sum(grn_adata.layers['mask'], axis =0)
     if mask_data:
-        grn_adata.layers['masked']  = np.multiply(grn_adata.X, grn_adata.layers['mask'])
-
+        grn_adata.layers['masked'] = np.multiply(grn_adata.X, grn_adata.layers['mask'])
     return grn_adata
 
 

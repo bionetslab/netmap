@@ -87,8 +87,7 @@ def select_top_edges(gene_inter_adata, adata, top_per_source=10, col_cluster='le
 
             if len(df_targets) >= min_reg_size:
                 for _, row in df_targets.iterrows():
-                    edge_str = f"{source}_{row['target']}"
-                    Keep_edges.append((edge_str, row['sum_of_edge']))
+                    Keep_edges.append((source, row['target'], row['sum_of_edge']))
 
             keep_edges_dict[c] = Keep_edges
 
@@ -103,8 +102,12 @@ def process_cell_edges(keep_edges_with_vals):
     DataFrame with ``source``, ``target``, ``sum_of_edge`` columns and a ``'summary'``
     DataFrame with source gene counts.
 
+    Edges are identified by ``(source, target)`` tuples rather than a joined
+    "source_target" string, since gene names may themselves contain underscores
+    and would make re-splitting such a string ambiguous.
+
     Args:
-        keep_edges_with_vals (dict): Mapping ``{cluster: [(edge_str, mean_val), ...]}``
+        keep_edges_with_vals (dict): Mapping ``{cluster: [(source, target, mean_val), ...]}``
 
     Returns:
         dict: ``{'unique': {cluster: {'edges': DataFrame, 'summary': DataFrame}}, 'all': ...}``.
@@ -113,35 +116,32 @@ def process_cell_edges(keep_edges_with_vals):
     all_cells = list(keep_edges_with_vals.keys())
 
     def get_source_summary(edge_list):
-        # edge_list is list of (name, val)
-        sources = [e[0].split('_')[0] for e in edge_list]
+        # edge_list is list of (source, target, val)
+        sources = [e[0] for e in edge_list]
         source_dict = dict(Counter(sources))
         sources_df = pd.DataFrame({'source': list(source_dict.keys()), 'count': list(source_dict.values())}).sort_values('count', ascending=False)
         return sources_df
 
     for cell in all_cells:
-        # Convert to dict for easy lookup by edge name string
-        current_edges_dict = {name: val for name, val in keep_edges_with_vals[cell]}
+        # Convert to dict for easy lookup by (source, target) key
+        current_edges_dict = {(source, target): val for source, target, val in keep_edges_with_vals[cell]}
 
-        # Calculate Uniques based on the edge name string
-        others_names = set()
+        # Calculate Uniques based on the (source, target) key
+        others_keys = set()
         for c in all_cells:
             if c != cell:
-                others_names.update([e[0] for e in keep_edges_with_vals[c]])
+                others_keys.update([(source, target) for source, target, val in keep_edges_with_vals[c]])
 
-        unique_names = set(current_edges_dict.keys()) - others_names
+        unique_keys = set(current_edges_dict.keys()) - others_keys
 
         # Helper to build DF with sum column
-        def build_df(name_set, lookup_dict):
-            data = []
-            for name in name_set:
-                source, target = name.split('_', 1)
-                data.append([source, target, lookup_dict[name]])
+        def build_df(key_set, lookup_dict):
+            data = [[source, target, lookup_dict[(source, target)]] for source, target in key_set]
             return pd.DataFrame(data, columns=['source', 'target', 'sum_of_edge'])
 
         results['unique'][cell] = {
-            'edges': build_df(unique_names, current_edges_dict),
-            'summary': get_source_summary([(n, current_edges_dict[n]) for n in unique_names])
+            'edges': build_df(unique_keys, current_edges_dict),
+            'summary': get_source_summary([(source, target, current_edges_dict[(source, target)]) for source, target in unique_keys])
         }
 
         results['all'][cell] = {
@@ -152,44 +152,18 @@ def process_cell_edges(keep_edges_with_vals):
     return results
 
 
-def aggregate_edges(selected_edges, grn_adata, key='unique', grouping='source') -> pd.DataFrame:
-    """Aggregate regulon attribution scores across edges.
-
-    For each cluster and source gene, averages attribution values over all selected
-    edges to produce a single regulon activity score per cell.
-
-    Args:
-        selected_edges (dict): Nested edge dict from :func:`select_top_edges`.
-        grn_adata (anndata.AnnData): GRN AnnData with attribution values in ``X``.
-        key (str): Top-level key to use — ``'unique'`` or ``'all'``. Defaults to
-            ``'unique'``.
-        grouping (str): Column to group edges by — ``'source'`` or ``'target'``.
-            Defaults to ``'source'``.
-
-    Returns:
-        pd.DataFrame: Regulon activity matrix, shape ``(n_cells, n_regulons)``.
-    """
-    regulons = {}
-    for ct in selected_edges[key]:
-        edges = selected_edges[key][ct]['edges'].copy()
-        edges['edge_id'] = edges['source'] + "_" + edges['target']
-        sign = edges.groupby(grouping)['edge_id'].apply(list).to_dict()
-
-        for g in sign:
-            regulons[f'{ct}_{g}'] = grn_adata[:, sign[g]].layers['masked'].mean(axis=1)
-
-    regulons = pd.DataFrame(regulons)
-    return regulons
-    
-
 def process_cell_edges_signed(keep_edges_pos, keep_edges_neg):
     """Build the positive/negative regulon result structure from per-cluster edge lists.
 
+    Edges are identified by ``(source, target)`` tuples rather than a joined
+    "source_target" string, since gene names may themselves contain underscores
+    and would make re-splitting such a string ambiguous.
+
     Args:
         keep_edges_pos (dict): Mapping of cluster label to a list of
-            ``(edge_str, sum_of_edge, spearman)`` tuples for positively correlated edges.
+            ``(source, target, sum_of_edge, spearman)`` tuples for positively correlated edges.
         keep_edges_neg (dict): Mapping of cluster label to a list of
-            ``(edge_str, sum_of_edge, spearman)`` tuples for negatively correlated edges.
+            ``(source, target, sum_of_edge, spearman)`` tuples for negatively correlated edges.
 
     Returns:
         dict: Nested result with keys ``'unique'`` and ``'all'``, each mapping cluster
@@ -204,11 +178,10 @@ def process_cell_edges_signed(keep_edges_pos, keep_edges_neg):
     results = {'unique': {}, 'all': {}}
     all_cells = list(keep_edges_pos.keys())
 
-    def build_df(name_set, lookup_dict):
+    def build_df(key_set, lookup_dict):
         data = []
-        for name in name_set:
-            source, target = name.split('_', 1)
-            val, sp = lookup_dict[name]
+        for source, target in key_set:
+            val, sp = lookup_dict[(source, target)]
             data.append([source, target, val, sp])
         return pd.DataFrame(data, columns=['source', 'target', 'sum_of_edge', 'spearman'])
 
@@ -223,15 +196,15 @@ def process_cell_edges_signed(keep_edges_pos, keep_edges_neg):
         )
 
     for cell in all_cells:
-        pos_dict = {name: (val, sp) for name, val, sp in keep_edges_pos[cell]}
-        neg_dict = {name: (val, sp) for name, val, sp in keep_edges_neg[cell]}
+        pos_dict = {(source, target): (val, sp) for source, target, val, sp in keep_edges_pos[cell]}
+        neg_dict = {(source, target): (val, sp) for source, target, val, sp in keep_edges_neg[cell]}
 
         others_pos = set()
         others_neg = set()
         for c in all_cells:
             if c != cell:
-                others_pos.update([e[0] for e in keep_edges_pos[c]])
-                others_neg.update([e[0] for e in keep_edges_neg[c]])
+                others_pos.update([(source, target) for source, target, val, sp in keep_edges_pos[c]])
+                others_neg.update([(source, target) for source, target, val, sp in keep_edges_neg[c]])
 
         unique_pos = set(pos_dict.keys()) - others_pos
         unique_neg = set(neg_dict.keys()) - others_neg
@@ -316,9 +289,9 @@ def select_top_edges_signed(gene_inter_adata, top_per_source=10, col_cluster='le
                          .sort_values('sum_of_edge', ascending=True).head(top_per_source)
 
             if len(df_pos) >= min_reg_size:
-                pos_edges.extend([(f"{source}_{r['target']}", r['sum_of_edge'], r[spearman_col]) for _, r in df_pos.iterrows()])
+                pos_edges.extend([(source, r['target'], r['sum_of_edge'], r[spearman_col]) for _, r in df_pos.iterrows()])
             if len(df_neg) >= min_reg_size:
-                neg_edges.extend([(f"{source}_{r['target']}", r['sum_of_edge'], r[spearman_col]) for _, r in df_neg.iterrows()])
+                neg_edges.extend([(source, r['target'], r['sum_of_edge'], r[spearman_col]) for _, r in df_neg.iterrows()])
 
         keep_edges_pos[c] = pos_edges
         keep_edges_neg[c] = neg_edges
