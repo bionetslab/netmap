@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.downstream.regulon.aggregate_edges_arbitrary" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html"><link rel="prev" title="netmap.downstream.markers.prepare_jaccard_analysis_df" href="netmap.downstream.markers.prepare_jaccard_analysis_df.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.downstream.regulon.aggregate_edges" href="netmap.downstream.regulon.aggregate_edges.html"><link rel="prev" title="netmap.downstream.markers.prepare_jaccard_analysis_df" href="netmap.downstream.markers.prepare_jaccard_analysis_df.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>netmap.downstream.regulon - Netmap 0.1 documentation</title>
@@ -295,6 +295,7 @@
 </ul>
 </li>
 <li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">netmap.downstream.regulon</a><input aria-label="Toggle navigation of netmap.downstream.regulon" checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges.html">netmap.downstream.regulon.aggregate_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html">netmap.downstream.regulon.aggregate_edges_arbitrary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.compute_signatures_UCell_scores.html">netmap.downstream.regulon.compute_signatures_UCell_scores</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.get_overlapping_signatures.html">netmap.downstream.regulon.get_overlapping_signatures</a></li>
@@ -389,43 +390,46 @@ positive and negative regulons.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html#netmap.downstream.regulon.aggregate_edges_arbitrary" title="netmap.downstream.regulon.aggregate_edges_arbitrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_edges_arbitrary</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges.html#netmap.downstream.regulon.aggregate_edges" title="netmap.downstream.regulon.aggregate_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_edges</span></code></a></p></td>
+<td><p>Aggregate regulon attribution scores across edges.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html#netmap.downstream.regulon.aggregate_edges_arbitrary" title="netmap.downstream.regulon.aggregate_edges_arbitrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_edges_arbitrary</span></code></a></p></td>
 <td><p>Aggregate attribution scores for arbitrary named edge sets.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.compute_signatures_UCell_scores.html#netmap.downstream.regulon.compute_signatures_UCell_scores" title="netmap.downstream.regulon.compute_signatures_UCell_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_signatures_UCell_scores</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.compute_signatures_UCell_scores.html#netmap.downstream.regulon.compute_signatures_UCell_scores" title="netmap.downstream.regulon.compute_signatures_UCell_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_signatures_UCell_scores</span></code></a></p></td>
 <td><p>Compute UCell gene set enrichment scores for regulon signatures.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.get_overlapping_signatures.html#netmap.downstream.regulon.get_overlapping_signatures" title="netmap.downstream.regulon.get_overlapping_signatures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_overlapping_signatures</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.get_overlapping_signatures.html#netmap.downstream.regulon.get_overlapping_signatures" title="netmap.downstream.regulon.get_overlapping_signatures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_overlapping_signatures</span></code></a></p></td>
 <td><p>Compute pairwise overlap status of target genes across clusters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.get_sourcewise_jaccard_regulons.html#netmap.downstream.regulon.get_sourcewise_jaccard_regulons" title="netmap.downstream.regulon.get_sourcewise_jaccard_regulons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sourcewise_jaccard_regulons</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.get_sourcewise_jaccard_regulons.html#netmap.downstream.regulon.get_sourcewise_jaccard_regulons" title="netmap.downstream.regulon.get_sourcewise_jaccard_regulons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sourcewise_jaccard_regulons</span></code></a></p></td>
 <td><p>Compute per-source-gene Jaccard similarity matrices across clusters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.jaccard_similarity.html#netmap.downstream.regulon.jaccard_similarity" title="netmap.downstream.regulon.jaccard_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaccard_similarity</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.jaccard_similarity.html#netmap.downstream.regulon.jaccard_similarity" title="netmap.downstream.regulon.jaccard_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jaccard_similarity</span></code></a></p></td>
 <td><p>Compute the Jaccard similarity coefficient between two sets.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.load_edge_dict_from_dataframe.html#netmap.downstream.regulon.load_edge_dict_from_dataframe" title="netmap.downstream.regulon.load_edge_dict_from_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_edge_dict_from_dataframe</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.load_edge_dict_from_dataframe.html#netmap.downstream.regulon.load_edge_dict_from_dataframe" title="netmap.downstream.regulon.load_edge_dict_from_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_edge_dict_from_dataframe</span></code></a></p></td>
 <td><p>Reconstruct a nested edge dictionary from a flat regulon DataFrame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.make_cluster_regulon_dataframe.html#netmap.downstream.regulon.make_cluster_regulon_dataframe" title="netmap.downstream.regulon.make_cluster_regulon_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_cluster_regulon_dataframe</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.make_cluster_regulon_dataframe.html#netmap.downstream.regulon.make_cluster_regulon_dataframe" title="netmap.downstream.regulon.make_cluster_regulon_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_cluster_regulon_dataframe</span></code></a></p></td>
 <td><p>Concatenate all regulon edge DataFrames into a flat DataFrame.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.make_cluster_regulon_dataframe_directional.html#netmap.downstream.regulon.make_cluster_regulon_dataframe_directional" title="netmap.downstream.regulon.make_cluster_regulon_dataframe_directional"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_cluster_regulon_dataframe_directional</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.make_cluster_regulon_dataframe_directional.html#netmap.downstream.regulon.make_cluster_regulon_dataframe_directional" title="netmap.downstream.regulon.make_cluster_regulon_dataframe_directional"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_cluster_regulon_dataframe_directional</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.make_global_target_similarity_plot.html#netmap.downstream.regulon.make_global_target_similarity_plot" title="netmap.downstream.regulon.make_global_target_similarity_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_global_target_similarity_plot</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.make_global_target_similarity_plot.html#netmap.downstream.regulon.make_global_target_similarity_plot" title="netmap.downstream.regulon.make_global_target_similarity_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_global_target_similarity_plot</span></code></a></p></td>
 <td><p>Plot a heatmap of the mean pairwise Jaccard similarity across all source genes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.process_cell_edges.html#netmap.downstream.regulon.process_cell_edges" title="netmap.downstream.regulon.process_cell_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_cell_edges</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.process_cell_edges.html#netmap.downstream.regulon.process_cell_edges" title="netmap.downstream.regulon.process_cell_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_cell_edges</span></code></a></p></td>
 <td><p>Organise per-cluster edge lists into a nested results dictionary.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.process_cell_edges_signed.html#netmap.downstream.regulon.process_cell_edges_signed" title="netmap.downstream.regulon.process_cell_edges_signed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_cell_edges_signed</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.process_cell_edges_signed.html#netmap.downstream.regulon.process_cell_edges_signed" title="netmap.downstream.regulon.process_cell_edges_signed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_cell_edges_signed</span></code></a></p></td>
 <td><p>Build the positive/negative regulon result structure from per-cluster edge lists.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.select_top_edges.html#netmap.downstream.regulon.select_top_edges" title="netmap.downstream.regulon.select_top_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_top_edges</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.select_top_edges.html#netmap.downstream.regulon.select_top_edges" title="netmap.downstream.regulon.select_top_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_top_edges</span></code></a></p></td>
 <td><p>Select the top-attribution edges per source TF per cluster.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="netmap.downstream.regulon.select_top_edges_signed.html#netmap.downstream.regulon.select_top_edges_signed" title="netmap.downstream.regulon.select_top_edges_signed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_top_edges_signed</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="netmap.downstream.regulon.select_top_edges_signed.html#netmap.downstream.regulon.select_top_edges_signed" title="netmap.downstream.regulon.select_top_edges_signed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_top_edges_signed</span></code></a></p></td>
 <td><p>Select top edges per source TF per cluster and split them into positive and negative regulons based on cluster-wise Spearman correlation.</p></td>
 </tr>
 </tbody>
@@ -438,12 +442,12 @@ positive and negative regulons.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html">
+          <a class="next-page" href="netmap.downstream.regulon.aggregate_edges.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">netmap.downstream.regulon.aggregate_edges_arbitrary</div>
+                <div class="title">netmap.downstream.regulon.aggregate_edges</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

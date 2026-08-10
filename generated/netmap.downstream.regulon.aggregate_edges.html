@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.masking.external.get_genome_annotation_from_gtf" href="netmap.masking.external.get_genome_annotation_from_gtf.html"><link rel="prev" title="netmap.masking.external.add_external_grn" href="netmap.masking.external.add_external_grn.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="netmap.downstream.regulon.aggregate_edges_arbitrary" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html"><link rel="prev" title="netmap.downstream.regulon" href="netmap.downstream.regulon.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>netmap.masking.external.add_genome_information_to_anndata - Netmap 0.1 documentation</title>
+        <title>netmap.downstream.regulon.aggregate_edges - Netmap 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -245,10 +245,10 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="netmap.masking.html">netmap.masking</a><input aria-label="Toggle navigation of netmap.masking" checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l3 current has-children"><a class="reference internal" href="netmap.masking.external.html">netmap.masking.external</a><input aria-label="Toggle navigation of netmap.masking.external" checked="" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="netmap.masking.html">netmap.masking</a><input aria-label="Toggle navigation of netmap.masking" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="netmap.masking.external.html">netmap.masking.external</a><input aria-label="Toggle navigation of netmap.masking.external" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="netmap.masking.external.add_external_grn.html">netmap.masking.external.add_external_grn</a></li>
-<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">netmap.masking.external.add_genome_information_to_anndata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="netmap.masking.external.add_genome_information_to_anndata.html">netmap.masking.external.add_genome_information_to_anndata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netmap.masking.external.get_genome_annotation_from_gtf.html">netmap.masking.external.get_genome_annotation_from_gtf</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netmap.masking.external.get_regulators.html">netmap.masking.external.get_regulators</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netmap.masking.external.preprocess_bed_file.html">netmap.masking.external.preprocess_bed_file</a></li>
@@ -294,8 +294,8 @@
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.markers.prepare_jaccard_analysis_df.html">netmap.downstream.markers.prepare_jaccard_analysis_df</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="netmap.downstream.regulon.html">netmap.downstream.regulon</a><input aria-label="Toggle navigation of netmap.downstream.regulon" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges.html">netmap.downstream.regulon.aggregate_edges</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="netmap.downstream.regulon.html">netmap.downstream.regulon</a><input aria-label="Toggle navigation of netmap.downstream.regulon" checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">netmap.downstream.regulon.aggregate_edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html">netmap.downstream.regulon.aggregate_edges_arbitrary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.compute_signatures_UCell_scores.html">netmap.downstream.regulon.compute_signatures_UCell_scores</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netmap.downstream.regulon.get_overlapping_signatures.html">netmap.downstream.regulon.get_overlapping_signatures</a></li>
@@ -361,7 +361,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/generated/netmap.masking.external.add_genome_information_to_anndata.rst.txt" title="View this page">
+  <a class="muted-link" href="../_sources/generated/netmap.downstream.regulon.aggregate_edges.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -379,32 +379,30 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="netmap-masking-external-add-genome-information-to-anndata">
-<h1>netmap.masking.external.add_genome_information_to_anndata<a class="headerlink" href="#netmap-masking-external-add-genome-information-to-anndata" title="Link to this heading">¶</a></h1>
+          <section id="netmap-downstream-regulon-aggregate-edges">
+<h1>netmap.downstream.regulon.aggregate_edges<a class="headerlink" href="#netmap-downstream-regulon-aggregate-edges" title="Link to this heading">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="netmap.masking.external.add_genome_information_to_anndata">
-<span class="sig-prename descclassname"><span class="pre">netmap.masking.external.</span></span><span class="sig-name descname"><span class="pre">add_genome_information_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grn_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_to_gene_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netmap/masking/external.html#add_genome_information_to_anndata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netmap.masking.external.add_genome_information_to_anndata" title="Link to this definition">¶</a></dt>
-<dd><p>Merge TF→gene regulatory relationships into GRN AnnData variable metadata.</p>
+<dt class="sig sig-object py" id="netmap.downstream.regulon.aggregate_edges">
+<span class="sig-prename descclassname"><span class="pre">netmap.downstream.regulon.</span></span><span class="sig-name descname"><span class="pre">aggregate_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grn_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'unique'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'source'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netmap/downstream/regulon.html#aggregate_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netmap.downstream.regulon.aggregate_edges" title="Link to this definition">¶</a></dt>
+<dd><p>Aggregate regulon attribution scores across edges.</p>
+<p>For each cluster and source gene, averages attribution values over all selected
+edges to produce a single regulon activity score per cell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grn_adata</strong> (<a class="reference external" href="https://anndata.readthedocs.io/en/stable/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.13.2)"><em>anndata.AnnData</em></a>) – GRN AnnData object whose var index contains
-<code class="docutils literal notranslate"><span class="pre">SourceGene_TargetGene</span></code> edge identifiers.</p></li>
-<li><p><strong>tf_to_gene_df</strong> (<em>pd.DataFrame</em>) – Output of <a class="reference internal" href="netmap.masking.external.get_regulators.html#netmap.masking.external.get_regulators" title="netmap.masking.external.get_regulators"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_regulators()</span></code></a> with at
-least <code class="docutils literal notranslate"><span class="pre">edge</span></code> and <code class="docutils literal notranslate"><span class="pre">regulator</span></code> columns.</p></li>
-<li><p><strong>window_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Suffix appended to the added boolean column name
-<code class="docutils literal notranslate"><span class="pre">regulator_{window_name}</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">''</span></code>.</p></li>
+<li><p><strong>selected_edges</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Nested edge dict from <a class="reference internal" href="netmap.downstream.regulon.select_top_edges.html#netmap.downstream.regulon.select_top_edges" title="netmap.downstream.regulon.select_top_edges"><code class="xref py py-func docutils literal notranslate"><span class="pre">select_top_edges()</span></code></a>.</p></li>
+<li><p><strong>grn_adata</strong> (<a class="reference external" href="https://anndata.readthedocs.io/en/stable/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.13.2)"><em>anndata.AnnData</em></a>) – GRN AnnData with attribution values in <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Top-level key to use — <code class="docutils literal notranslate"><span class="pre">'unique'</span></code> or <code class="docutils literal notranslate"><span class="pre">'all'</span></code>. Defaults to
+<code class="docutils literal notranslate"><span class="pre">'unique'</span></code>.</p></li>
+<li><p><strong>grouping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Column to group edges by — <code class="docutils literal notranslate"><span class="pre">'source'</span></code> or <code class="docutils literal notranslate"><span class="pre">'target'</span></code>.
+Defaults to <code class="docutils literal notranslate"><span class="pre">'source'</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">grn_adata</span></code> with a new boolean column</dt><dd><p><code class="docutils literal notranslate"><span class="pre">regulator_{window_name}</span></code> in <code class="docutils literal notranslate"><span class="pre">.var</span></code>.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-even"><p>Regulon activity matrix, shape <code class="docutils literal notranslate"><span class="pre">(n_cells,</span> <span class="pre">n_regulons)</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://anndata.readthedocs.io/en/stable/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.13.2)">anndata.AnnData</a></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -416,23 +414,23 @@ least <code class="docutils literal notranslate"><span class="pre">edge</span></
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="netmap.masking.external.get_genome_annotation_from_gtf.html">
+          <a class="next-page" href="netmap.downstream.regulon.aggregate_edges_arbitrary.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">netmap.masking.external.get_genome_annotation_from_gtf</div>
+                <div class="title">netmap.downstream.regulon.aggregate_edges_arbitrary</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="netmap.masking.external.add_external_grn.html">
+          <a class="prev-page" href="netmap.downstream.regulon.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">netmap.masking.external.add_external_grn</div>
+                <div class="title">netmap.downstream.regulon</div>
                 
               </div>
             </a>
@@ -466,8 +464,8 @@ least <code class="docutils literal notranslate"><span class="pre">edge</span></
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">netmap.masking.external.add_genome_information_to_anndata</a><ul>
-<li><a class="reference internal" href="#netmap.masking.external.add_genome_information_to_anndata"><code class="docutils literal notranslate"><span class="pre">add_genome_information_to_anndata()</span></code></a></li>
+<li><a class="reference internal" href="#">netmap.downstream.regulon.aggregate_edges</a><ul>
+<li><a class="reference internal" href="#netmap.downstream.regulon.aggregate_edges"><code class="docutils literal notranslate"><span class="pre">aggregate_edges()</span></code></a></li>
 </ul>
 </li>
 </ul>
