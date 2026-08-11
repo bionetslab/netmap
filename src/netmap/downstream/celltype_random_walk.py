@@ -178,7 +178,7 @@ def compute_seed_activity(X, src_idx, tgt_idx, n_genes):
     """
     n_cells, n_edges = X.shape
 
-    x_abs = abs(X) if scs.issparse(X) else np.abs(X)
+    x_abs = X.maximum(0) if scs.issparse(X) else np.clip(X, 0, None)
 
     indicator_src = scs.coo_matrix(
         (np.ones(n_edges), (np.arange(n_edges), src_idx)), shape=(n_edges, n_genes)
@@ -384,7 +384,7 @@ def run_celltype_random_walk(
         top_genes = [(idx_to_gene[j], float(gene_scores[j])) for j in top_idx]
         return celltype_proba, top_genes
 
-    print('starting')
+
     n_cells = grn_adata.n_obs
     results = Parallel(n_jobs=n_jobs)(delayed(_one_cell)(i) for i in range(n_cells))
 
