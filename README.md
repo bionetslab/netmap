@@ -1,4 +1,5 @@
-# NETMAP (single-cell gene regulatory networks using XAI)
+# NetMap: Concurrent de novo inference of cell types and gene regulatory networks 
+[![DOI](https://zenodo.org/badge/636669182.svg)](https://doi.org/10.5281/zenodo.22280279)
 
 ## Installation
 The repository is installable using pixi and pip. If you want to try out netmap, you can clone the repository, and install a kernel via pixi.
