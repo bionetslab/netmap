@@ -373,12 +373,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.utils.data_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;I/O utilities for AnnData objects and Parquet-backed GRN edge data.</span>
+<span></span><span class="sd">"""I/O utilities for AnnData objects and Parquet-backed GRN edge data.</span>
 
 <span class="sd">:func:`retrieve_top_edges` and :func:`retrieve_edges_by_index` load specific</span>
 <span class="sd">attribution columns from the Parquet shards written by</span>
 <span class="sd">:func:`~netmap.grn.inferrence.inferrence` into ``grn_adata.X``.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">anndata</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -397,7 +397,7 @@
 <div class="viewcode-block" id="attribution_to_anndata">
 <a class="viewcode-back" href="../../../generated/netmap.utils.data_utils.attribution_to_anndata.html#netmap.utils.data_utils.attribution_to_anndata">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">attribution_to_anndata</span><span class="p">(</span><span class="n">attribution_list</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">obs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">anndata</span><span class="o">.</span><span class="n">AnnData</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform an attribution data frame into an AnnData object.</span>
+<span class="w">    </span><span class="sd">"""Transform an attribution data frame into an AnnData object.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        attribution_list: (Sparse) data frame of attribution values, with one</span>
@@ -411,11 +411,11 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: AnnData object with attribution values stored in ``X``,</span>
 <span class="sd">            and optional ``var`` / ``obs`` metadata attached.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating anndata&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Creating anndata'</span><span class="p">)</span>
     <span class="n">adata</span> <span class="o">=</span> <span class="n">anndata</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">attribution_list</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Setting vars&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Setting vars'</span><span class="p">)</span>
         <span class="n">adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
     <span class="k">if</span> <span class="n">obs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">adata</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span>
@@ -426,37 +426,37 @@
 <div class="viewcode-block" id="create_output_directory">
 <a class="viewcode-back" href="../../../generated/netmap.utils.data_utils.create_output_directory.html#netmap.utils.data_utils.create_output_directory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_output_directory</span><span class="p">(</span><span class="n">result_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the output directory defined in result_params.</span>
+<span class="w">    </span><span class="sd">"""Create the output directory defined in result_params.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        result_params (dict): Must contain ``&#39;output_directory&#39;`` (str) and</span>
-<span class="sd">            ``&#39;overwrite&#39;`` (bool, passed as ``exist_ok``).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">result_params</span><span class="p">[</span><span class="s1">&#39;output_directory&#39;</span><span class="p">],</span> <span class="n">exist_ok</span><span class="o">=</span><span class="n">result_params</span><span class="p">[</span><span class="s1">&#39;overwrite&#39;</span><span class="p">])</span></div>
+<span class="sd">        result_params (dict): Must contain ``'output_directory'`` (str) and</span>
+<span class="sd">            ``'overwrite'`` (bool, passed as ``exist_ok``).</span>
+<span class="sd">    """</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">result_params</span><span class="p">[</span><span class="s1">'output_directory'</span><span class="p">],</span> <span class="n">exist_ok</span><span class="o">=</span><span class="n">result_params</span><span class="p">[</span><span class="s1">'overwrite'</span><span class="p">])</span></div>
 
 
 
 <div class="viewcode-block" id="save_anndata">
 <a class="viewcode-back" href="../../../generated/netmap.utils.data_utils.save_anndata.html#netmap.utils.data_utils.save_anndata">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">save_anndata</span><span class="p">(</span><span class="n">adobj</span><span class="p">,</span> <span class="n">result_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save an AnnData object to disk.</span>
+<span class="w">    </span><span class="sd">"""Save an AnnData object to disk.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        adobj (anndata.AnnData): Object to save.</span>
-<span class="sd">        result_params (dict): Must contain ``&#39;output_directory&#39;`` and</span>
-<span class="sd">            ``&#39;adata_filename&#39;`` keys.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">adobj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_params</span><span class="p">[</span><span class="s1">&#39;output_directory&#39;</span><span class="p">],</span> <span class="n">result_params</span><span class="p">[</span><span class="s1">&#39;adata_filename&#39;</span><span class="p">]))</span></div>
+<span class="sd">        result_params (dict): Must contain ``'output_directory'`` and</span>
+<span class="sd">            ``'adata_filename'`` keys.</span>
+<span class="sd">    """</span>
+    <span class="n">adobj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_params</span><span class="p">[</span><span class="s1">'output_directory'</span><span class="p">],</span> <span class="n">result_params</span><span class="p">[</span><span class="s1">'adata_filename'</span><span class="p">]))</span></div>
 
 
 
 <div class="viewcode-block" id="merge_all_to_obs">
 <a class="viewcode-back" href="../../../generated/netmap.utils.data_utils.merge_all_to_obs.html#netmap.utils.data_utils.merge_all_to_obs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_all_to_obs</span><span class="p">(</span><span class="n">target_adata</span><span class="p">,</span> <span class="n">source_adata</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copies all variables from source_adata into target_adata.obs for convenient Scanpy plotting.</span>
+<span class="w">    </span><span class="sd">"""Copies all variables from source_adata into target_adata.obs for convenient Scanpy plotting.</span>
 
 <span class="sd">    All columns in ``source_adata.var_names`` are appended as new columns to</span>
-<span class="sd">    ``target_adata.obs``.  When columns named ``&#39;regulon&#39;`` are already present</span>
+<span class="sd">    ``target_adata.obs``.  When columns named ``'regulon'`` are already present</span>
 <span class="sd">    in ``target_adata.obs`` and ``replace=True``, those existing regulon columns</span>
 <span class="sd">    are dropped before the new values are concatenated.</span>
 
@@ -466,7 +466,7 @@
 <span class="sd">        source_adata: AnnData object whose ``X`` matrix (cells x variables) is</span>
 <span class="sd">            used as the source of new ``obs`` columns.</span>
 <span class="sd">        replace: If ``True`` (default), any existing columns whose name contains</span>
-<span class="sd">            ``&#39;regulon&#39;`` in ``target_adata.obs`` are removed before adding the</span>
+<span class="sd">            ``'regulon'`` in ``target_adata.obs`` are removed before adding the</span>
 <span class="sd">            new columns.  If ``False``, the merge is skipped when overlapping</span>
 <span class="sd">            column names are detected and a message is printed.</span>
 
@@ -476,9 +476,9 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If the cell counts of ``target_adata`` and ``source_adata``</span>
 <span class="sd">            do not match.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">target_adata</span><span class="o">.</span><span class="n">n_obs</span> <span class="o">!=</span> <span class="n">source_adata</span><span class="o">.</span><span class="n">n_obs</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cell counts do not match between objects.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cell counts do not match between objects."</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">source_adata</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
         <span class="n">source_data</span> <span class="o">=</span> <span class="n">source_adata</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
@@ -495,11 +495,11 @@
     <span class="c1"># Check if regulon cols are already present, and delete all regulon columns</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">source_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">replace</span><span class="p">:</span>
-            <span class="n">spike_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">&#39;regulon&#39;</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+            <span class="n">spike_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">'regulon'</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
             <span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">spike_cols</span><span class="p">)</span>
             <span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="n">source_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Regulon columns where present and not replaced.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'Regulon columns where present and not replaced.'</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">target_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="n">source_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -510,7 +510,7 @@
 <div class="viewcode-block" id="retrieve_top_edges">
 <a class="viewcode-back" href="../../../generated/netmap.utils.data_utils.retrieve_top_edges.html#netmap.utils.data_utils.retrieve_top_edges">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_top_edges</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the top-percentage edges by attribution sum from Parquet shards.</span>
+<span class="w">    </span><span class="sd">"""Load the top-percentage edges by attribution sum from Parquet shards.</span>
 
 <span class="sd">    Selects the top ``percentage`` fraction of edges ranked by ``edge_sums``,</span>
 <span class="sd">    then reads the corresponding columns from the Parquet shards in ``output_dir``.</span>
@@ -524,19 +524,19 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: GRN AnnData with ``X`` populated for the selected edges.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
         <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
 
-    <span class="n">parquet_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.parquet&quot;</span><span class="p">))</span>
+    <span class="n">parquet_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.parquet"</span><span class="p">))</span>
 
-    <span class="n">grn_adata</span><span class="o">.</span><span class="n">uns</span><span class="p">[</span><span class="s1">&#39;edge_sum_original_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;edge_sums&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">grn_adata</span><span class="o">.</span><span class="n">uns</span><span class="p">[</span><span class="s1">'edge_sum_original_index'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'edge_sums'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># Slice the object</span>
     <span class="n">max_entry</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">max_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_entry</span> <span class="o">*</span> <span class="n">percentage</span><span class="p">)</span>
-    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">uns</span><span class="p">[</span><span class="s1">&#39;edge_sum_original_index&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">max_index</span><span class="p">])</span>
-    <span class="n">index_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">])</span>
+    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">uns</span><span class="p">[</span><span class="s1">'edge_sum_original_index'</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">max_index</span><span class="p">])</span>
+    <span class="n">index_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'index'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">])</span>
 
     <span class="c1"># Map columns to files (fast, reads only metadata)</span>
     <span class="n">col_to_file</span> <span class="o">=</span> <span class="p">{}</span>
@@ -577,7 +577,7 @@
 <div class="viewcode-block" id="retrieve_edges_by_index">
 <a class="viewcode-back" href="../../../generated/netmap.utils.data_utils.retrieve_edges_by_index.html#netmap.utils.data_utils.retrieve_edges_by_index">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_edges_by_index</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">index_list</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load specific edges by integer index from Parquet shards.</span>
+<span class="w">    </span><span class="sd">"""Load specific edges by integer index from Parquet shards.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with empty ``X`` (Parquet-backed).</span>
@@ -587,11 +587,11 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: GRN AnnData with ``X`` populated for the selected edges.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
         <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
 
-    <span class="n">parquet_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.parquet&quot;</span><span class="p">))</span>
+    <span class="n">parquet_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.parquet"</span><span class="p">))</span>
     <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">index_list</span><span class="p">)</span>
 
     <span class="n">index_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">])</span>
@@ -635,7 +635,7 @@
 <div class="viewcode-block" id="remove_regulon_columns">
 <a class="viewcode-back" href="../../../generated/netmap.utils.data_utils.remove_regulon_columns.html#netmap.utils.data_utils.remove_regulon_columns">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_regulon_columns</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes all regulon columns from grn_adata.obs.</span>
+<span class="w">    </span><span class="sd">"""Removes all regulon columns from grn_adata.obs.</span>
 
 <span class="sd">    Useful when regulon activity values were previously added via</span>
 <span class="sd">    ``merge_all_to_obs`` and need to be stripped out before Scanpy plotting</span>
@@ -643,12 +643,12 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        grn_adata: AnnData object whose ``obs`` DataFrame may contain columns</span>
-<span class="sd">            with ``&#39;regulon&#39;`` in their name.</span>
+<span class="sd">            with ``'regulon'`` in their name.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        grn_adata: The input object with regulon columns removed from ``obs``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">spike_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">&#39;regulon&#39;</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">spike_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">'regulon'</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
     <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">spike_cols</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">grn_adata</span></div>
 
@@ -657,7 +657,7 @@
 <div class="viewcode-block" id="remove_Ucell_columns">
 <a class="viewcode-back" href="../../../generated/netmap.utils.data_utils.remove_Ucell_columns.html#netmap.utils.data_utils.remove_Ucell_columns">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_Ucell_columns</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes all UCell columns from grn_adata.obs.</span>
+<span class="w">    </span><span class="sd">"""Removes all UCell columns from grn_adata.obs.</span>
 
 <span class="sd">    Useful when UCell scores were previously added to ``obs`` and need to be</span>
 <span class="sd">    stripped out before Scanpy plotting functions complain about unrecognised</span>
@@ -665,12 +665,12 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        grn_adata: AnnData object whose ``obs`` DataFrame may contain columns</span>
-<span class="sd">            with ``&#39;UCell&#39;`` in their name.</span>
+<span class="sd">            with ``'UCell'`` in their name.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        grn_adata: The input object with UCell columns removed from ``obs``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">spike_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">&#39;UCell&#39;</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">spike_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">'UCell'</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
     <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">spike_cols</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">grn_adata</span></div>
 

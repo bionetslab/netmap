@@ -373,7 +373,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.downstream.markers</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Jaccard-based comparison of GRN-derived regulon targets against cell-type marker sets.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Jaccard-based comparison of GRN-derived regulon targets against cell-type marker sets."""</span>
 
 <span class="c1"># --- Data Manipulation &amp; Bioinformatics ---</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -391,7 +391,7 @@
 <div class="viewcode-block" id="calculate_jaccard_scores">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.markers.calculate_jaccard_scores.html#netmap.downstream.markers.calculate_jaccard_scores">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_jaccard_scores</span><span class="p">(</span><span class="n">query_set</span><span class="p">,</span> <span class="n">reference_dict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Jaccard similarity between a query set and a dict of reference sets.</span>
+<span class="w">    </span><span class="sd">"""Calculate Jaccard similarity between a query set and a dict of reference sets.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        query_set (iterable): Gene names representing the query gene set.</span>
@@ -402,7 +402,7 @@
 <span class="sd">        dict: Mapping of each key from ``reference_dict`` to its Jaccard similarity</span>
 <span class="sd">        score with ``query_set``. Scores are floats in [0, 1]. A pair with an empty</span>
 <span class="sd">        union receives a score of 0.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">q_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ref_set</span> <span class="ow">in</span> <span class="n">reference_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -415,21 +415,21 @@
 <div class="viewcode-block" id="get_grn_targets">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.markers.get_grn_targets.html#netmap.downstream.markers.get_grn_targets">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_grn_targets</span><span class="p">(</span><span class="n">keep_edges</span><span class="p">,</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">source_genes</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract target genes for specific sources from the filtered edge object.</span>
+<span class="w">    </span><span class="sd">"""Extract target genes for specific sources from the filtered edge object.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        keep_edges (dict): Nested dict returned by ``select_top_edges()``, structured as</span>
-<span class="sd">            ``{&#39;unique&#39;: {cluster: {&#39;edges&#39;: pd.DataFrame, &#39;summary&#39;: ...}, ...}, &#39;all&#39;: ...}``.</span>
+<span class="sd">            ``{'unique': {cluster: {'edges': pd.DataFrame, 'summary': ...}, ...}, 'all': ...}``.</span>
 <span class="sd">            The ``edges`` DataFrame must contain ``source`` and ``target`` columns.</span>
 <span class="sd">        cluster: The cluster identifier used to look up the relevant edge DataFrame</span>
-<span class="sd">            within ``keep_edges[&#39;unique&#39;]``.</span>
+<span class="sd">            within ``keep_edges['unique']``.</span>
 <span class="sd">        source_genes (iterable): Source gene names whose target genes should be retrieved.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list: Target gene names (strings) regulated by any of the genes in</span>
 <span class="sd">        ``source_genes`` within the specified cluster.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">re</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="s1">&#39;unique&#39;</span><span class="p">][</span><span class="n">cluster</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">re</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="s1">'unique'</span><span class="p">][</span><span class="n">cluster</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">source_genes</span><span class="p">)]</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
 
 
@@ -438,7 +438,7 @@
 <div class="viewcode-block" id="prepare_jaccard_analysis_df">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.markers.prepare_jaccard_analysis_df.html#netmap.downstream.markers.prepare_jaccard_analysis_df">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">prepare_jaccard_analysis_df</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">all_signatures</span><span class="p">,</span> <span class="n">keep_edges</span><span class="p">,</span> <span class="n">marker_sets</span><span class="p">,</span> <span class="n">cluster_mapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process all clusters and return a unified DataFrame for plotting.</span>
+<span class="w">    </span><span class="sd">"""Process all clusters and return a unified DataFrame for plotting.</span>
 
 <span class="sd">    For each Leiden cluster in ``grn_adata``, retrieves the top differentially</span>
 <span class="sd">    expressed source genes from ``all_signatures``, fetches their GRN target</span>
@@ -450,11 +450,11 @@
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData object (obs = cells, var = edges)</span>
 <span class="sd">            whose ``obs.leiden_remap`` column lists the cluster label for every cell.</span>
 <span class="sd">        all_signatures (anndata.AnnData): AnnData object containing a Wilcoxon</span>
-<span class="sd">            rank_genes_groups result stored under the key ``&#39;wilcoxon&#39;`` (produced by</span>
+<span class="sd">            rank_genes_groups result stored under the key ``'wilcoxon'`` (produced by</span>
 <span class="sd">            ``sc.tl.rank_genes_groups``). Gene names are expected in the format</span>
 <span class="sd">            ``&lt;celltype&gt;_&lt;gene&gt;`` so they can be split on the last underscore.</span>
 <span class="sd">        keep_edges (dict): Nested dict returned by ``select_top_edges()``, structured as</span>
-<span class="sd">            ``{&#39;unique&#39;: {cluster: {&#39;edges&#39;: pd.DataFrame, ...}}, &#39;all&#39;: ...}``.</span>
+<span class="sd">            ``{'unique': {cluster: {'edges': pd.DataFrame, ...}}, 'all': ...}``.</span>
 <span class="sd">        marker_sets (dict): Mapping of ``{celltype: set(genes)}`` mapping cell-type labels</span>
 <span class="sd">            to their canonical marker gene sets used as Jaccard references.</span>
 <span class="sd">        cluster_mapper (dict or pd.Series): Mapping from raw cluster identifiers to</span>
@@ -468,17 +468,17 @@
 <span class="sd">            - ``celltype`` (str): Key from ``marker_sets`` used as the reference.</span>
 <span class="sd">            - ``jaccard`` (float): Jaccard similarity score in [0, 1].</span>
 <span class="sd">            - ``ct`` (str): Cluster identifier from ``grn_adata.obs.leiden_remap``.</span>
-<span class="sd">            - ``type`` (str): Either ``&#39;Source&#39;`` or ``&#39;Target&#39;``, indicating which</span>
+<span class="sd">            - ``type`` (str): Either ``'Source'`` or ``'Target'``, indicating which</span>
 <span class="sd">              gene set was compared.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">leiden_remap</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># 1. Get Top Sources (Genes)</span>
-            <span class="n">bcrank</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">ct</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;wilcoxon&#39;</span><span class="p">)</span>
-            <span class="n">bcrank</span><span class="p">[[</span><span class="s1">&#39;celltype&#39;</span><span class="p">,</span> <span class="s1">&#39;gene&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">bcrank</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">top_sources</span> <span class="o">=</span> <span class="n">bcrank</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20</span><span class="p">)[</span><span class="s1">&#39;gene&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">bcrank</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">ct</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">'wilcoxon'</span><span class="p">)</span>
+            <span class="n">bcrank</span><span class="p">[[</span><span class="s1">'celltype'</span><span class="p">,</span> <span class="s1">'gene'</span><span class="p">]]</span> <span class="o">=</span> <span class="n">bcrank</span><span class="p">[</span><span class="s1">'names'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">top_sources</span> <span class="o">=</span> <span class="n">bcrank</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20</span><span class="p">)[</span><span class="s1">'gene'</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
             <span class="c1"># 2. Get Targets of those Sources</span>
             <span class="n">top_targets</span> <span class="o">=</span> <span class="n">get_grn_targets</span><span class="p">(</span><span class="n">keep_edges</span><span class="p">,</span> <span class="n">ct</span><span class="p">,</span> <span class="n">top_sources</span><span class="p">)</span>
@@ -488,13 +488,13 @@
             <span class="n">tgt_jaccard</span> <span class="o">=</span> <span class="n">calculate_jaccard_scores</span><span class="p">(</span><span class="n">top_targets</span><span class="p">,</span> <span class="n">marker_sets</span><span class="p">)</span>
 
             <span class="c1"># 4. Convert to DataFrames</span>
-            <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">scores</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;Source&#39;</span><span class="p">,</span> <span class="n">src_jaccard</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Target&#39;</span><span class="p">,</span> <span class="n">tgt_jaccard</span><span class="p">)]:</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;celltype&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">&#39;jaccard&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span>
-                <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ct</span>
-                <span class="n">df</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+            <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">scores</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'Source'</span><span class="p">,</span> <span class="n">src_jaccard</span><span class="p">),</span> <span class="p">(</span><span class="s1">'Target'</span><span class="p">,</span> <span class="n">tgt_jaccard</span><span class="p">)]:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'celltype'</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">'jaccard'</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span>
+                <span class="n">df</span><span class="p">[</span><span class="s1">'ct'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ct</span>
+                <span class="n">df</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
                 <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping cluster </span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s2"> due to error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping cluster </span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s2"> due to error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">full_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
 
@@ -504,11 +504,11 @@
 
 <div class="viewcode-block" id="plot_jaccard_comparison">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.markers.plot_jaccard_comparison.html#netmap.downstream.markers.plot_jaccard_comparison">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">plot_jaccard_comparison</span><span class="p">(</span><span class="n">plot_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Jaccard Similarity: On-Target vs Off-Target&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a faceted boxplot comparing Jaccard scores across clusters and gene-set types.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_jaccard_comparison</span><span class="p">(</span><span class="n">plot_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Jaccard Similarity: On-Target vs Off-Target"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Create a faceted boxplot comparing Jaccard scores across clusters and gene-set types.</span>
 
-<span class="sd">    Renders a ``seaborn.catplot`` with one column per gene-set type (``&#39;Source&#39;``</span>
-<span class="sd">    and ``&#39;Target&#39;``), x-axis showing cluster labels, y-axis showing Jaccard</span>
+<span class="sd">    Renders a ``seaborn.catplot`` with one column per gene-set type (``'Source'``</span>
+<span class="sd">    and ``'Target'``), x-axis showing cluster labels, y-axis showing Jaccard</span>
 <span class="sd">    similarity, and hue encoding whether the cluster is mapped (``is_mapped``</span>
 <span class="sd">    column). Tick labels are rotated for readability and the legend is</span>
 <span class="sd">    repositioned to avoid overlap.</span>
@@ -518,33 +518,33 @@
 <span class="sd">            :func:`prepare_jaccard_analysis_df`, expected to contain at minimum</span>
 <span class="sd">            the columns ``ct``, ``jaccard``, ``is_mapped``, and ``type``.</span>
 <span class="sd">        title (str): Figure-level super-title. Defaults to</span>
-<span class="sd">            ``&quot;Jaccard Similarity: On-Target vs Off-Target&quot;``.</span>
+<span class="sd">            ``"Jaccard Similarity: On-Target vs Off-Target"``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        seaborn.FacetGrid: The grid object containing the rendered figure.</span>
 <span class="sd">        The figure can be saved with ``g.fig.savefig(...)`` or displayed with</span>
 <span class="sd">        ``plt.show()``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;ticks&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">"ticks"</span><span class="p">)</span>
 
     <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;ct&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;jaccard&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;is_mapped&#39;</span><span class="p">,</span>
-        <span class="n">col</span><span class="o">=</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;Set2&#39;</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">'ct'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">'jaccard'</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">'is_mapped'</span><span class="p">,</span>
+        <span class="n">col</span><span class="o">=</span><span class="s1">'type'</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">'box'</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">'Set2'</span><span class="p">,</span>
         <span class="n">height</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">fliersize</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
 
     <span class="c1"># Formatting</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">set_axis_labels</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Jaccard Similarity&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">set_titles</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{col_name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">'right'</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">set_axis_labels</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"Jaccard Similarity"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">set_titles</span><span class="p">(</span><span class="s2">"</span><span class="si">{col_name}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
-    <span class="n">sns</span><span class="o">.</span><span class="n">move_legend</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">move_legend</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
-    <span class="n">g</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">g</span></div>
 
 </pre></div>

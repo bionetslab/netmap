@@ -373,12 +373,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.downstream.edge_selection</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Memory-efficient edge ranking and top-edge annotation for GRN AnnData objects.</span>
+<span></span><span class="sd">"""Memory-efficient edge ranking and top-edge annotation for GRN AnnData objects.</span>
 
 <span class="sd">:func:`add_top_edge_annotation_global` and :func:`add_top_edge_annotation_cluster`</span>
 <span class="sd">annotate ``grn_adata.var`` with per-cell counts of how often each edge appears</span>
 <span class="sd">in the top-N% of attributions, globally or per Leiden cluster respectively.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -388,8 +388,8 @@
 
 <div class="viewcode-block" id="chunked_argsort">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.edge_selection.chunked_argsort.html#netmap.downstream.edge_selection.chunked_argsort">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">chunked_argsort</span><span class="p">(</span><span class="n">unsadata</span><span class="p">,</span> <span class="n">layer_name</span><span class="o">=</span><span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute ``np.argsort`` on ``adata.X`` in chunks to reduce peak memory usage.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chunked_argsort</span><span class="p">(</span><span class="n">unsadata</span><span class="p">,</span> <span class="n">layer_name</span><span class="o">=</span><span class="s1">'sorted'</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute ``np.argsort`` on ``adata.X`` in chunks to reduce peak memory usage.</span>
 
 <span class="sd">    Processes ``unsadata.X`` row-by-row in batches of ``chunk_size``, writing</span>
 <span class="sd">    the sorted column-index order for each row into a pre-allocated layer.</span>
@@ -400,7 +400,7 @@
 <span class="sd">        unsadata (anndata.AnnData): AnnData object to process.  Modified</span>
 <span class="sd">            in-place by adding ``layers[layer_name]``.</span>
 <span class="sd">        layer_name (str): Name of the new layer to create.  Defaults to</span>
-<span class="sd">            ``&#39;sorted&#39;``.</span>
+<span class="sd">            ``'sorted'``.</span>
 <span class="sd">        chunk_size (int): Number of rows (cells) to process per iteration.</span>
 <span class="sd">            Defaults to 500.</span>
 <span class="sd">        dtype (numpy.dtype or None): Integer dtype for the output array.</span>
@@ -410,7 +410,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        None. Modifies ``unsadata`` in-place by adding</span>
 <span class="sd">        ``layers[layer_name]``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n_obs</span><span class="p">,</span> <span class="n">n_vars</span> <span class="o">=</span> <span class="n">unsadata</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="c1"># 1. Automatically determine the smallest safe integer type</span>
@@ -435,42 +435,42 @@
         <span class="c1"># Perform sort and assign</span>
         <span class="n">unsadata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">layer_name</span><span class="p">][</span><span class="n">i</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully created layer &#39;</span><span class="si">{</span><span class="n">layer_name</span><span class="si">}</span><span class="s2">&#39; using </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Successfully created layer '</span><span class="si">{</span><span class="n">layer_name</span><span class="si">}</span><span class="s2">' using </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_top_edges_global</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_edges</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return edge-count DataFrames for multiple top-percentage thresholds.</span>
+<span class="w">    </span><span class="sd">"""Return edge-count DataFrames for multiple top-percentage thresholds.</span>
 
-<span class="sd">    Uses the pre-sorted ``&#39;sorted&#39;`` layer (created by :func:`chunked_argsort`)</span>
+<span class="sd">    Uses the pre-sorted ``'sorted'`` layer (created by :func:`chunked_argsort`)</span>
 <span class="sd">    to count, for each threshold in ``top_edges``, how many cells include each</span>
 <span class="sd">    edge among their top-N% highest-attribution edges.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData object containing a layer</span>
-<span class="sd">            ``&#39;sorted&#39;`` with the result of an argsort (column indices ordered</span>
+<span class="sd">            ``'sorted'`` with the result of an argsort (column indices ordered</span>
 <span class="sd">            from lowest to highest attribution per row).</span>
-<span class="sd">        top_edges (list of float): Fractions of edges to consider as &quot;top&quot;</span>
+<span class="sd">        top_edges (list of float): Fractions of edges to consider as "top"</span>
 <span class="sd">            (e.g. ``[0.05, 0.1]``).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        pandas.DataFrame: DataFrame with columns ``&#39;edge_key&#39;``,</span>
-<span class="sd">            ``&#39;top_edges&#39;``, and ``&#39;cell_count&#39;``, covering all thresholds</span>
+<span class="sd">        pandas.DataFrame: DataFrame with columns ``'edge_key'``,</span>
+<span class="sd">            ``'top_edges'``, and ``'cell_count'``, covering all thresholds</span>
 <span class="sd">            in ``top_edges`` concatenated into a single frame.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1">#if  not &#39;sorted&#39; in grn_adata.layers:</span>
+<span class="sd">    """</span>
+    <span class="c1">#if  not 'sorted' in grn_adata.layers:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">chunked_argsort</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">_exceptions</span><span class="o">.</span><span class="n">_ArrayMemoryError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You ran into an issue sorting the array. Please manually sort&quot;</span>
-            <span class="s2">&quot;the array using chunked_argsort and reduce the chunk size (current default chunk&quot;</span>
-            <span class="s2">&quot; size: 500)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"You ran into an issue sorting the array. Please manually sort"</span>
+            <span class="s2">"the array using chunked_argsort and reduce the chunk size (current default chunk"</span>
+            <span class="s2">" size: 500)"</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">MemoryError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You ran into an issue sorting the array. Please manually sort&quot;</span>
-            <span class="s2">&quot;the array using chunked_argsort and reduce the chunk size (current default chunk&quot;</span>
-            <span class="s2">&quot; size: 500)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"You ran into an issue sorting the array. Please manually sort"</span>
+            <span class="s2">"the array using chunked_argsort and reduce the chunk size (current default chunk"</span>
+            <span class="s2">" size: 500)"</span><span class="p">)</span>
 
-    <span class="n">b</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;sorted&#39;</span><span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'sorted'</span><span class="p">]</span>
 
     <span class="c1"># Calculate partition indices for all top_edges values</span>
     <span class="n">top_edges_data_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">top_edges</span><span class="p">]</span>
@@ -506,7 +506,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_data_preprr</span><span class="p">(</span><span class="n">global_counter</span><span class="p">,</span> <span class="n">edge_metadata_np</span><span class="p">,</span> <span class="n">top_edges_val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a structured array recording per-edge cell counts at one threshold.</span>
+<span class="w">    </span><span class="sd">"""Build a structured array recording per-edge cell counts at one threshold.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        global_counter (collections.Counter): Mapping of edge name → number of</span>
@@ -514,13 +514,13 @@
 <span class="sd">        edge_metadata_np (numpy.ndarray): Full array of edge names from</span>
 <span class="sd">            ``grn_adata.var.index``, used to infer the correct string dtype.</span>
 <span class="sd">        top_edges_val (float): The top-percentage threshold value to embed in</span>
-<span class="sd">            the ``&#39;top_edges&#39;`` field of the output.</span>
+<span class="sd">            the ``'top_edges'`` field of the output.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        numpy.ndarray: Structured array with fields ``&#39;edge_key&#39;`` (edge name),</span>
-<span class="sd">            ``&#39;top_edges&#39;`` (float16 threshold), and ``&#39;cell_count&#39;`` (int32</span>
+<span class="sd">        numpy.ndarray: Structured array with fields ``'edge_key'`` (edge name),</span>
+<span class="sd">            ``'top_edges'`` (float16 threshold), and ``'cell_count'`` (int32</span>
 <span class="sd">            number of cells).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">edge_keys_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">cell_counts_list</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -539,9 +539,9 @@
     <span class="c1"># Define dtype_final using the *full* index data type</span>
     <span class="n">dtype_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([</span>
         <span class="c1"># Use the dtype of the original index, which is now the complete index</span>
-        <span class="p">(</span><span class="s1">&#39;edge_key&#39;</span><span class="p">,</span> <span class="n">edge_metadata_np</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;top_edges&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;cell_count&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="p">(</span><span class="s1">'edge_key'</span><span class="p">,</span> <span class="n">edge_metadata_np</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'top_edges'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'cell_count'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
     <span class="p">])</span>
 
     <span class="c1"># Create the empty structured array</span>
@@ -549,18 +549,18 @@
 
     <span class="c1"># Populate the structured array fields</span>
     <span class="c1"># The index is now final_edge_keys</span>
-    <span class="n">final_summary_result</span><span class="p">[</span><span class="s1">&#39;edge_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_keys_np</span>
+    <span class="n">final_summary_result</span><span class="p">[</span><span class="s1">'edge_key'</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_keys_np</span>
     <span class="c1"># The counts array is now cell_counts_reindexed</span>
-    <span class="n">final_summary_result</span><span class="p">[</span><span class="s1">&#39;cell_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_counts_np</span>
-    <span class="n">final_summary_result</span><span class="p">[</span><span class="s1">&#39;top_edges&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_edges_val</span>
+    <span class="n">final_summary_result</span><span class="p">[</span><span class="s1">'cell_count'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_counts_np</span>
+    <span class="n">final_summary_result</span><span class="p">[</span><span class="s1">'top_edges'</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_edges_val</span>
 
     <span class="k">return</span> <span class="n">final_summary_result</span>
 
 
 <div class="viewcode-block" id="add_top_edge_annotation_cluster">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.edge_selection.add_top_edge_annotation_cluster.html#netmap.downstream.edge_selection.add_top_edge_annotation_cluster">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_top_edge_annotation_cluster</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_edges</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">],</span> <span class="n">nan_fill</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cluster_var</span><span class="o">=</span><span class="s1">&#39;spectral&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Annotate ``grn_adata.var`` with per-cluster top-edge cell counts.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_top_edge_annotation_cluster</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_edges</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">],</span> <span class="n">nan_fill</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cluster_var</span><span class="o">=</span><span class="s1">'spectral'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Annotate ``grn_adata.var`` with per-cluster top-edge cell counts.</span>
 
 <span class="sd">    For each cluster in ``grn_adata.obs[cluster_var]``, counts how many cells</span>
 <span class="sd">    within that cluster include each edge among their top-N% highest-attribution</span>
@@ -577,17 +577,17 @@
 <span class="sd">        nan_fill (int or float): Value used to fill edges with no count at a</span>
 <span class="sd">            given threshold/cluster combination.  Defaults to 0.</span>
 <span class="sd">        cluster_var (str): Column in ``grn_adata.obs`` that identifies cluster</span>
-<span class="sd">            membership.  Defaults to ``&#39;spectral&#39;``.</span>
+<span class="sd">            membership.  Defaults to ``'spectral'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: ``grn_adata`` with new columns added to ``.var``</span>
-<span class="sd">            named ``&#39;cell_count_{top_edge}_{cluster}&#39;`` for every combination</span>
+<span class="sd">            named ``'cell_count_{top_edge}_{cluster}'`` for every combination</span>
 <span class="sd">            of threshold and cluster.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span>
-    <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;index&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">'index'</span><span class="p">:</span>
         <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-        <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;edge_key&#39;</span><span class="p">})</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'index'</span><span class="p">:</span> <span class="s1">'edge_key'</span><span class="p">})</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
@@ -596,12 +596,12 @@
         <span class="n">top_edges_per_cell</span> <span class="o">=</span> <span class="n">_get_top_edges_global</span><span class="p">(</span><span class="n">grn_adata_sub</span><span class="p">,</span> <span class="n">top_edges</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">te</span> <span class="ow">in</span> <span class="n">top_edges</span><span class="p">:</span>
-            <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">clu</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">var</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="sa">f</span><span class="s1">'cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">clu</span><span class="si">}</span><span class="s1">'</span> <span class="ow">in</span> <span class="n">var</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">top_edges_per_cell</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">top_edges_per_cell</span><span class="o">.</span><span class="n">top_edges</span> <span class="o">==</span> <span class="n">te</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;edge_key&#39;</span><span class="p">,</span> <span class="s1">&#39;cell_count&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cell_count&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">clu</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">}),</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;edge_key&#39;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;edge_key&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
-            <span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">clu</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">clu</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">nan_fill</span><span class="p">)</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">top_edges_per_cell</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">top_edges_per_cell</span><span class="o">.</span><span class="n">top_edges</span> <span class="o">==</span> <span class="n">te</span><span class="p">,</span> <span class="p">[</span><span class="s1">'edge_key'</span><span class="p">,</span> <span class="s1">'cell_count'</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'cell_count'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">clu</span><span class="si">}</span><span class="s1">'</span><span class="p">}),</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">'edge_key'</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">'edge_key'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'outer'</span><span class="p">)</span>
+            <span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">clu</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">clu</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">nan_fill</span><span class="p">)</span>
 
-    <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;edge_key&#39;</span><span class="p">)</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'edge_key'</span><span class="p">)</span>
     <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
 
     <span class="k">return</span> <span class="n">grn_adata</span></div>
@@ -610,8 +610,8 @@
 
 <div class="viewcode-block" id="add_top_edge_annotation_global">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.edge_selection.add_top_edge_annotation_global.html#netmap.downstream.edge_selection.add_top_edge_annotation_global">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_top_edge_annotation_global</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_edges</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">],</span> <span class="n">nan_fill</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">key_name</span><span class="o">=</span><span class="s1">&#39;global&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Annotate ``grn_adata.var`` with global top-edge cell counts.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_top_edge_annotation_global</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_edges</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">],</span> <span class="n">nan_fill</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">key_name</span><span class="o">=</span><span class="s1">'global'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Annotate ``grn_adata.var`` with global top-edge cell counts.</span>
 
 <span class="sd">    Counts, across all cells, how many times each edge appears among the</span>
 <span class="sd">    top-N% highest-attribution edges.  Results are merged into</span>
@@ -628,27 +628,27 @@
 <span class="sd">        nan_fill (int or float): Value used to fill edges with no count at a</span>
 <span class="sd">            given threshold.  Defaults to 0.</span>
 <span class="sd">        key_name (str): Prefix for the new column names.  Defaults to</span>
-<span class="sd">            ``&#39;global&#39;``.</span>
+<span class="sd">            ``'global'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: ``grn_adata`` with new columns added to ``.var``</span>
-<span class="sd">            named ``&#39;{key_name}_cell_count_{top_edge}&#39;`` for each threshold.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">            named ``'{key_name}_cell_count_{top_edge}'`` for each threshold.</span>
+<span class="sd">    """</span>
     <span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span>
-    <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;index&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">'index'</span><span class="p">:</span>
         <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-        <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;edge_key&#39;</span><span class="p">})</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'index'</span><span class="p">:</span> <span class="s1">'edge_key'</span><span class="p">})</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
     <span class="n">top_edges_per_cell</span> <span class="o">=</span> <span class="n">_get_top_edges_global</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">top_edges</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">te</span> <span class="ow">in</span> <span class="n">top_edges</span><span class="p">:</span>
-        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s1">_cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">var</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s1">_cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">'</span> <span class="ow">in</span> <span class="n">var</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">top_edges_per_cell</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">top_edges_per_cell</span><span class="o">.</span><span class="n">top_edges</span> <span class="o">==</span> <span class="n">te</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;edge_key&#39;</span><span class="p">,</span> <span class="s1">&#39;cell_count&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cell_count&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s1">_cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">}),</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;edge_key&#39;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;edge_key&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
-        <span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s1">_cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s1">_cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">nan_fill</span><span class="p">)</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">top_edges_per_cell</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">top_edges_per_cell</span><span class="o">.</span><span class="n">top_edges</span> <span class="o">==</span> <span class="n">te</span><span class="p">,</span> <span class="p">[</span><span class="s1">'edge_key'</span><span class="p">,</span> <span class="s1">'cell_count'</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'cell_count'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s1">_cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">'</span><span class="p">}),</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">'edge_key'</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">'edge_key'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'outer'</span><span class="p">)</span>
+        <span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s1">_cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s1">_cell_count_</span><span class="si">{</span><span class="n">te</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">nan_fill</span><span class="p">)</span>
 
-    <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;edge_key&#39;</span><span class="p">)</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'edge_key'</span><span class="p">)</span>
     <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
 
     <span class="k">return</span> <span class="n">grn_adata</span></div>

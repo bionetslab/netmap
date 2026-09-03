@@ -373,21 +373,21 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.model.zinbautoencoder</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Zero-Inflated Negative Binomial (ZINB) autoencoder for scRNA-seq count data.</span>
+<span></span><span class="sd">"""Zero-Inflated Negative Binomial (ZINB) autoencoder for scRNA-seq count data.</span>
 
 <span class="sd">This module implements a ZINB autoencoder with three decoder heads for the</span>
 <span class="sd">mean (mu), dispersion (theta), and zero-inflation probability (pi) parameters.</span>
 <span class="sd">Forward-mode flags (``forward_mu_only``, ``forward_theta_only``, ``latent_only``,</span>
 <span class="sd">``forward_pi_only``) redirect :meth:`ZINBAutoencoder.forward` to return a single</span>
 <span class="sd">tensor required by Captum attribution methods.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
@@ -399,14 +399,14 @@
 <div class="viewcode-block" id="ZINBLoss.__init__">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.ZINBLoss.html#netmap.model.zinbautoencoder.ZINBLoss.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">ridge_lambda</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zero-Inflated Negative Binomial loss module.</span>
+<span class="w">        </span><span class="sd">"""Zero-Inflated Negative Binomial loss module.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            scale_factor (float): Scale factor applied to predictions. Defaults to 1.0.</span>
 <span class="sd">            eps (float): Small value for numerical stability. Defaults to 1e-10.</span>
 <span class="sd">            ridge_lambda (float): Ridge regularisation weight for the zero-inflation</span>
 <span class="sd">                probability (pi). Defaults to 0.0.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ZINBLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">=</span> <span class="n">scale_factor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">eps</span>
@@ -416,7 +416,7 @@
 <div class="viewcode-block" id="ZINBLoss.forward">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.ZINBLoss.html#netmap.model.zinbautoencoder.ZINBLoss.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">pi</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the ZINB negative log-likelihood loss.</span>
+<span class="w">        </span><span class="sd">"""Compute the ZINB negative log-likelihood loss.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            y_true (torch.Tensor): Ground truth counts (non-negative integers).</span>
@@ -427,7 +427,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: Mean ZINB negative log-likelihood, optionally with</span>
 <span class="sd">                ridge penalty on pi.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">eps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="n">y_true</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
         <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_factor</span>
@@ -466,7 +466,7 @@
 <div class="viewcode-block" id="ZINBAutoencoder">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.ZINBAutoencoder.html#netmap.model.zinbautoencoder.ZINBAutoencoder">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ZINBAutoencoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Autoencoder with three decoder heads for ZINB-distributed scRNA-seq data.</span>
+<span class="w">    </span><span class="sd">"""Autoencoder with three decoder heads for ZINB-distributed scRNA-seq data.</span>
 
 <span class="sd">    The shared encoder compresses gene expression into a latent space. Three</span>
 <span class="sd">    independent decoder branches predict the ZINB parameters:</span>
@@ -492,7 +492,7 @@
 <span class="sd">            Defaults to 0.0.</span>
 <span class="sd">        hidden_dims (list of int): Width of each hidden layer in the encoder;</span>
 <span class="sd">            all three decoders mirror this in reverse. Defaults to ``[64]``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 <div class="viewcode-block" id="ZINBAutoencoder.__init__">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.ZINBAutoencoder.html#netmap.model.zinbautoencoder.ZINBAutoencoder.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">latent_dim</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">hidden_dims</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">]):</span>
@@ -636,7 +636,7 @@
 <div class="viewcode-block" id="ZINBAutoencoder.forward">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.ZINBAutoencoder.html#netmap.model.zinbautoencoder.ZINBAutoencoder.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a forward pass, returning output controlled by the mode flags.</span>
+<span class="w">        </span><span class="sd">"""Run a forward pass, returning output controlled by the mode flags.</span>
 
 <span class="sd">        When all mode flags are ``False``, returns ``(mu, theta, pi)``.</span>
 <span class="sd">        Set one of ``forward_mu_only``, ``forward_theta_only``, ``latent_only``,</span>
@@ -651,7 +651,7 @@
 <span class="sd">            torch.Tensor or tuple: Depending on the active flag —</span>
 <span class="sd">                ``mu``, ``theta``, latent, ``pi``,</span>
 <span class="sd">                or ``(mu, theta, pi)`` tuple.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">latent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_mu</span><span class="p">(</span><span class="n">latent</span><span class="p">)</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_theta</span><span class="p">(</span><span class="n">latent</span><span class="p">)</span>
@@ -674,14 +674,14 @@
 <div class="viewcode-block" id="ZINBAutoencoder.compute_loss">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.ZINBAutoencoder.html#netmap.model.zinbautoencoder.ZINBAutoencoder.compute_loss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the ZINB loss for a batch.</span>
+<span class="w">        </span><span class="sd">"""Compute the ZINB loss for a batch.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            x (torch.Tensor): Input count matrix of shape ``(batch, input_dim)``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: Scalar ZINB negative log-likelihood loss.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Forward pass</span>
         <span class="n">mu</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -697,7 +697,7 @@
 <div class="viewcode-block" id="get_thetas">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.get_thetas.html#netmap.model.zinbautoencoder.get_thetas">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_thetas</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data_tensor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the mean predicted dispersion (theta) across all cells.</span>
+<span class="w">    </span><span class="sd">"""Return the mean predicted dispersion (theta) across all cells.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (ZINBAutoencoder): A trained ZINB autoencoder.</span>
@@ -705,7 +705,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        numpy.ndarray: Mean theta value per gene, shape ``(input_dim,)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">model</span><span class="o">.</span><span class="n">forward_mu_only</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">model</span><span class="o">.</span><span class="n">forward_theta_only</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">model</span><span class="o">.</span><span class="n">latent_only</span> <span class="o">=</span> <span class="kc">False</span>
@@ -720,7 +720,7 @@
 <div class="viewcode-block" id="get_mus">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.get_mus.html#netmap.model.zinbautoencoder.get_mus">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_mus</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data_tensor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the mean predicted mean expression (mu) across all cells.</span>
+<span class="w">    </span><span class="sd">"""Return the mean predicted mean expression (mu) across all cells.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (ZINBAutoencoder): A trained ZINB autoencoder.</span>
@@ -728,7 +728,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        numpy.ndarray: Mean mu value per gene, shape ``(input_dim,)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">model</span><span class="o">.</span><span class="n">forward_mu_only</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">model</span><span class="o">.</span><span class="n">forward_theta_only</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">model</span><span class="o">.</span><span class="n">latent_only</span> <span class="o">=</span> <span class="kc">False</span>
@@ -744,7 +744,7 @@
 <div class="viewcode-block" id="get_mus_grouping">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.get_mus_grouping.html#netmap.model.zinbautoencoder.get_mus_grouping">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_mus_grouping</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data_tensor</span><span class="p">,</span> <span class="n">grouping</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the mean predicted mu per observation group.</span>
+<span class="w">    </span><span class="sd">"""Return the mean predicted mu per observation group.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (ZINBAutoencoder): A trained ZINB autoencoder.</span>
@@ -753,7 +753,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Mapping ``{group_label: numpy.ndarray}`` of mean mu per gene.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">model</span><span class="o">.</span><span class="n">forward_mu_only</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">model</span><span class="o">.</span><span class="n">forward_theta_only</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">model</span><span class="o">.</span><span class="n">latent_only</span> <span class="o">=</span> <span class="kc">False</span>
@@ -762,11 +762,11 @@
 
 
     <span class="n">param</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">lat_mu</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="n">param</span><span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grouping</span><span class="p">)</span>
+    <span class="n">param</span><span class="p">[</span><span class="s1">'obs'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grouping</span><span class="p">)</span>
 
-    <span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'obs'</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
     <span class="n">dictionary_of_mus</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[</span><span class="s1">&#39;obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'obs'</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[</span><span class="s1">'obs'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
         <span class="n">dictionary_of_mus</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">index</span><span class="o">==</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">dictionary_of_mus</span></div>
 
@@ -774,7 +774,7 @@
 <div class="viewcode-block" id="get_thetas_grouping">
 <a class="viewcode-back" href="../../../generated/netmap.model.zinbautoencoder.get_thetas_grouping.html#netmap.model.zinbautoencoder.get_thetas_grouping">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_thetas_grouping</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data_tensor</span><span class="p">,</span> <span class="n">grouping</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the mean predicted theta per observation group.</span>
+<span class="w">    </span><span class="sd">"""Return the mean predicted theta per observation group.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (ZINBAutoencoder): A trained ZINB autoencoder.</span>
@@ -783,7 +783,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Mapping ``{group_label: numpy.ndarray}`` of mean theta per gene.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">model</span><span class="o">.</span><span class="n">forward_mu_only</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">model</span><span class="o">.</span><span class="n">forward_theta_only</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">model</span><span class="o">.</span><span class="n">latent_only</span> <span class="o">=</span> <span class="kc">False</span>
@@ -792,11 +792,11 @@
 
 
     <span class="n">param</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">lat_mu</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="n">param</span><span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grouping</span><span class="p">)</span>
+    <span class="n">param</span><span class="p">[</span><span class="s1">'obs'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grouping</span><span class="p">)</span>
 
-    <span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'obs'</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
     <span class="n">dictionary_of_mus</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[</span><span class="s1">&#39;obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'obs'</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[</span><span class="s1">'obs'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
         <span class="n">dictionary_of_mus</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">index</span><span class="o">==</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">dictionary_of_mus</span></div>
 

@@ -373,12 +373,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.downstream.clustering</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Dimensionality reduction, clustering, and label-matching utilities for GRN AnnData.</span>
+<span></span><span class="sd">"""Dimensionality reduction, clustering, and label-matching utilities for GRN AnnData.</span>
 
 <span class="sd">The main pipeline entry :func:`process` runs PCA → kNN → Leiden → UMAP then</span>
 <span class="sd">adds spectral clustering labels.  :func:`unify_group_labelling` remaps GRN</span>
-<span class="sd">cluster labels to match a reference expression object&#39;s clusters.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">cluster labels to match a reference expression object's clusters.</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">scanpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">anndata</span>
@@ -398,7 +398,7 @@
 <div class="viewcode-block" id="downstream_recipe">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.clustering.downstream_recipe.html#netmap.downstream.clustering.downstream_recipe">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">downstream_recipe</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sc</span><span class="o">.</span><span class="n">AnnData</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the standard Scanpy dimensionality-reduction and clustering pipeline.</span>
+<span class="w">    </span><span class="sd">"""Run the standard Scanpy dimensionality-reduction and clustering pipeline.</span>
 
 <span class="sd">    Applies PCA, kNN graph construction, Leiden clustering, and UMAP embedding</span>
 <span class="sd">    to ``grn_adata`` in sequence.  All parameters have defaults and can be</span>
@@ -412,41 +412,41 @@
 <span class="sd">            - ``leiden_resolution`` (float): Leiden resolution. Default 0.1.</span>
 <span class="sd">            - ``n_components`` (int): UMAP output dimensions. Default 100.</span>
 <span class="sd">            - ``knn_neighbors`` (int): Neighbours for ``sc.pp.neighbors``. Default 50.</span>
-<span class="sd">            - ``svd_solver`` (str): PCA solver. Default ``&#39;randomized&#39;``.</span>
+<span class="sd">            - ``svd_solver`` (str): PCA solver. Default ``'randomized'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: ``grn_adata`` with PCA, kNN, Leiden, and UMAP results</span>
 <span class="sd">            added.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Define defaults and update with any provided kwargs</span>
     <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;n_neighbors&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-        <span class="s1">&#39;leiden_resolution&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="s1">&#39;n_components&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="s1">&#39;knn_neighbors&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
-        <span class="s1">&#39;svd_solver&#39;</span><span class="p">:</span> <span class="s1">&#39;randomized&#39;</span>
+        <span class="s1">'n_neighbors'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="s1">'leiden_resolution'</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s1">'n_components'</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">'knn_neighbors'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="s1">'svd_solver'</span><span class="p">:</span> <span class="s1">'randomized'</span>
     <span class="p">}</span>
     <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># Use the config values in the scanpy functions</span>
-    <span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">pca</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;svd_solver&#39;</span><span class="p">],</span> <span class="n">zero_center</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">pca</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">'svd_solver'</span><span class="p">],</span> <span class="n">zero_center</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Note: sc.pp.neighbors uses n_neighbors.</span>
-    <span class="c1"># If you specifically want to use your &#39;knn_neighbors&#39; key:</span>
-    <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;knn_neighbors&#39;</span><span class="p">])</span>
+    <span class="c1"># If you specifically want to use your 'knn_neighbors' key:</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">'knn_neighbors'</span><span class="p">])</span>
 
-    <span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">leiden</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;leiden_resolution&#39;</span><span class="p">])</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">leiden</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">'leiden_resolution'</span><span class="p">])</span>
 
     <span class="c1"># n_components in UMAP usually refers to the dimensions of the embedding (default 2)</span>
-    <span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;n_components&#39;</span><span class="p">])</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">'n_components'</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">grn_adata</span></div>
 
 
 <div class="viewcode-block" id="process">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.clustering.process.html#netmap.downstream.clustering.process">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">n_clu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">key_added</span><span class="o">=</span><span class="s1">&#39;spectral&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare GRN AnnData and run the full clustering pipeline.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">n_clu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">key_added</span><span class="o">=</span><span class="s1">'spectral'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Prepare GRN AnnData and run the full clustering pipeline.</span>
 
 <span class="sd">    Fills NaN values in ``grn_adata.X`` with 0, calls :func:`downstream_recipe`,</span>
 <span class="sd">    then adds spectral clustering via :func:`spectral_clustering`.</span>
@@ -455,12 +455,12 @@
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData to cluster.</span>
 <span class="sd">        n_clu (int): Number of spectral clusters. Defaults to 2.</span>
 <span class="sd">        key_added (str): Column name for spectral labels in ``.obs``.</span>
-<span class="sd">            Defaults to ``&#39;spectral&#39;``.</span>
+<span class="sd">            Defaults to ``'spectral'``.</span>
 <span class="sd">        **kwargs: Forwarded to :func:`downstream_recipe`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: Clustered GRN AnnData.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">scs</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
         <span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -477,13 +477,13 @@
 
 <div class="viewcode-block" id="spectral_clustering">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.clustering.spectral_clustering.html#netmap.downstream.clustering.spectral_clustering">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">spectral_clustering</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_clu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">key_added</span><span class="o">=</span><span class="s1">&#39;spectral&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run scikit-learn spectral clustering on the neighbour graph of an AnnData object.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spectral_clustering</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_clu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">key_added</span><span class="o">=</span><span class="s1">'spectral'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run scikit-learn spectral clustering on the neighbour graph of an AnnData object.</span>
 
 <span class="sd">    Recomputes the neighbour graph with default parameters via</span>
 <span class="sd">    ``sc.pp.neighbors``, then fits a</span>
 <span class="sd">    :class:`sklearn.cluster.SpectralClustering` model using the precomputed</span>
-<span class="sd">    nearest-neighbour distances stored in ``adata.obsp[&#39;distances&#39;]``.  The</span>
+<span class="sd">    nearest-neighbour distances stored in ``adata.obsp['distances']``.  The</span>
 <span class="sd">    resulting integer cluster labels are stored as a categorical column in</span>
 <span class="sd">    ``adata.obs``.  If ``key_added`` already exists in ``adata.obs`` a</span>
 <span class="sd">    numeric suffix (``_1``, ``_2``, …) is appended to avoid overwriting</span>
@@ -494,23 +494,23 @@
 <span class="sd">            clustering.  Modified in-place.</span>
 <span class="sd">        n_clu (int): Number of clusters to compute.  Defaults to 2.</span>
 <span class="sd">        key_added (str): Base name of the column added to ``adata.obs``.</span>
-<span class="sd">            Defaults to ``&#39;spectral&#39;``.</span>
+<span class="sd">            Defaults to ``'spectral'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: The input ``adata`` object with an additional</span>
 <span class="sd">        categorical column in ``.obs`` named ``key_added`` (or</span>
 <span class="sd">        ``key_added_&lt;n&gt;`` if the name was already taken) containing the</span>
 <span class="sd">        spectral cluster labels.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
-    <span class="n">ssc</span> <span class="o">=</span> <span class="n">SpectralClustering</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clu</span><span class="p">,</span><span class="n">assign_labels</span><span class="o">=</span><span class="s1">&#39;discretize&#39;</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">affinity</span><span class="o">=</span> <span class="s1">&#39;precomputed_nearest_neighbors&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">obsp</span><span class="p">[</span><span class="s1">&#39;distances&#39;</span><span class="p">])</span>
+    <span class="n">ssc</span> <span class="o">=</span> <span class="n">SpectralClustering</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clu</span><span class="p">,</span><span class="n">assign_labels</span><span class="o">=</span><span class="s1">'discretize'</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">affinity</span><span class="o">=</span> <span class="s1">'precomputed_nearest_neighbors'</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">obsp</span><span class="p">[</span><span class="s1">'distances'</span><span class="p">])</span>
 
     <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">key_added_t</span> <span class="o">=</span> <span class="n">key_added</span>
     <span class="k">while</span> <span class="n">key_added_t</span> <span class="ow">in</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">key_added_t</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key_added</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">key_added_t</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key_added</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s1">'</span>
     <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">key_added_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">labels_</span>
     <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">key_added_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">key_added_t</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">adata</span></div>
@@ -518,7 +518,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">unify_group_labelling</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="n">col_adata</span><span class="p">,</span> <span class="n">col_grn_adata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adjust GRN cluster labels to match a reference clustering via optimal assignment.</span>
+<span class="w">    </span><span class="sd">"""Adjust GRN cluster labels to match a reference clustering via optimal assignment.</span>
 
 <span class="sd">    Uses the Hungarian algorithm (:func:`scipy.optimize.linear_sum_assignment`)</span>
 <span class="sd">    to find a one-to-one mapping from GRN cluster labels to reference cluster</span>
@@ -541,7 +541,7 @@
 <span class="sd">        float: Score of the linear-sum assignment divided by the number of</span>
 <span class="sd">            cells.  Ranges between ``1/n_clusters`` (random matching) and</span>
 <span class="sd">            ``1.0`` (identical clustering).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">cm</span> <span class="o">=</span> <span class="n">contingency_matrix</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_adata</span><span class="p">],</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_adata</span><span class="p">])</span>
     <span class="n">row_ind</span><span class="p">,</span> <span class="n">col_ind</span> <span class="o">=</span> <span class="n">linear_sum_assignment</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">maximize</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
@@ -553,7 +553,7 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row_ind</span><span class="p">)):</span>
         <span class="n">reverse_mapping</span><span class="p">[</span><span class="n">names_grn</span><span class="p">[</span><span class="n">col_ind</span><span class="p">[</span><span class="n">i</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">names_ad</span><span class="p">[</span><span class="n">row_ind</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
 
-    <span class="n">col_grn_adata_remapped</span> <span class="o">=</span> <span class="n">col_grn_adata</span> <span class="o">+</span> <span class="s1">&#39;_remap&#39;</span>
+    <span class="n">col_grn_adata_remapped</span> <span class="o">=</span> <span class="n">col_grn_adata</span> <span class="o">+</span> <span class="s1">'_remap'</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_adata</span><span class="p">])[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_adata_remapped</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">reverse_mapping</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_adata</span><span class="p">]]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -571,7 +571,7 @@
 <div class="viewcode-block" id="unify_group_labelling">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.clustering.unify_group_labelling.html#netmap.downstream.clustering.unify_group_labelling">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">unify_group_labelling</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="n">col_adata</span><span class="p">,</span> <span class="n">col_grn_adata</span><span class="p">,</span> <span class="n">return_mapping</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Match overclustered GRN labels to a reference clustering using argmax assignment.</span>
+<span class="w">    </span><span class="sd">"""Match overclustered GRN labels to a reference clustering using argmax assignment.</span>
 
 <span class="sd">    Each GRN cluster is mapped to the reference cluster that contains the majority</span>
 <span class="sd">    of its cells (argmax of the contingency matrix column).  Unlike the Hungarian</span>
@@ -589,7 +589,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        float or tuple: Fraction of correctly matched cells.  If</span>
 <span class="sd">            ``return_mapping=True``, returns ``(score, reverse_mapping)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># 1. Compute Contingency Matrix</span>
     <span class="c1"># Rows = adata (Ref), Cols = grn_adata (Target)</span>
     <span class="n">cm</span> <span class="o">=</span> <span class="n">contingency_matrix</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_adata</span><span class="p">],</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_adata</span><span class="p">])</span>
@@ -612,7 +612,7 @@
         <span class="n">total_matched_cells</span> <span class="o">+=</span> <span class="n">cm</span><span class="p">[</span><span class="n">ref_idx</span><span class="p">,</span> <span class="n">grn_idx</span><span class="p">]</span>
 
     <span class="c1"># 3. Apply Mapping</span>
-    <span class="n">col_grn_remapped</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col_grn_adata</span><span class="si">}</span><span class="s2">_remap&quot;</span>
+    <span class="n">col_grn_remapped</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">col_grn_adata</span><span class="si">}</span><span class="s2">_remap"</span>
     <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_remapped</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_adata</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">reverse_mapping</span><span class="p">)</span>
     <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_remapped</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_grn_remapped</span><span class="p">])</span>
 

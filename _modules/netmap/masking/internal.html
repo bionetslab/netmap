@@ -373,13 +373,13 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.masking.internal</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Neighbourhood-expression masking for GRN edges.</span>
+<span></span><span class="sd">"""Neighbourhood-expression masking for GRN edges.</span>
 
 <span class="sd">Functions in this module build binary cell×edge masks that indicate whether</span>
 <span class="sd">both the source and target genes of an edge are expressed in the local kNN</span>
-<span class="sd">neighbourhood of each cell.  The masks are stored in ``grn_adata.layers[&#39;mask&#39;]``</span>
+<span class="sd">neighbourhood of each cell.  The masks are stored in ``grn_adata.layers['mask']``</span>
 <span class="sd">and used downstream to filter low-confidence edges.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -398,15 +398,15 @@
 
 <div class="viewcode-block" id="get_neighborhood_expression">
 <a class="viewcode-back" href="../../../generated/netmap.masking.internal.get_neighborhood_expression.html#netmap.masking.internal.get_neighborhood_expression">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_neighborhood_expression</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">knn_neighbours</span> <span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">required_neighbours</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">expression_threshold</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if each gene is expressed in the k-nearest neighbors (kNN) of each cell.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_neighborhood_expression</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">knn_neighbours</span> <span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">required_neighbours</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">expression_threshold</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">'X'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Checks if each gene is expressed in the k-nearest neighbors (kNN) of each cell.</span>
 
 <span class="sd">    Computes a kNN graph on adata, then for each cell counts how many neighbours</span>
 <span class="sd">    express each gene above expression_threshold. Returns a binary matrix where</span>
 <span class="sd">    1 indicates the gene is expressed in at least required_neighbours neighbours.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        adata (anndata.AnnData): Expression AnnData with PCA in ``obsm[&#39;X_pca&#39;]``.</span>
+<span class="sd">        adata (anndata.AnnData): Expression AnnData with PCA in ``obsm['X_pca']``.</span>
 <span class="sd">            A kNN graph is computed internally via ``sc.pp.neighbors``.</span>
 <span class="sd">        knn_neighbours (int): Number of nearest neighbours for the kNN graph.</span>
 <span class="sd">            Defaults to 10.</span>
@@ -414,21 +414,21 @@
 <span class="sd">            a gene for the cell to be considered in the neighbourhood. Defaults to 1.</span>
 <span class="sd">        expression_threshold (float): Minimum value to consider a gene expressed.</span>
 <span class="sd">            Defaults to 0.</span>
-<span class="sd">        layer (str): Layer to use for expression values — ``&#39;X&#39;`` or a named</span>
-<span class="sd">            layer. Defaults to ``&#39;X&#39;``.</span>
+<span class="sd">        layer (str): Layer to use for expression values — ``'X'`` or a named</span>
+<span class="sd">            layer. Defaults to ``'X'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        scipy.sparse matrix or numpy.ndarray: Binary matrix of shape</span>
 <span class="sd">            ``(n_cells, n_genes)`` where 1 means the gene is expressed in at</span>
 <span class="sd">            least ``required_neighbours`` neighbours.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Compute knn graph with low number of neighbours</span>
     <span class="c1"># in practice, the number may not be equal</span>
 
     <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="n">knn_neighbours</span><span class="p">)</span>
     <span class="c1"># Get the connectivity matrix from the kNN graph</span>
-    <span class="n">connectivities</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obsp</span><span class="p">[</span><span class="s1">&#39;connectivities&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">connectivities</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obsp</span><span class="p">[</span><span class="s1">'connectivities'</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">connectivities</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">connectivities</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># Binarize the graph</span>
 
     <span class="n">binary_expression</span> <span class="o">=</span> <span class="n">binarize_adata</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">expression_threshold</span> <span class="o">=</span> <span class="n">expression_threshold</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="n">layer</span><span class="p">)</span>
@@ -450,10 +450,10 @@
 <div class="viewcode-block" id="create_pairwise_binary_mask">
 <a class="viewcode-back" href="../../../generated/netmap.masking.internal.create_pairwise_binary_mask.html#netmap.masking.internal.create_pairwise_binary_mask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_pairwise_binary_mask</span><span class="p">(</span><span class="n">binary_matrix</span><span class="p">,</span> <span class="n">gene_list</span><span class="p">,</span> <span class="n">source_list</span><span class="p">,</span> <span class="n">target_list</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a dense 2D array of pairwise masks using preallocation.</span>
+<span class="w">    </span><span class="sd">"""Creates a dense 2D array of pairwise masks using preallocation.</span>
 
 <span class="sd">    Edge genes are passed as separate ``source_list``/``target_list`` arrays rather</span>
-<span class="sd">    than parsed from &quot;GeneA_GeneB&quot; strings, since gene names may themselves contain</span>
+<span class="sd">    than parsed from "GeneA_GeneB" strings, since gene names may themselves contain</span>
 <span class="sd">    underscores and would make that split ambiguous.</span>
 
 <span class="sd">    Args:</span>
@@ -466,7 +466,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: A 2D array of shape (num_cells, len(source_list)).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">num_cells</span> <span class="o">=</span> <span class="n">binary_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">num_pairs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_list</span><span class="p">)</span>
 
@@ -498,21 +498,21 @@
 
 <div class="viewcode-block" id="binarize_adata">
 <a class="viewcode-back" href="../../../generated/netmap.masking.internal.binarize_adata.html#netmap.masking.internal.binarize_adata">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">binarize_adata</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">expression_threshold</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Binarize gene expression to 0/1 based on an expression threshold.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">binarize_adata</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">expression_threshold</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">'X'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Binarize gene expression to 0/1 based on an expression threshold.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        adata (anndata.AnnData): Expression AnnData object.</span>
 <span class="sd">        expression_threshold (float): Values above this are set to 1. Defaults to 0.</span>
-<span class="sd">        layer (str): ``&#39;X&#39;`` to use ``adata.X``, otherwise the name of a layer in</span>
-<span class="sd">            ``adata.layers``. Defaults to ``&#39;X&#39;``.</span>
+<span class="sd">        layer (str): ``'X'`` to use ``adata.X``, otherwise the name of a layer in</span>
+<span class="sd">            ``adata.layers``. Defaults to ``'X'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        numpy.ndarray or numpy.matrix: Binary expression matrix of shape</span>
 <span class="sd">            ``(n_cells, n_genes)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="n">layer</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">layer</span> <span class="o">==</span> <span class="s1">'X'</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">issparse</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
             <span class="n">binary_expression</span> <span class="o">=</span> <span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">expression_threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -529,14 +529,14 @@
 
 <div class="viewcode-block" id="add_neighbourhood_expression_mask">
 <a class="viewcode-back" href="../../../generated/netmap.masking.internal.add_neighbourhood_expression_mask.html#netmap.masking.internal.add_neighbourhood_expression_mask">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_neighbourhood_expression_mask</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">mask_data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a binary cell×edge co-expression mask and add it to the GRN AnnData.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_neighbourhood_expression_mask</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">'X'</span><span class="p">,</span> <span class="n">mask_data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Create a binary cell×edge co-expression mask and add it to the GRN AnnData.</span>
 
 <span class="sd">    The mask indicates whether both the source and target genes of each edge are</span>
 <span class="sd">    expressed in the kNN neighbourhood of each cell.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        adata (anndata.AnnData): Expression AnnData; must have ``obsm[&#39;X_pca&#39;]``.</span>
+<span class="sd">        adata (anndata.AnnData): Expression AnnData; must have ``obsm['X_pca']``.</span>
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData whose ``var_names`` are</span>
 <span class="sd">            ``SourceGene_TargetGene`` edge identifiers, and whose ``var`` must</span>
 <span class="sd">            contain unambiguous ``source``/``target`` gene columns (as produced</span>
@@ -545,73 +545,73 @@
 <span class="sd">            names may themselves contain underscores.</span>
 <span class="sd">        strict (bool): If ``True``, use direct binarization of ``adata.X`` instead</span>
 <span class="sd">            of neighbourhood expression. Defaults to ``False``.</span>
-<span class="sd">        layer (str): Layer to use for expression values. Defaults to ``&#39;X&#39;``.</span>
+<span class="sd">        layer (str): Layer to use for expression values. Defaults to ``'X'``.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        anndata.AnnData: ``grn_adata`` with ``layers[&#39;mask&#39;]`` (int8) and</span>
-<span class="sd">            ``var[&#39;count_nonzero&#39;]`` added.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        anndata.AnnData: ``grn_adata`` with ``layers['mask']`` (int8) and</span>
+<span class="sd">            ``var['count_nonzero']`` added.</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="s1">&#39;X_pca&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">'X_pca'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="s2">&quot;adata.obsm[&#39;X_pca&#39;] not found. Please run scanpy.pp.pca(adata) &quot;</span>
-                <span class="s2">&quot;before calling this function to enable neighborhood calculations.&quot;</span>
+                <span class="s2">"adata.obsm['X_pca'] not found. Please run scanpy.pp.pca(adata) "</span>
+                <span class="s2">"before calling this function to enable neighborhood calculations."</span>
             <span class="p">)</span>
 
-    <span class="k">if</span> <span class="s1">&#39;source&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">columns</span> <span class="ow">or</span> <span class="s1">&#39;target&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">'source'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">columns</span> <span class="ow">or</span> <span class="s1">'target'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-            <span class="s2">&quot;grn_adata.var must contain &#39;source&#39; and &#39;target&#39; columns (as produced &quot;</span>
-            <span class="s2">&quot;by netmap.grn.inferrence.inferrence()) to identify edge genes, since &quot;</span>
-            <span class="s2">&quot;edge names cannot be reliably split on &#39;_&#39; when gene names themselves &quot;</span>
-            <span class="s2">&quot;contain underscores.&quot;</span>
+            <span class="s2">"grn_adata.var must contain 'source' and 'target' columns (as produced "</span>
+            <span class="s2">"by netmap.grn.inferrence.inferrence()) to identify edge genes, since "</span>
+            <span class="s2">"edge names cannot be reliably split on '_' when gene names themselves "</span>
+            <span class="s2">"contain underscores."</span>
         <span class="p">)</span>
 
-    <span class="n">grn_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">])</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+    <span class="n">grn_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'source'</span><span class="p">])</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'target'</span><span class="p">])</span>
 
     <span class="n">adata_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
     <span class="n">missing_genes</span> <span class="o">=</span> <span class="n">grn_genes</span> <span class="o">-</span> <span class="n">adata_genes</span>
 
     <span class="k">if</span> <span class="n">missing_genes</span><span class="p">:</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing_genes</span><span class="p">)</span><span class="si">}</span><span class="s2"> genes from grn_adata are missing from adata.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing_genes</span><span class="p">)</span><span class="si">}</span><span class="s2"> genes from grn_adata are missing from adata."</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_genes</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">grn_genes</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Zero overlap between GRN genes and adata.var_names.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Zero overlap between GRN genes and adata.var_names."</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">strict</span><span class="p">:</span>
         <span class="n">ne</span> <span class="o">=</span> <span class="n">get_neighborhood_expression</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">required_neighbours</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="n">layer</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ne</span> <span class="o">=</span> <span class="n">binarize_adata</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="n">layer</span><span class="p">)</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">create_pairwise_binary_mask</span><span class="p">(</span>
-        <span class="n">ne</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">ne</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
     <span class="p">)</span>
 
-    <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span>
-    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;count_nonzero&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'mask'</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span>
+    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'count_nonzero'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'mask'</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mask_data</span><span class="p">:</span>
-        <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;masked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">])</span>
+        <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'masked'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'mask'</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">grn_adata</span></div>
 
 
 
 <div class="viewcode-block" id="add_cluster_wise_spearman">
 <a class="viewcode-back" href="../../../generated/netmap.masking.internal.add_cluster_wise_spearman.html#netmap.masking.internal.add_cluster_wise_spearman">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_cluster_wise_spearman</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">adata</span><span class="p">,</span> <span class="n">cluster_column</span><span class="o">=</span><span class="s1">&#39;leiden_remap&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute cluster-wise Spearman rank correlation between source and target gene</span>
-<span class="sd">    expression for each edge in grn_adata, adding a &#39;{cluster}_spearman&#39; column</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_cluster_wise_spearman</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">adata</span><span class="p">,</span> <span class="n">cluster_column</span><span class="o">=</span><span class="s1">'leiden_remap'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute cluster-wise Spearman rank correlation between source and target gene</span>
+<span class="sd">    expression for each edge in grn_adata, adding a '{cluster}_spearman' column</span>
 <span class="sd">    to grn_adata.var for every cluster.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData (obs=cells, var=edges).</span>
-<span class="sd">            var must contain &#39;source&#39; and &#39;target&#39; columns.</span>
+<span class="sd">            var must contain 'source' and 'target' columns.</span>
 <span class="sd">        adata (anndata.AnnData): Expression AnnData (obs=cells, var=genes).</span>
 <span class="sd">            obs must be aligned with grn_adata.obs.</span>
 <span class="sd">        cluster_column (str): Column in grn_adata.obs with cluster labels.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        anndata.AnnData: grn_adata with new &#39;{cluster}_spearman&#39; columns in .var.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">sources</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-    <span class="n">targets</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="sd">        anndata.AnnData: grn_adata with new '{cluster}_spearman' columns in .var.</span>
+<span class="sd">    """</span>
+    <span class="n">sources</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
     <span class="c1"># Collect all unique genes, preserving order</span>
     <span class="n">seen</span> <span class="o">=</span> <span class="p">{}</span>
@@ -622,7 +622,7 @@
     <span class="n">adata_gene_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
     <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">all_genes</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">adata_gene_set</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2"> GRN genes not found in adata and will produce NaN correlations.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2"> GRN genes not found in adata and will produce NaN correlations."</span><span class="p">)</span>
     <span class="n">available_genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">all_genes</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">adata_gene_set</span><span class="p">]</span>
     <span class="n">gene_to_idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">available_genes</span><span class="p">)}</span>
 
@@ -640,7 +640,7 @@
         <span class="n">n_cells</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">n_cells</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_spearman&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_spearman'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
             <span class="k">continue</span>
 
         <span class="c1"># Rank-transform each gene column, then standardise</span>
@@ -658,7 +658,7 @@
             <span class="k">if</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">gene_to_idx</span> <span class="ow">and</span> <span class="n">tgt</span> <span class="ow">in</span> <span class="n">gene_to_idx</span><span class="p">:</span>
                 <span class="n">spearman_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">corr_matrix</span><span class="p">[</span><span class="n">gene_to_idx</span><span class="p">[</span><span class="n">src</span><span class="p">],</span> <span class="n">gene_to_idx</span><span class="p">[</span><span class="n">tgt</span><span class="p">]]</span>
 
-        <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_spearman&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spearman_vals</span>
+        <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_spearman'</span><span class="p">]</span> <span class="o">=</span> <span class="n">spearman_vals</span>
 
     <span class="k">return</span> <span class="n">grn_adata</span></div>
 
@@ -666,8 +666,8 @@
 
 <div class="viewcode-block" id="add_cluster_based_candidate_edges">
 <a class="viewcode-back" href="../../../generated/netmap.masking.internal.add_cluster_based_candidate_edges.html#netmap.masking.internal.add_cluster_based_candidate_edges">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_cluster_based_candidate_edges</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">cluster_column</span> <span class="o">=</span> <span class="s1">&#39;leiden_remap&#39;</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Annotate edges with per-cluster mask support fractions and candidacy flags.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_cluster_based_candidate_edges</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">cluster_column</span> <span class="o">=</span> <span class="s1">'leiden_remap'</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Annotate edges with per-cluster mask support fractions and candidacy flags.</span>
 
 <span class="sd">    For each Leiden cluster, computes the fraction of cluster cells in which the</span>
 <span class="sd">    edge mask is 1, adds a ``{cluster}_nonzero`` column, and marks an edge as a</span>
@@ -676,26 +676,26 @@
 <span class="sd">    clusters is also added.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with ``layers[&#39;mask&#39;]`` and</span>
-<span class="sd">            ``var[&#39;count_nonzero&#39;]``.</span>
+<span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with ``layers['mask']`` and</span>
+<span class="sd">            ``var['count_nonzero']``.</span>
 <span class="sd">        cluster_column (str): Column in ``grn_adata.obs`` with cluster labels.</span>
-<span class="sd">            Defaults to ``&#39;leiden_remap&#39;``.</span>
+<span class="sd">            Defaults to ``'leiden_remap'``.</span>
 <span class="sd">        threshold (float): Minimum mask support fraction for an edge to be a</span>
 <span class="sd">            candidate. Defaults to 0.5.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: ``grn_adata`` with per-cluster and global candidacy</span>
 <span class="sd">            columns added to ``.var``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">vc</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">cluster_column</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
-    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;count_nonzero_norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;count_nonzero&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'count_nonzero_norm'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'count_nonzero'</span><span class="p">]</span><span class="o">/</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">vc</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
-        <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_nonzero&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">grn_adata</span><span class="p">[</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">cluster_column</span><span class="p">]</span> <span class="o">==</span> <span class="n">ps</span><span class="p">]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span><span class="o">/</span><span class="n">vc</span><span class="p">[</span><span class="n">ps</span><span class="p">]</span>
-        <span class="c1">#grn_adata.var[f&#39;{ps}_candidate_edge&#39;] = np.abs(grn_adata.var[f&#39;{ps}_nonzero&#39;]-grn_adata.var[f&#39;count_nonzero_norm&#39;])&gt;0.1</span>
-        <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_candidate_edge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_nonzero&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="n">threshold</span>
+        <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_nonzero'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">grn_adata</span><span class="p">[</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">cluster_column</span><span class="p">]</span> <span class="o">==</span> <span class="n">ps</span><span class="p">]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'mask'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span><span class="o">/</span><span class="n">vc</span><span class="p">[</span><span class="n">ps</span><span class="p">]</span>
+        <span class="c1">#grn_adata.var[f'{ps}_candidate_edge'] = np.abs(grn_adata.var[f'{ps}_nonzero']-grn_adata.var[f'count_nonzero_norm'])&gt;0.1</span>
+        <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_candidate_edge'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_nonzero'</span><span class="p">]</span><span class="o">&gt;</span><span class="n">threshold</span>
 
-    <span class="n">value_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_candidate_edge&#39;</span> <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="n">vc</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
-    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;candidate_edge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">value_cols</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">value_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s1">_candidate_edge'</span> <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="n">vc</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'candidate_edge'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">value_cols</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">grn_adata</span></div>
 
 
@@ -705,7 +705,7 @@
 <div class="viewcode-block" id="find_consistent_pairs">
 <a class="viewcode-back" href="../../../generated/netmap.masking.internal.find_consistent_pairs.html#netmap.masking.internal.find_consistent_pairs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_consistent_pairs</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Spearman correlation between forward and reverse edge attribution scores.</span>
+<span class="w">    </span><span class="sd">"""Compute Spearman correlation between forward and reverse edge attribution scores.</span>
 
 <span class="sd">    For every pair of genes (A, B), computes the Spearman correlation between</span>
 <span class="sd">    the attribution columns ``A_B`` and ``B_A`` in ``grn_adata.X`` across all</span>
@@ -718,7 +718,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Mapping ``{edge_str: spearman_r}`` for all forward and reverse</span>
 <span class="sd">            pairs. Self-pairs are not included.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">num_cells</span><span class="p">,</span> <span class="n">num_edges</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span>
 
@@ -726,9 +726,9 @@
 
     <span class="n">gene_pairs_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">gene_names</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">g1_idx</span><span class="p">,</span> <span class="n">g2_idx</span> <span class="ow">in</span> <span class="n">gene_pairs_indices</span><span class="p">:</span>
-        <span class="n">pairwise_mask_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">[:,</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">statistic</span>
+        <span class="n">pairwise_mask_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">[:,</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">"</span><span class="p">]]</span><span class="o">.</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">statistic</span>
         <span class="c1"># add reverse bc I am lazy</span>
-        <span class="n">pairwise_mask_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pairwise_mask_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="n">pairwise_mask_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pairwise_mask_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">g1_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">g2_idx</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">pairwise_mask_dict</span></div>
 
 </pre></div>

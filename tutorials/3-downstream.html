@@ -428,16 +428,16 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load data</span>
 <span class="c1"># Collectri is in ressource folder</span>
-<span class="n">collectri</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;resources/collectri.tsv&#39;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">collectri</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'resources/collectri.tsv'</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">)</span>
 
 <span class="c1"># This is the preprocessed anndata object.</span>
-<span class="n">adata_raw</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="s1">&#39;netmap/data/blood/reprocessed/bd-rhap-rep1.h5ad&#39;</span><span class="p">)</span>
-<span class="n">experiment_name</span> <span class="o">=</span> <span class="s1">&#39;bd-rhap-rep1-X&#39;</span>
+<span class="n">adata_raw</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="s1">'netmap/data/blood/reprocessed/bd-rhap-rep1.h5ad'</span><span class="p">)</span>
+<span class="n">experiment_name</span> <span class="o">=</span> <span class="s1">'bd-rhap-rep1-X'</span>
 
 <span class="c1"># The dummy anndata object</span>
-<span class="n">output_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;netmap/case_studies/blood/</span><span class="si">{</span><span class="n">experiment_name</span><span class="si">}</span><span class="s2">/&quot;</span>
-<span class="n">var</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">experiment_name</span><span class="si">}</span><span class="s1">_var.tsv&#39;</span><span class="p">))</span>
-<span class="n">obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">experiment_name</span><span class="si">}</span><span class="s1">_obs.tsv&#39;</span><span class="p">))</span>
+<span class="n">output_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"netmap/case_studies/blood/</span><span class="si">{</span><span class="n">experiment_name</span><span class="si">}</span><span class="s2">/"</span>
+<span class="n">var</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">experiment_name</span><span class="si">}</span><span class="s1">_var.tsv'</span><span class="p">))</span>
+<span class="n">obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">experiment_name</span><span class="si">}</span><span class="s1">_obs.tsv'</span><span class="p">))</span>
 <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">var</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="p">,</span> <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="p">,)</span>
 </pre></div>
 </div>
@@ -446,7 +446,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;grn&quot;</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">"grn"</span><span class="p">))</span>
 <br/></pre></div>
 </div>
 </div>
@@ -463,7 +463,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adata_raw</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;counts&#39;</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adata_raw</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'counts'</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -481,7 +481,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;celltype_semi_manual&#39;</span><span class="p">,</span> <span class="s1">&#39;leiden&#39;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'celltype_semi_manual'</span><span class="p">,</span> <span class="s1">'leiden'</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -496,7 +496,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'index'</span><span class="p">)</span>
 <br/><br/></pre></div>
 </div>
 </div>
@@ -505,7 +505,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Cluster GRN</span>
-<span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">pca</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">svd_solver</span> <span class="o">=</span> <span class="s1">&#39;randomized&#39;</span><span class="p">,</span> <span class="n">zero_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">pca</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">svd_solver</span> <span class="o">=</span> <span class="s1">'randomized'</span><span class="p">,</span> <span class="n">zero_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
 <span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">n_components</span> <span class="o">=</span><span class="mi">50</span><span class="p">)</span>
 <br/></pre></div>
@@ -524,7 +524,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;leiden&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'leiden'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -539,10 +539,10 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Clustering Score Evaluation&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">col_grn</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;leiden&quot;</span><span class="p">]:</span>
-    <span class="n">score</span> <span class="o">=</span> <span class="n">unify_group_labelling</span><span class="p">(</span> <span class="n">adata_raw</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="s1">&#39;celltype_semi_manual&#39;</span><span class="p">,</span> <span class="n">col_grn</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col_grn</span><span class="si">}</span><span class="s2"> score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Clustering Score Evaluation"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">col_grn</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"leiden"</span><span class="p">]:</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">unify_group_labelling</span><span class="p">(</span> <span class="n">adata_raw</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="s1">'celltype_semi_manual'</span><span class="p">,</span> <span class="n">col_grn</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">col_grn</span><span class="si">}</span><span class="s2"> score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -561,7 +561,7 @@ leiden score: 0.9533180778032037
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Transcfer the new labels to the GEX andata object.</span>
-<span class="n">adata_raw</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;celltype_remapped&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;leiden_remap&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">adata_raw</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">'celltype_remapped'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">'leiden_remap'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <br/></pre></div>
 </div>
 </div>
@@ -569,7 +569,7 @@ leiden score: 0.9533180778032037
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;celltype_remapped&#39;</span><span class="p">,</span> <span class="s1">&#39;celltype_semi_manual&#39;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'celltype_remapped'</span><span class="p">,</span> <span class="s1">'celltype_semi_manual'</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -586,7 +586,7 @@ leiden score: 0.9533180778032037
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make a dummy GRN object</span>
 <span class="n">grn_adata2</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">var</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="p">,</span> <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="p">)</span>
-<span class="n">grn_adata2</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata2</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+<span class="n">grn_adata2</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata2</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'index'</span><span class="p">)</span>
 <span class="n">grn_adata2</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obs</span>
 </pre></div>
 </div>
@@ -604,7 +604,7 @@ leiden score: 0.9533180778032037
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Select plausible edges based on the gene expression dataset</span>
-<span class="n">add_neighbourhood_expression_mask</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">grn_adata2</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span> <span class="p">)</span>
+<span class="n">add_neighbourhood_expression_mask</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">grn_adata2</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">'counts'</span> <span class="p">)</span>
 <span class="c1"># Annotate edges which CAN be present in at least 0.3 based on gene expression mask</span>
 <span class="n">grn_adata2</span> <span class="o">=</span> <span class="n">add_cluster_based_candidate_edges</span><span class="p">(</span><span class="n">grn_adata2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 <br/></pre></div>
@@ -615,7 +615,7 @@ leiden score: 0.9533180778032037
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Select edges which are candidates in at least one cluster</span>
-<span class="n">index_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">grn_adata2</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;candidate_edge&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">index_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">grn_adata2</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'candidate_edge'</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 <span class="c1"># Select plausible edges and load them into a new anndata obeject.</span>
 <span class="n">grn_adata3</span> <span class="o">=</span> <span class="n">retrieve_edges_by_index</span><span class="p">(</span><span class="n">grn_adata2</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">index_list</span><span class="p">)</span>
 </pre></div>
@@ -650,8 +650,8 @@ AnnData object with n_obs × n_vars = 10925 × 138297
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Transfer the clustering the the new object</span>
 <span class="n">grn_adata3</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">grn_adata2</span><span class="o">.</span><span class="n">obs</span>
-<span class="n">grn_adata3</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;X_pca&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;X_pca&#39;</span><span class="p">]</span>
-<span class="n">grn_adata3</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;X_umap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;X_umap&#39;</span><span class="p">]</span>
+<span class="n">grn_adata3</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">'X_pca'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">'X_pca'</span><span class="p">]</span>
+<span class="n">grn_adata3</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">'X_umap'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">'X_umap'</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -659,7 +659,7 @@ AnnData object with n_obs × n_vars = 10925 × 138297
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;leiden&#39;</span><span class="p">,</span> <span class="s1">&#39;leiden_remap&#39;</span><span class="p">,</span> <span class="s1">&#39;celltype_semi_manual&#39;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'leiden'</span><span class="p">,</span> <span class="s1">'leiden_remap'</span><span class="p">,</span> <span class="s1">'celltype_semi_manual'</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -674,7 +674,7 @@ AnnData object with n_obs × n_vars = 10925 × 138297
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;celltype_remapped&#39;</span><span class="p">,</span> <span class="s1">&#39;celltype_semi_manual&#39;</span><span class="p">,</span> <span class="s1">&#39;CD14&#39;</span><span class="p">,</span> <span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'celltype_remapped'</span><span class="p">,</span> <span class="s1">'celltype_semi_manual'</span><span class="p">,</span> <span class="s1">'CD14'</span><span class="p">,</span> <span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -689,7 +689,7 @@ AnnData object with n_obs × n_vars = 10925 × 138297
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cross_tab</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">grn_adata3</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;celltype_semi_manual&#39;</span><span class="p">],</span> <span class="n">grn_adata3</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;leiden_remap&#39;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cross_tab</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">grn_adata3</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">'celltype_semi_manual'</span><span class="p">],</span> <span class="n">grn_adata3</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">'leiden_remap'</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -844,7 +844,7 @@ AnnData object with n_obs × n_vars = 10925 × 138297
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This can be used to add is_source_collectri, is_target_collectri to annotate for each edge</span>
 <span class="c1"># whether the source node of an edge is also in collectri</span>
-<span class="n">grn_adata3</span> <span class="o">=</span> <span class="n">add_external_grn</span><span class="p">(</span><span class="n">grn_ad</span><span class="o">=</span><span class="n">grn_adata3</span><span class="p">,</span>   <span class="n">external_grn</span><span class="o">=</span><span class="n">collectri</span><span class="p">,</span><span class="n">name_grn</span><span class="o">=</span><span class="s1">&#39;collectri&#39;</span><span class="p">)</span>
+<span class="n">grn_adata3</span> <span class="o">=</span> <span class="n">add_external_grn</span><span class="p">(</span><span class="n">grn_ad</span><span class="o">=</span><span class="n">grn_adata3</span><span class="p">,</span>   <span class="n">external_grn</span><span class="o">=</span><span class="n">collectri</span><span class="p">,</span><span class="n">name_grn</span><span class="o">=</span><span class="s1">'collectri'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -855,16 +855,16 @@ AnnData object with n_obs × n_vars = 10925 × 138297
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Identify top targets for each source gene within clusters</span>
 <span class="c1"># - Keeps up to top_per_source strongest targets</span>
 <span class="c1"># - Removes regulons smaller than min_reg_size</span>
-<span class="n">cluster_column</span> <span class="o">=</span> <span class="s1">&#39;celltype_semi_manual&#39;</span>
+<span class="n">cluster_column</span> <span class="o">=</span> <span class="s1">'celltype_semi_manual'</span>
 <span class="n">top_per_source</span> <span class="o">=</span> <span class="mi">30</span>
 <span class="n">min_reg_size</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">)</span>
-<span class="n">add_neighbourhood_expression_mask</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">grn_adata3</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span> <span class="p">)</span>
+<span class="n">add_neighbourhood_expression_mask</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">grn_adata3</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="s1">'counts'</span> <span class="p">)</span>
 <span class="n">keep_edges</span> <span class="o">=</span> <span class="n">select_top_edges</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">=</span><span class="n">grn_adata3</span><span class="p">,</span> <span class="n">adata</span><span class="o">=</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">top_per_source</span><span class="o">=</span><span class="n">top_per_source</span><span class="p">,</span> <span class="n">col_cluster</span><span class="o">=</span><span class="n">cluster_column</span><span class="p">,</span> <span class="n">min_reg_size</span><span class="o">=</span><span class="n">min_reg_size</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># If you want to only use specific genes as sources, e.g. TFs you can add a boolean mask where true</span>
 <span class="c1"># indicates that the gene should be used as a source.</span>
-<span class="c1">#keep_edges = select_top_edges(gene_inter_adata=grn_adata3, adata=adata_raw, top_per_source=top_per_source, col_cluster=cluster_column, min_reg_size=min_reg_size, verbose=True, tf_column=&#39;is_source_collectri&#39;)</span>
+<span class="c1">#keep_edges = select_top_edges(gene_inter_adata=grn_adata3, adata=adata_raw, top_per_source=top_per_source, col_cluster=cluster_column, min_reg_size=min_reg_size, verbose=True, tf_column='is_source_collectri')</span>
 <br/><br/></pre></div>
 </div>
 </div>
@@ -887,8 +887,8 @@ Selecting targets for cluster: pDC
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">aggregate_edges</span><span class="p">(</span><span class="n">selected_edges</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;unique&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">aggregate_edges</span><span class="p">(</span><span class="n">selected_edges</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">'unique'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Filters gene signatures by cluster and computes UCell scores.</span>
 
 <span class="sd">    Parameters</span>
@@ -896,20 +896,20 @@ Selecting targets for cluster: pDC
 <span class="sd">    grn_adata : AnnData</span>
 <span class="sd">        AnnData object containing GRN (gene regulatory network) information.</span>
 <span class="sd">    adata : AnnData</span>
-<span class="sd">        AnnData object containing gene expression counts in the &#39;counts&#39; layer.</span>
+<span class="sd">        AnnData object containing gene expression counts in the 'counts' layer.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    pd.DataFrame</span>
-<span class="sd">        DataFrame with UCell scores merged with the &#39;spectral&#39; cluster labels.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        DataFrame with UCell scores merged with the 'spectral' cluster labels.</span>
+<span class="sd">    """</span>
 
     <span class="n">regulons</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span>
-        <span class="n">sign</span> <span class="o">=</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">ct</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">ct</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'source'</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_"</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="s1">'target'</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">sign</span><span class="p">:</span>
-            <span class="n">regulons</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="p">[:,</span> <span class="n">sign</span><span class="p">[</span><span class="n">g</span><span class="p">]]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">regulons</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="p">[:,</span> <span class="n">sign</span><span class="p">[</span><span class="n">g</span><span class="p">]]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">regulons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">regulons</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">regulons</span>
 </pre></div>
@@ -919,7 +919,7 @@ Selecting targets for cluster: pDC
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">regus</span> <span class="o">=</span> <span class="n">aggregate_edges</span><span class="p">(</span><span class="n">keep_edges</span><span class="p">,</span> <span class="n">grn_adata3</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;unique&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">regus</span> <span class="o">=</span> <span class="n">aggregate_edges</span><span class="p">(</span><span class="n">keep_edges</span><span class="p">,</span> <span class="n">grn_adata3</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">'unique'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -954,11 +954,11 @@ pDC
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute differential regulon activity using the nonparametric Wilcoxon test.</span>
 <span class="c1"># This identifies regulons whose activity significantly differs between clusters.</span>
-<span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;wilcoxon&#39;</span><span class="p">,</span> <span class="n">key_added</span> <span class="o">=</span> <span class="s2">&quot;wilcoxon&quot;</span><span class="p">)</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'wilcoxon'</span><span class="p">,</span> <span class="n">key_added</span> <span class="o">=</span> <span class="s2">"wilcoxon"</span><span class="p">)</span>
 
 <span class="c1"># Visualize the top differentially active regulons per cluster.</span>
 <span class="c1"># The plot shows effect sizes and significance for the highest-ranked regulons.</span>
-<span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">n_genes</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;wilcoxon&quot;</span><span class="p">)</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">n_genes</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"wilcoxon"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1006,11 +1006,11 @@ WARNING: dendrogram data not found (using key=dendrogram_celltype_semi_manual). 
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute differential regulon activity using the nonparametric Wilcoxon test.</span>
 <span class="c1"># This identifies regulons whose activity significantly differs between clusters.</span>
-<span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;wilcoxon&#39;</span><span class="p">,</span> <span class="n">key_added</span> <span class="o">=</span> <span class="s2">&quot;wilcoxon&quot;</span><span class="p">)</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'wilcoxon'</span><span class="p">,</span> <span class="n">key_added</span> <span class="o">=</span> <span class="s2">"wilcoxon"</span><span class="p">)</span>
 
 <span class="c1"># Visualize the top differentially active regulons per cluster.</span>
 <span class="c1"># The plot shows effect sizes and significance for the highest-ranked regulons.</span>
-<span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">n_genes</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;wilcoxon&quot;</span><span class="p">)</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">n_genes</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"wilcoxon"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1059,12 +1059,12 @@ WARNING: dendrogram data not found (using key=dendrogram_celltype_semi_manual). 
 <span class="c1"># 1. Plotting Raw Entropy Only</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
-<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Rank&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Raw Entropy (bits)&#39;</span><span class="p">,</span>  <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Rank'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Raw Entropy (bits)'</span><span class="p">,</span>  <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="c1"># Replicating the distinct blue line style</span>
-<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ranks</span><span class="p">,</span> <span class="n">raw</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Raw Entropy (H)&#39;</span><span class="p">)</span>
-<span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span> <span class="p">)</span>
-<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ranks</span><span class="p">,</span> <span class="n">raw</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Raw Entropy (H)'</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span> <span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
 <span class="c1"># 2. Annotate Discoveries on the RAW line</span>
 <span class="k">for</span> <span class="n">rank</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">discoveries</span><span class="p">:</span>
@@ -1072,18 +1072,18 @@ WARNING: dendrogram data not found (using key=dendrogram_celltype_semi_manual). 
     <span class="n">y_pos</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="n">rank</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># Add a marker at the point</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">y_pos</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">y_pos</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 
     <span class="c1"># Add annotation text with an offset above the RAW line</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
                  <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">y_pos</span><span class="p">),</span>
                  <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">y_pos</span> <span class="o">+</span> <span class="mf">0.15</span><span class="p">),</span> <span class="c1"># Increased offset above RAW line</span>
-                 <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span>
-                 <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s1">&#39;-&gt;&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.7</span><span class="p">),</span>
-                 <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+                 <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">,</span>
+                 <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s1">'-&gt;'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.7</span><span class="p">),</span>
+                 <span class="n">ha</span><span class="o">=</span><span class="s1">'center'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Entropy vs. Rank&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;raw_entropy_annotated.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Entropy vs. Rank'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'raw_entropy_annotated.png'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1108,7 +1108,7 @@ WARNING: dendrogram data not found (using key=dendrogram_celltype_semi_manual). 
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cellmarker</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/data_nfs/og86asub/netmap/netmap-evaluation/data/markers/Cell_marker_Seq.csv&#39;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cellmarker</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'/data_nfs/og86asub/netmap/netmap-evaluation/data/markers/Cell_marker_Seq.csv'</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1116,7 +1116,7 @@ WARNING: dendrogram data not found (using key=dendrogram_celltype_semi_manual). 
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metamarker</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/data_nfs/og86asub/netmap/netmap-evaluation/data/markers/metamarkers.tsv&#39;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metamarker</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'/data_nfs/og86asub/netmap/netmap-evaluation/data/markers/metamarkers.tsv'</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span><span class="s1">','</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1871,19 +1871,19 @@ WARNING: dendrogram data not found (using key=dendrogram_celltype_semi_manual). 
     <span class="k">return</span> <span class="n">intersection</span> <span class="o">/</span> <span class="n">union</span> <span class="k">if</span> <span class="n">union</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
 
 
-<span class="n">ct</span> <span class="o">=</span> <span class="s1">&#39;cd8_tcells&#39;</span>
+<span class="n">ct</span> <span class="o">=</span> <span class="s1">'cd8_tcells'</span>
 <span class="n">jacc_dfs</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">grn_adata3</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">leiden_remap</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span>
-    <span class="n">bcrank</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span> <span class="n">ct</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;wilcoxon&#39;</span><span class="p">)</span>
-    <span class="n">bcrank</span><span class="p">[[</span><span class="s1">&#39;celltype&#39;</span><span class="p">,</span> <span class="s1">&#39;gene&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">bcrank</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">bcrank</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span> <span class="n">ct</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">'wilcoxon'</span><span class="p">)</span>
+    <span class="n">bcrank</span><span class="p">[[</span><span class="s1">'celltype'</span><span class="p">,</span> <span class="s1">'gene'</span><span class="p">]]</span> <span class="o">=</span> <span class="n">bcrank</span><span class="p">[</span><span class="s1">'names'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">topg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bcrank</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">gene</span><span class="p">)</span>
 
     <span class="c1">#cm = metamarker</span>
-    <span class="c1">#marker_sets = cm.groupby(&#39;celltype&#39;)[&#39;gene&#39;].apply(set).to_dict()</span>
+    <span class="c1">#marker_sets = cm.groupby('celltype')['gene'].apply(set).to_dict()</span>
 
-    <span class="n">cm</span> <span class="o">=</span> <span class="n">cellmarker</span><span class="p">[(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">tissue_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Peripheral blood&#39;</span><span class="p">,</span> <span class="s1">&#39;Blood&#39;</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">species</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Human&#39;</span><span class="p">]))]</span>
-    <span class="n">marker_sets</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;cell_name&#39;</span><span class="p">)[</span><span class="s1">&#39;marker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">cellmarker</span><span class="p">[(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">tissue_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">'Peripheral blood'</span><span class="p">,</span> <span class="s1">'Blood'</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">species</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">'Human'</span><span class="p">]))]</span>
+    <span class="n">marker_sets</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'cell_name'</span><span class="p">)[</span><span class="s1">'marker'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
     <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">marker_sets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
 
@@ -1896,7 +1896,7 @@ WARNING: dendrogram data not found (using key=dendrogram_celltype_semi_manual). 
         <span class="n">jac</span> <span class="o">=</span> <span class="n">jaccard_similarity</span><span class="p">(</span><span class="n">topg</span><span class="p">,</span> <span class="n">marker_sets</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
         <span class="n">sim_liste</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">jac</span>
 
-    <span class="n">sim_liste</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;celltype&#39;</span><span class="p">:</span> <span class="n">sim_liste</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="s1">&#39;jaccard&#39;</span><span class="p">:</span> <span class="n">sim_liste</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="s1">&#39;ct&#39;</span><span class="p">:</span><span class="n">ct</span><span class="p">})</span>
+    <span class="n">sim_liste</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'celltype'</span><span class="p">:</span> <span class="n">sim_liste</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="s1">'jaccard'</span><span class="p">:</span> <span class="n">sim_liste</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="s1">'ct'</span><span class="p">:</span><span class="n">ct</span><span class="p">})</span>
     <span class="n">jacc_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sim_liste</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2142,7 +2142,7 @@ cd8_tcells
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">matrix</span> <span class="o">=</span> <span class="n">jaccards</span><span class="p">[</span><span class="n">jaccards</span><span class="o">.</span><span class="n">jaccard</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;celltype&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;ct&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;jaccard&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">matrix</span> <span class="o">=</span> <span class="n">jaccards</span><span class="p">[</span><span class="n">jaccards</span><span class="o">.</span><span class="n">jaccard</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'celltype'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'ct'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'jaccard'</span><span class="p">)</span>
 
 <span class="c1"># 2. Fill NaNs (if only half the matrix is provided) and ensure symmetry</span>
 <span class="n">matrix</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -2151,8 +2151,8 @@ cd8_tcells
 
 <span class="c1"># 3. Create the heatmap</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">clustermap</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;YlGnBu&#39;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;.2f&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Cell Type Jaccard Similarity&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">clustermap</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'YlGnBu'</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">".2f"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Cell Type Jaccard Similarity'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -2176,7 +2176,7 @@ cd8_tcells
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">jaccards</span><span class="p">[</span><span class="n">jaccards</span><span class="o">.</span><span class="n">ct</span> <span class="o">==</span> <span class="s1">&#39;b_cells&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;celltype&#39;</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">jaccards</span><span class="p">[</span><span class="n">jaccards</span><span class="o">.</span><span class="n">ct</span> <span class="o">==</span> <span class="s1">'b_cells'</span><span class="p">]</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">'celltype'</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -2202,22 +2202,22 @@ cd8_tcells
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.cluster.hierarchy</span><span class="w"> </span><span class="kn">import</span> <span class="n">fcluster</span>
 
 <span class="c1"># 1. Extract the 2 top-level clusters</span>
-<span class="c1"># &#39;t=2&#39; specifies the number of clusters</span>
-<span class="c1"># &#39;criterion=&#39;maxclust&#39;&#39; ensures we get exactly 2 groups</span>
-<span class="n">cluster_labels</span> <span class="o">=</span> <span class="n">fcluster</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;maxclust&#39;</span><span class="p">)</span>
+<span class="c1"># 't=2' specifies the number of clusters</span>
+<span class="c1"># 'criterion='maxclust'' ensures we get exactly 2 groups</span>
+<span class="n">cluster_labels</span> <span class="o">=</span> <span class="n">fcluster</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">'maxclust'</span><span class="p">)</span>
 
 <span class="c1"># 2. Map labels back to cell names</span>
 <span class="n">cluster_mapping</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s1">&#39;cell_name&#39;</span><span class="p">:</span> <span class="n">names</span><span class="p">,</span>
-    <span class="s1">&#39;cluster_id&#39;</span><span class="p">:</span> <span class="n">cluster_labels</span>
+    <span class="s1">'cell_name'</span><span class="p">:</span> <span class="n">names</span><span class="p">,</span>
+    <span class="s1">'cluster_id'</span><span class="p">:</span> <span class="n">cluster_labels</span>
 <span class="p">})</span>
 
 <span class="c1"># 3. View the groups</span>
-<span class="n">group_1</span> <span class="o">=</span> <span class="n">cluster_mapping</span><span class="p">[</span><span class="n">cluster_mapping</span><span class="p">[</span><span class="s1">&#39;cluster_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;cell_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="n">group_2</span> <span class="o">=</span> <span class="n">cluster_mapping</span><span class="p">[</span><span class="n">cluster_mapping</span><span class="p">[</span><span class="s1">&#39;cluster_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">][</span><span class="s1">&#39;cell_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">group_1</span> <span class="o">=</span> <span class="n">cluster_mapping</span><span class="p">[</span><span class="n">cluster_mapping</span><span class="p">[</span><span class="s1">'cluster_id'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span><span class="s1">'cell_name'</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">group_2</span> <span class="o">=</span> <span class="n">cluster_mapping</span><span class="p">[</span><span class="n">cluster_mapping</span><span class="p">[</span><span class="s1">'cluster_id'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">][</span><span class="s1">'cell_name'</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Group 1: </span><span class="si">{</span><span class="n">group_1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Group 2: </span><span class="si">{</span><span class="n">group_2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Group 1: </span><span class="si">{</span><span class="n">group_1</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Group 2: </span><span class="si">{</span><span class="n">group_2</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2299,9 +2299,9 @@ cd8_tcells
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.formula.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">quantreg</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">hierarchy</span>
 
-<span class="n">clusters</span> <span class="o">=</span> <span class="n">hierarchy</span><span class="o">.</span><span class="n">fcluster</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;distance&#39;</span><span class="p">)</span>
-<span class="n">dfclu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;index&#39;</span><span class="p">:</span><span class="n">names</span><span class="p">,</span> <span class="s1">&#39;cluster&#39;</span> <span class="p">:</span> <span class="n">clusters</span><span class="p">})</span>
-<span class="n">dfclu</span> <span class="o">=</span> <span class="n">dfclu</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+<span class="n">clusters</span> <span class="o">=</span> <span class="n">hierarchy</span><span class="o">.</span><span class="n">fcluster</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">'distance'</span><span class="p">)</span>
+<span class="n">dfclu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'index'</span><span class="p">:</span><span class="n">names</span><span class="p">,</span> <span class="s1">'cluster'</span> <span class="p">:</span> <span class="n">clusters</span><span class="p">})</span>
+<span class="n">dfclu</span> <span class="o">=</span> <span class="n">dfclu</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'index'</span><span class="p">)</span>
 <br/></pre></div>
 </div>
 </div>
@@ -2370,8 +2370,8 @@ cd8_tcells
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Prepare Data &amp; Compute Jaccard Index</span>
 <span class="c1"># Grouping markers into sets per cell type</span>
-<span class="n">cm</span> <span class="o">=</span> <span class="n">cellmarker</span><span class="p">[(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">tissue_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Peripheral blood&#39;</span><span class="p">,</span> <span class="s1">&#39;Blood&#39;</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">species</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Human&#39;</span><span class="p">]))]</span>
-<span class="n">marker_sets</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;cell_name&#39;</span><span class="p">)[</span><span class="s1">&#39;marker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="n">cm</span> <span class="o">=</span> <span class="n">cellmarker</span><span class="p">[(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">tissue_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">'Peripheral blood'</span><span class="p">,</span> <span class="s1">'Blood'</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">species</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">'Human'</span><span class="p">]))]</span>
+<span class="n">marker_sets</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'cell_name'</span><span class="p">)[</span><span class="s1">'marker'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">marker_sets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
 <span class="n">topg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bcrank</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">gene</span><span class="p">)</span>
@@ -2704,8 +2704,8 @@ T helper 1(Th1) cell
 
 <span class="c1"># 1. Prepare Data &amp; Compute Jaccard Index</span>
 <span class="c1"># Grouping markers into sets per cell type</span>
-<span class="n">cm</span> <span class="o">=</span> <span class="n">cellmarker</span><span class="p">[(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">tissue_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Peripheral blood&#39;</span><span class="p">,</span> <span class="s1">&#39;Blood&#39;</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">species</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Human&#39;</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">cell_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">group_2</span><span class="p">))]</span>
-<span class="n">marker_sets</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;cell_name&#39;</span><span class="p">)[</span><span class="s1">&#39;marker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="n">cm</span> <span class="o">=</span> <span class="n">cellmarker</span><span class="p">[(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">tissue_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">'Peripheral blood'</span><span class="p">,</span> <span class="s1">'Blood'</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">species</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">'Human'</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cellmarker</span><span class="o">.</span><span class="n">cell_name</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">group_2</span><span class="p">))]</span>
+<span class="n">marker_sets</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'cell_name'</span><span class="p">)[</span><span class="s1">'marker'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">marker_sets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">jaccard_similarity</span><span class="p">(</span><span class="n">set1</span><span class="p">,</span> <span class="n">set2</span><span class="p">):</span>
@@ -2723,22 +2723,22 @@ T helper 1(Th1) cell
 <span class="c1"># 2. Compute Clustering</span>
 <span class="c1"># Convert similarity to distance: Distance = 1 - Similarity</span>
 <span class="n">dist_matrix</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sim_matrix</span>
-<span class="c1"># Ensure it&#39;s a condensed distance matrix for scipy</span>
+<span class="c1"># Ensure it's a condensed distance matrix for scipy</span>
 <span class="n">condensed_dist</span> <span class="o">=</span> <span class="n">pdist</span><span class="p">(</span><span class="n">dist_matrix</span><span class="p">)</span> <span class="c1"># or use squareform if matrix is already distance-based</span>
-<span class="n">Z</span> <span class="o">=</span> <span class="n">linkage</span><span class="p">(</span><span class="n">squareform</span><span class="p">(</span><span class="n">dist_matrix</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ward&#39;</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">linkage</span><span class="p">(</span><span class="n">squareform</span><span class="p">(</span><span class="n">dist_matrix</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s1">'ward'</span><span class="p">)</span>
 
 <span class="c1"># 3. Show Heatmap with Dendrogram</span>
 <span class="n">df_sim</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sim_matrix</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
 <span class="c1"># Set aesthetic parameters for better readability</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="n">font_scale</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">,</span> <span class="n">font_scale</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
 
 <span class="c1"># Create the clustermap</span>
 <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">clustermap</span><span class="p">(</span>
     <span class="n">df_sim</span><span class="p">,</span>
     <span class="n">row_linkage</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
     <span class="n">col_linkage</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
-    <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'viridis'</span><span class="p">,</span>
     <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span> <span class="p">,</span><span class="mi">20</span><span class="p">),</span>      <span class="c1"># Increased size for better spacing</span>
     <span class="n">xticklabels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>      <span class="c1"># Ensure all labels are shown</span>
     <span class="n">yticklabels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -2747,7 +2747,7 @@ T helper 1(Th1) cell
 <span class="p">)</span>
 
 <span class="c1"># Rotate labels to prevent overlapping</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">ax_heatmap</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">ax_heatmap</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">ha</span><span class="o">=</span><span class="s1">'right'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">ax_heatmap</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -2765,7 +2765,7 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">keep_edges</span><span class="p">[</span><span class="s1">&#39;unique&#39;</span><span class="p">][</span><span class="s1">&#39;DC&#39;</span><span class="p">][</span><span class="s1">&#39;summary&#39;</span><span class="p">][</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">keep_edges</span><span class="p">[</span><span class="s1">'unique'</span><span class="p">][</span><span class="s1">'DC'</span><span class="p">][</span><span class="s1">'summary'</span><span class="p">][</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -3054,10 +3054,10 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">re</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="s1">&#39;unique&#39;</span><span class="p">][</span><span class="s1">&#39;cd14+_monocytes&#39;</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span>
-<span class="n">gene</span> <span class="o">=</span> <span class="s1">&#39;RBP7&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">re</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="s1">'unique'</span><span class="p">][</span><span class="s1">'cd14+_monocytes'</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span>
+<span class="n">gene</span> <span class="o">=</span> <span class="s1">'RBP7'</span>
 <span class="n">re_sub</span> <span class="o">=</span> <span class="n">re</span><span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">gene</span><span class="p">]</span>
-<span class="n">edges</span> <span class="o">=</span> <span class="n">re_sub</span><span class="o">.</span><span class="n">source</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">re_sub</span><span class="o">.</span><span class="n">target</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="n">re_sub</span><span class="o">.</span><span class="n">source</span> <span class="o">+</span> <span class="s1">'_'</span> <span class="o">+</span> <span class="n">re_sub</span><span class="o">.</span><span class="n">target</span>
 </pre></div>
 </div>
 </div>
@@ -3065,10 +3065,10 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">re</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="s1">&#39;unique&#39;</span><span class="p">][</span><span class="s1">&#39;cd4+_tcells&#39;</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span>
-<span class="n">gene</span> <span class="o">=</span> <span class="s1">&#39;RPS19&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">re</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="s1">'unique'</span><span class="p">][</span><span class="s1">'cd4+_tcells'</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span>
+<span class="n">gene</span> <span class="o">=</span> <span class="s1">'RPS19'</span>
 <span class="n">re_sub</span> <span class="o">=</span> <span class="n">re</span><span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">gene</span><span class="p">]</span>
-<span class="n">edges</span> <span class="o">=</span> <span class="n">re_sub</span><span class="o">.</span><span class="n">source</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">re_sub</span><span class="o">.</span><span class="n">target</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="n">re_sub</span><span class="o">.</span><span class="n">source</span> <span class="o">+</span> <span class="s1">'_'</span> <span class="o">+</span> <span class="n">re_sub</span><span class="o">.</span><span class="n">target</span>
 </pre></div>
 </div>
 </div>
@@ -3076,9 +3076,9 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#grn_adata3.layers[&#39;masked_data&#39;] = np.multiply(grn_adata3.layers[&#39;mask&#39;], grn_adata3.X)</span>
-<span class="n">grn_adata3</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;umap_GEX&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adata_raw</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;X_umap&#39;</span><span class="p">]</span>
-<span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="s1">&#39;celltype_semi_manual&#39;</span><span class="p">],</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;umap_GEX&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#grn_adata3.layers['masked_data'] = np.multiply(grn_adata3.layers['mask'], grn_adata3.X)</span>
+<span class="n">grn_adata3</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">'umap_GEX'</span><span class="p">]</span> <span class="o">=</span> <span class="n">adata_raw</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">'X_umap'</span><span class="p">]</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="s1">'celltype_semi_manual'</span><span class="p">],</span> <span class="n">basis</span><span class="o">=</span><span class="s1">'umap_GEX'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3172,7 +3172,7 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">matrixplot</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">,</span>  <span class="nb">list</span><span class="p">(</span><span class="n">edges</span><span class="p">),</span> <span class="n">groupby</span><span class="o">=</span><span class="s1">&#39;leiden_remap&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">matrixplot</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">,</span>  <span class="nb">list</span><span class="p">(</span><span class="n">edges</span><span class="p">),</span> <span class="n">groupby</span><span class="o">=</span><span class="s1">'leiden_remap'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3187,7 +3187,7 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">matrixplot</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">re_sub</span><span class="o">.</span><span class="n">target</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="n">gene</span><span class="p">],</span> <span class="n">groupby</span><span class="o">=</span><span class="s1">&#39;celltype_semi_manual&#39;</span> <span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">matrixplot</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">re_sub</span><span class="o">.</span><span class="n">target</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="n">gene</span><span class="p">],</span> <span class="n">groupby</span><span class="o">=</span><span class="s1">'celltype_semi_manual'</span> <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3202,8 +3202,8 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dff</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="s1">&#39;cd14+_monocytes&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;wilcoxon&#39;</span><span class="p">)</span>
-<span class="n">dff</span><span class="p">[</span><span class="n">dff</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;RPS&quot;</span><span class="p">,</span> <span class="s2">&quot;RPL&quot;</span><span class="p">))]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dff</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span><span class="n">adata_raw</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="s1">'cd14+_monocytes'</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">'wilcoxon'</span><span class="p">)</span>
+<span class="n">dff</span><span class="p">[</span><span class="n">dff</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"RPS"</span><span class="p">,</span> <span class="s2">"RPL"</span><span class="p">))]</span>
 </pre></div>
 </div>
 </div>
@@ -3356,8 +3356,8 @@ T helper 1(Th1) cell
 <span class="c1">#   the source regulator and its top downstream targets, allowing</span>
 <span class="c1">#   inspection of connectivity, target density, and regulatory structure.</span>
 
-<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/data_nfs/og86asub/netmap/netmap-evaluation/results/case_studies/networks&#39;</span><span class="p">)</span>
-<span class="n">plot_reg</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">,</span> <span class="n">regulon</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;RASA2&quot;</span><span class="p">],</span> <span class="n">out_path</span><span class="o">=</span><span class="s1">&#39;/data_nfs/og86asub/netmap/netmap-evaluation/results/case_studies/&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">'/data_nfs/og86asub/netmap/netmap-evaluation/results/case_studies/networks'</span><span class="p">)</span>
+<span class="n">plot_reg</span><span class="p">(</span><span class="n">grn_adata3</span><span class="p">,</span> <span class="n">regulon</span><span class="o">=</span><span class="p">[</span><span class="s2">"RASA2"</span><span class="p">],</span> <span class="n">out_path</span><span class="o">=</span><span class="s1">'/data_nfs/og86asub/netmap/netmap-evaluation/results/case_studies/'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3394,7 +3394,7 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panaglao</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/data_nfs/og86asub/netmap/netmap-evaluation/data/markers/panglaodb_human.csv&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panaglao</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'/data_nfs/og86asub/netmap/netmap-evaluation/data/markers/panglaodb_human.csv'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3402,7 +3402,7 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panaglao</span><span class="p">[</span><span class="n">panaglao</span><span class="p">[</span><span class="s1">&#39;Official gene symbol&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;RBP7&#39;</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panaglao</span><span class="p">[</span><span class="n">panaglao</span><span class="p">[</span><span class="s1">'Official gene symbol'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'RBP7'</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -3452,7 +3452,7 @@ T helper 1(Th1) cell
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panaglao</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">panaglao</span><span class="p">[</span><span class="s1">&#39;Product description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;mitochon&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panaglao</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">panaglao</span><span class="p">[</span><span class="s1">'Product description'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'mitochon'</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>

@@ -414,7 +414,7 @@ import numpy as np
 </pre></div>
 </div>
 <div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>## Load adata (prefiltered by cellrange/rhapsody)
-adata = sc.read_10x_mtx(&#39;netmap/data/blood/rhapsody/rhapsody_out/&#39;)
+adata = sc.read_10x_mtx('netmap/data/blood/rhapsody/rhapsody_out/')
 <br/></pre></div>
 </div>
 </div>
@@ -519,9 +519,9 @@ adata = sc.read_10x_mtx(&#39;netmap/data/blood/rhapsody/rhapsody_out/&#39;)
 </pre></div>
 </div>
 <div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>#adata.var = adata.var.reset_index()
-#adata.var = adata.var.set_index(&quot;gene_symbol&quot;)
+#adata.var = adata.var.set_index("gene_symbol")
 #data.var.index = adata.var.index.astype(str)
-#adata.var = adata.var.set_index(&#39;index&#39;)
+#adata.var = adata.var.set_index('index')
 adata.var_names_make_unique()
 </pre></div>
 </div>
@@ -552,14 +552,14 @@ Index([&#39;A1BG&#39;, &#39;A1BG-AS1&#39;, &#39;A1CF&#39;, &#39;A2M&#39;, &#39;A
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><br/><span></span># mitochondrial genes, &quot;MT-&quot; for human, &quot;Mt-&quot; for mouse
-adata.var[&quot;mt&quot;] = adata.var_names.str.startswith(&quot;MT-&quot;)
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><br/><span></span># mitochondrial genes, "MT-" for human, "Mt-" for mouse
+adata.var["mt"] = adata.var_names.str.startswith("MT-")
 # ribosomal genes
-adata.var[&quot;ribo&quot;] = adata.var_names.str.startswith((&quot;RPS&quot;, &quot;RPL&quot;))
+adata.var["ribo"] = adata.var_names.str.startswith(("RPS", "RPL"))
 # hemoglobin genes
-adata.var[&quot;hb&quot;] = adata.var_names.str.contains(&quot;^HB[^(P)]&quot;)
+adata.var["hb"] = adata.var_names.str.contains("^HB[^(P)]")
 
-sc.pp.calculate_qc_metrics(adata, qc_vars=[&quot;mt&quot;, &quot;ribo&quot;, &quot;hb&quot;], inplace=True, log1p=True)
+sc.pp.calculate_qc_metrics(adata, qc_vars=["mt", "ribo", "hb"], inplace=True, log1p=True)
 </pre></div>
 </div>
 </div>
@@ -569,7 +569,7 @@ sc.pp.calculate_qc_metrics(adata, qc_vars=[&quot;mt&quot;, &quot;ribo&quot;, &qu
 </div>
 <div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>sc.pl.violin(
     adata,
-    [&quot;n_genes_by_counts&quot;, &quot;total_counts&quot;, &quot;pct_counts_mt&quot;],
+    ["n_genes_by_counts", "total_counts", "pct_counts_mt"],
     jitter=0.4,
     multi_panel=True,
 )
@@ -595,7 +595,7 @@ sc.pp.calculate_qc_metrics(adata, qc_vars=[&quot;mt&quot;, &quot;ribo&quot;, &qu
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>sc.pl.scatter(adata, &quot;total_counts&quot;, &quot;n_genes_by_counts&quot;, color=&quot;pct_counts_mt&quot;)
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>sc.pl.scatter(adata, "total_counts", "n_genes_by_counts", color="pct_counts_mt")
 </pre></div>
 </div>
 </div>
@@ -637,7 +637,7 @@ adata = adata[adata.obs.pct_counts_mt&lt;20]
 </pre></div>
 </div>
 <div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span># Saving count data
-adata.layers[&quot;counts&quot;] = adata.X.copy()
+adata.layers["counts"] = adata.X.copy()
 </pre></div>
 </div>
 </div>
@@ -647,7 +647,7 @@ adata.layers[&quot;counts&quot;] = adata.X.copy()
 </div>
 <div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span># Normalizing to median total counts
 sc.pp.normalize_total(adata, target_sum = 10000)
-adata.layers[&#39;count_norm&#39;] = adata.X.copy()
+adata.layers['count_norm'] = adata.X.copy()
 # Logarithmize the data
 sc.pp.log1p(adata)
 </pre></div>
@@ -657,9 +657,9 @@ sc.pp.log1p(adata)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>models.download_models(model = &#39;Immune_All_Low.pkl&#39;, force_update = True)
-model = models.Model.load(model = &#39;Immune_All_High.pkl&#39;)
-predictions = celltypist.annotate(adata, model = &#39;Immune_All_High.pkl&#39;, majority_voting = True)
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>models.download_models(model = 'Immune_All_Low.pkl', force_update = True)
+model = models.Model.load(model = 'Immune_All_High.pkl')
+predictions = celltypist.annotate(adata, model = 'Immune_All_High.pkl', majority_voting = True)
 </pre></div>
 </div>
 </div>
@@ -716,8 +716,8 @@ Name: count, dtype: int64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>model = models.Model.load(model = &#39;Immune_All_Low.pkl&#39;)
-predictions = celltypist.annotate(adata, model = &#39;Immune_All_Low.pkl&#39;, majority_voting = True)
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>model = models.Model.load(model = 'Immune_All_Low.pkl')
+predictions = celltypist.annotate(adata, model = 'Immune_All_Low.pkl', majority_voting = True)
 </pre></div>
 </div>
 </div>
@@ -742,7 +742,7 @@ predictions = celltypist.annotate(adata, model = &#39;Immune_All_Low.pkl&#39;, m
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>adata.obs[&#39;granular&#39;]= predictions.predicted_labels[&#39;predicted_labels&#39;]
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>adata.obs['granular']= predictions.predicted_labels['predicted_labels']
 </pre></div>
 </div>
 </div>
@@ -784,7 +784,7 @@ sc.tl.leiden(adata)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>sc.pl.umap(adata, color = [ &#39;predicted_labels&#39;, &#39;majority_voting&#39;, &#39;CD8A&#39;,&#39;leiden&#39;, &#39;CD4&#39;, &#39;granular&#39;, &#39;CD14&#39;, &#39;CD3E&#39;, &#39;CD8A&#39;])
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>sc.pl.umap(adata, color = [ 'predicted_labels', 'majority_voting', 'CD8A','leiden', 'CD4', 'granular', 'CD14', 'CD3E', 'CD8A'])
 </pre></div>
 </div>
 </div>
@@ -800,16 +800,16 @@ sc.tl.leiden(adata)
 </pre></div>
 </div>
 <div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>celltype_mapping_2 = {
-    &#39;0&#39;: &#39;cd14+_monocytes&#39;,
-    &#39;1&#39;: &#39;cd14+_monocytes&#39;,
-    &#39;2&#39;: &#39;cd14-_monocytes&#39;,
-    &#39;3&#39;: &#39;cd4+_tcells&#39;,
-    &#39;4&#39;:  &#39;nk_cells&#39;,
-    &#39;5&#39;:  &#39;cd8_tcells&#39;,
-    &#39;6&#39;: &#39;DC&#39;,
-    &#39;7&#39;: &#39;cd14+_monocytes&#39;,
-    &#39;8&#39;: &#39;pDC&#39;,
-    &#39;9&#39;: &#39;b_cells&#39;}
+    '0': 'cd14+_monocytes',
+    '1': 'cd14+_monocytes',
+    '2': 'cd14-_monocytes',
+    '3': 'cd4+_tcells',
+    '4':  'nk_cells',
+    '5':  'cd8_tcells',
+    '6': 'DC',
+    '7': 'cd14+_monocytes',
+    '8': 'pDC',
+    '9': 'b_cells'}
 </pre></div>
 </div>
 </div>
@@ -817,7 +817,7 @@ sc.tl.leiden(adata)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>adata.obs[&#39;celltype_semi_manual&#39;] = [celltype_mapping_2[c] for c in adata.obs[&#39;leiden&#39;]]
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>adata.obs['celltype_semi_manual'] = [celltype_mapping_2[c] for c in adata.obs['leiden']]
 </pre></div>
 </div>
 </div>
@@ -833,7 +833,7 @@ sc.tl.leiden(adata)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>sc.pl.umap(adata, color = [ &#39;predicted_labels&#39;, &#39;majority_voting&#39;, &#39;celltype_semi_manual&#39;], legend_loc = &#39;on data&#39;)
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>sc.pl.umap(adata, color = [ 'predicted_labels', 'majority_voting', 'celltype_semi_manual'], legend_loc = 'on data')
 </pre></div>
 </div>
 </div>
@@ -874,7 +874,7 @@ adata.X[adata.X == -np.inf] = 0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
 </pre></div>
 </div>
-<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>adata = adata[adata.obs.celltype_semi_manual != &#39;megakaryocytes&#39;].copy()
+<div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>adata = adata[adata.obs.celltype_semi_manual != 'megakaryocytes'].copy()
 </pre></div>
 </div>
 </div>
@@ -884,8 +884,8 @@ adata.X[adata.X == -np.inf] = 0
 </div>
 <div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span>import pandas as pd
 ## Use file in github resource folder
-pangalao = pd.read_csv(&#39;panglaodb_human.csv&#39;)
-high_ui = pangalao[pangalao[&#39;UI&#39;]&gt;0.1][&#39;Official gene symbol&#39;].values
+pangalao = pd.read_csv('panglaodb_human.csv')
+high_ui = pangalao[pangalao['UI']&gt;0.1]['Official gene symbol'].values
 adata = adata[:, ~adata.var.index.isin(high_ui)].copy()
 </pre></div>
 </div>
@@ -895,7 +895,7 @@ adata = adata[:, ~adata.var.index.isin(high_ui)].copy()
 </pre></div>
 </div>
 <div class="input_area highlight-none notranslate"><div class="highlight"><pre><span></span># Save data set for furter processing
-adata.write_h5ad(&#39;netmap/data/blood/reprocessed/bd-rhap-rep1.h5ad&#39;)
+adata.write_h5ad('netmap/data/blood/reprocessed/bd-rhap-rep1.h5ad')
 </pre></div>
 </div>
 </div>

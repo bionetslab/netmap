@@ -373,7 +373,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.utils.tf_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utilities for loading and indexing transcription factor lists against AnnData gene sets.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Utilities for loading and indexing transcription factor lists against AnnData gene sets."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">anndata</span>
@@ -383,18 +383,18 @@
 <div class="viewcode-block" id="load_tf_names">
 <a class="viewcode-back" href="../../../generated/netmap.utils.tf_utils.load_tf_names.html#netmap.utils.tf_utils.load_tf_names">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_tf_names</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a transcription factor file with one single column of transcription factors.</span>
+<span class="w">    </span><span class="sd">"""Load a transcription factor file with one single column of transcription factors.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path: Full path to the transcription factor file.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list of str: Transcription factor names.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tfs_genes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tfs&quot;</span><span class="p">])</span>
-    <span class="c1"># tfs_genes = pd.read_csv(&quot;../allTFs_mm.txt&quot;, names=[&quot;tfs&quot;])</span>
+<span class="sd">    """</span>
+    <span class="n">tfs_genes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">"tfs"</span><span class="p">])</span>
+    <span class="c1"># tfs_genes = pd.read_csv("../allTFs_mm.txt", names=["tfs"])</span>
 
-    <span class="n">tfs_genes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tfs_genes</span><span class="p">[</span><span class="s2">&quot;tfs&quot;</span><span class="p">])</span>
+    <span class="n">tfs_genes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tfs_genes</span><span class="p">[</span><span class="s2">"tfs"</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">tfs_genes</span></div>
 
 
@@ -402,7 +402,7 @@
 <div class="viewcode-block" id="filter_tf_names">
 <a class="viewcode-back" href="../../../generated/netmap.utils.tf_utils.filter_tf_names.html#netmap.utils.tf_utils.filter_tf_names">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">filter_tf_names</span><span class="p">(</span><span class="n">tf_genes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">adata</span><span class="p">:</span> <span class="n">anndata</span><span class="o">.</span><span class="n">AnnData</span><span class="p">,</span> <span class="n">tfs_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter the transcription factor list using an AnnData object.</span>
+<span class="w">    </span><span class="sd">"""Filter the transcription factor list using an AnnData object.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tf_genes (list of str): List of transcription factor names.</span>
@@ -416,20 +416,20 @@
 <span class="sd">        tuple: ``(tfs_indexes, tf_genes)`` where ``tfs_indexes`` is a list of</span>
 <span class="sd">            integer positions in ``adata.var`` and ``tf_genes`` is the filtered</span>
 <span class="sd">            set of TF names.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tf_genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">tf_genes</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="p">)]</span>
     <span class="n">tf_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">tf_genes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">tfs_only</span><span class="p">:</span>
         <span class="n">tfs_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">tf_genes</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of  TFs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"number of  TFs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No gene and TF overlap&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No gene and TF overlap"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not usig TFs only aka GRN mode.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Not usig TFs only aka GRN mode."</span><span class="p">)</span>
         <span class="n">tfs_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="p">))]</span>
         <span class="n">tf_genes</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of  genes used as TFs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"number of  genes used as TFs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tfs_indexes</span><span class="p">,</span> <span class="n">tf_genes</span></div>
 
 
@@ -437,7 +437,7 @@
 <div class="viewcode-block" id="get_tf_index">
 <a class="viewcode-back" href="../../../generated/netmap.utils.tf_utils.get_tf_index.html#netmap.utils.tf_utils.get_tf_index">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_tf_index</span><span class="p">(</span><span class="n">tf_genes</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">tfs_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the indices and names of transcription factors within a gene list.</span>
+<span class="w">    </span><span class="sd">"""Return the indices and names of transcription factors within a gene list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tf_genes (list of str): List of transcription factor names.</span>
@@ -450,21 +450,21 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: ``(tfs_indexes, tf_names)`` — integer indices and corresponding</span>
 <span class="sd">            gene name list.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tf_genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">tf_genes</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)]</span>
     <span class="n">tf_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">tf_genes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">gene_names</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">tfs_only</span><span class="p">:</span>
         <span class="n">tfs_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">gene_names</span><span class="p">))</span> <span class="k">if</span> <span class="n">gene_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">tf_genes</span><span class="p">]</span>
         <span class="n">tf_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">tf_genes</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of  TFs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"number of  TFs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No gene and TF overlap&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No gene and TF overlap"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not usig TFs only aka GRN mode.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Not usig TFs only aka GRN mode."</span><span class="p">)</span>
         <span class="n">tfs_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">gene_names</span><span class="p">))]</span>
         <span class="n">tf_names</span> <span class="o">=</span> <span class="n">gene_names</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of  genes used as TFs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"number of  genes used as TFs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tfs_indexes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tfs_indexes</span><span class="p">,</span> <span class="n">tf_names</span></div>
 
 </pre></div>

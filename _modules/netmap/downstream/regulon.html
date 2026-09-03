@@ -373,13 +373,13 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.downstream.regulon</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Regulon selection and signed regulon construction from GRN attribution data.</span>
+<span></span><span class="sd">"""Regulon selection and signed regulon construction from GRN attribution data.</span>
 
 <span class="sd">:func:`select_top_edges` and :func:`select_top_edges_signed` select high-confidence</span>
 <span class="sd">edges per source TF per cluster, filtered by neighbourhood co-expression support.</span>
 <span class="sd">The signed variant uses cluster-wise Spearman correlation to split edges into</span>
 <span class="sd">positive and negative regulons.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -413,19 +413,19 @@
 
 <div class="viewcode-block" id="select_top_edges">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.select_top_edges.html#netmap.downstream.regulon.select_top_edges">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">select_top_edges</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="p">,</span> <span class="n">adata</span><span class="p">,</span> <span class="n">top_per_source</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">col_cluster</span><span class="o">=</span><span class="s1">&#39;leiden_remap&#39;</span><span class="p">,</span> <span class="n">min_reg_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tf_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_edge_support</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select the top-attribution edges per source TF per cluster.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_top_edges</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="p">,</span> <span class="n">adata</span><span class="p">,</span> <span class="n">top_per_source</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">col_cluster</span><span class="o">=</span><span class="s1">'leiden_remap'</span><span class="p">,</span> <span class="n">min_reg_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tf_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_edge_support</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Select the top-attribution edges per source TF per cluster.</span>
 
 <span class="sd">    For each cluster, computes per-cell mean attribution across cluster cells for each</span>
-<span class="sd">    source gene&#39;s edges, filters by ``min_edge_support`` from the mask layer, and keeps</span>
+<span class="sd">    source gene's edges, filters by ``min_edge_support`` from the mask layer, and keeps</span>
 <span class="sd">    the top ``top_per_source`` edges per source. Returns the processed edge dict.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        gene_inter_adata (anndata.AnnData): GRN AnnData with ``X`` (attributions),</span>
-<span class="sd">            ``layers[&#39;mask&#39;]``, and cluster labels in ``obs``.</span>
+<span class="sd">            ``layers['mask']``, and cluster labels in ``obs``.</span>
 <span class="sd">        adata (anndata.AnnData): Expression AnnData (currently unused, reserved).</span>
 <span class="sd">        top_per_source (int): Max edges per source TF per cluster. Defaults to 10.</span>
-<span class="sd">        col_cluster (str): Cluster column in ``obs``. Defaults to ``&#39;leiden_remap&#39;``.</span>
+<span class="sd">        col_cluster (str): Cluster column in ``obs``. Defaults to ``'leiden_remap'``.</span>
 <span class="sd">        min_reg_size (int): Minimum edges required to keep a regulon. Defaults to 10.</span>
 <span class="sd">        verbose (bool): Print progress. Defaults to ``True``.</span>
 <span class="sd">        return_copy (bool): Unused, reserved. Defaults to ``False``.</span>
@@ -434,37 +434,37 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Nested result from :func:`process_cell_edges`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">clusters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_cluster</span><span class="p">]))</span>
     <span class="n">keep_edges_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
         <span class="n">Keep_edges</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># Now will store tuples: (edge_name, sum_val)</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selecting targets for cluster: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Selecting targets for cluster: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">cells_c</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_cluster</span><span class="p">]</span> <span class="o">==</span> <span class="n">c</span>
-        <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;edge_support_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">][</span><span class="n">cells_c</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'edge_support_c'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'mask'</span><span class="p">][</span><span class="n">cells_c</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">tf_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">tfs</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">tf_column</span><span class="p">]][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-            <span class="n">source_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tfs</span><span class="p">))</span>
+            <span class="n">tfs</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">tf_column</span><span class="p">]][</span><span class="s1">'source'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+            <span class="n">source_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">"source"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tfs</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">source_list</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+            <span class="n">source_list</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">"source"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">source_list</span><span class="p">:</span>
             <span class="n">df_targets</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span>
-                    <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">source</span><span class="p">)</span> <span class="o">&amp;</span>
-                    <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;edge_support_c&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_edge_support</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]</span> <span class="o">==</span> <span class="n">source</span><span class="p">)</span> <span class="o">&amp;</span>
+                    <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'edge_support_c'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_edge_support</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
             <span class="c1"># Calculate sum and sort</span>
-            <span class="n">df_targets</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="p">[</span><span class="n">cells_c</span><span class="p">,</span> <span class="n">df_targets</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">df_targets</span> <span class="o">=</span> <span class="n">df_targets</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
+            <span class="n">df_targets</span><span class="p">[</span><span class="s1">'sum_of_edge'</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="p">[</span><span class="n">cells_c</span><span class="p">,</span> <span class="n">df_targets</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">df_targets</span> <span class="o">=</span> <span class="n">df_targets</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'sum_of_edge'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_targets</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_reg_size</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_targets</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-                    <span class="n">Keep_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">]))</span>
+                    <span class="n">Keep_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s1">'target'</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">'sum_of_edge'</span><span class="p">]))</span>
 
             <span class="n">keep_edges_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">Keep_edges</span>
 
@@ -475,31 +475,31 @@
 <div class="viewcode-block" id="process_cell_edges">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.process_cell_edges.html#netmap.downstream.regulon.process_cell_edges">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">process_cell_edges</span><span class="p">(</span><span class="n">keep_edges_with_vals</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Organise per-cluster edge lists into a nested results dictionary.</span>
+<span class="w">    </span><span class="sd">"""Organise per-cluster edge lists into a nested results dictionary.</span>
 
-<span class="sd">    Builds two views of the data: ``&#39;unique&#39;`` (edges not present in any other cluster)</span>
-<span class="sd">    and ``&#39;all&#39;`` (all selected edges). Each cluster entry contains an ``&#39;edges&#39;``</span>
-<span class="sd">    DataFrame with ``source``, ``target``, ``sum_of_edge`` columns and a ``&#39;summary&#39;``</span>
+<span class="sd">    Builds two views of the data: ``'unique'`` (edges not present in any other cluster)</span>
+<span class="sd">    and ``'all'`` (all selected edges). Each cluster entry contains an ``'edges'``</span>
+<span class="sd">    DataFrame with ``source``, ``target``, ``sum_of_edge`` columns and a ``'summary'``</span>
 <span class="sd">    DataFrame with source gene counts.</span>
 
 <span class="sd">    Edges are identified by ``(source, target)`` tuples rather than a joined</span>
-<span class="sd">    &quot;source_target&quot; string, since gene names may themselves contain underscores</span>
+<span class="sd">    "source_target" string, since gene names may themselves contain underscores</span>
 <span class="sd">    and would make re-splitting such a string ambiguous.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        keep_edges_with_vals (dict): Mapping ``{cluster: [(source, target, mean_val), ...]}``</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: ``{&#39;unique&#39;: {cluster: {&#39;edges&#39;: DataFrame, &#39;summary&#39;: DataFrame}}, &#39;all&#39;: ...}``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;unique&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+<span class="sd">        dict: ``{'unique': {cluster: {'edges': DataFrame, 'summary': DataFrame}}, 'all': ...}``.</span>
+<span class="sd">    """</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'unique'</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">'all'</span><span class="p">:</span> <span class="p">{}}</span>
     <span class="n">all_cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">keep_edges_with_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_source_summary</span><span class="p">(</span><span class="n">edge_list</span><span class="p">):</span>
         <span class="c1"># edge_list is list of (source, target, val)</span>
         <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">]</span>
         <span class="n">source_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">sources</span><span class="p">))</span>
-        <span class="n">sources_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">source_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">source_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">sources_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'source'</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">source_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">'count'</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">source_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'count'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sources_df</span>
 
     <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">all_cells</span><span class="p">:</span>
@@ -517,16 +517,16 @@
         <span class="c1"># Helper to build DF with sum column</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">build_df</span><span class="p">(</span><span class="n">key_set</span><span class="p">,</span> <span class="n">lookup_dict</span><span class="p">):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">lookup_dict</span><span class="p">[(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)]]</span> <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">key_set</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;sum_of_edge&#39;</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'source'</span><span class="p">,</span> <span class="s1">'target'</span><span class="p">,</span> <span class="s1">'sum_of_edge'</span><span class="p">])</span>
 
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;unique&#39;</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">build_df</span><span class="p">(</span><span class="n">unique_keys</span><span class="p">,</span> <span class="n">current_edges_dict</span><span class="p">),</span>
-            <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">([(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">current_edges_dict</span><span class="p">[(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)])</span> <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">unique_keys</span><span class="p">])</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'unique'</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'edges'</span><span class="p">:</span> <span class="n">build_df</span><span class="p">(</span><span class="n">unique_keys</span><span class="p">,</span> <span class="n">current_edges_dict</span><span class="p">),</span>
+            <span class="s1">'summary'</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">([(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">current_edges_dict</span><span class="p">[(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)])</span> <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">unique_keys</span><span class="p">])</span>
         <span class="p">}</span>
 
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">build_df</span><span class="p">(</span><span class="n">current_edges_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">current_edges_dict</span><span class="p">),</span>
-            <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">keep_edges_with_vals</span><span class="p">[</span><span class="n">cell</span><span class="p">])</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'all'</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'edges'</span><span class="p">:</span> <span class="n">build_df</span><span class="p">(</span><span class="n">current_edges_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">current_edges_dict</span><span class="p">),</span>
+            <span class="s1">'summary'</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">keep_edges_with_vals</span><span class="p">[</span><span class="n">cell</span><span class="p">])</span>
         <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">results</span></div>
@@ -536,10 +536,10 @@
 <div class="viewcode-block" id="process_cell_edges_signed">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.process_cell_edges_signed.html#netmap.downstream.regulon.process_cell_edges_signed">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">process_cell_edges_signed</span><span class="p">(</span><span class="n">keep_edges_pos</span><span class="p">,</span> <span class="n">keep_edges_neg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the positive/negative regulon result structure from per-cluster edge lists.</span>
+<span class="w">    </span><span class="sd">"""Build the positive/negative regulon result structure from per-cluster edge lists.</span>
 
 <span class="sd">    Edges are identified by ``(source, target)`` tuples rather than a joined</span>
-<span class="sd">    &quot;source_target&quot; string, since gene names may themselves contain underscores</span>
+<span class="sd">    "source_target" string, since gene names may themselves contain underscores</span>
 <span class="sd">    and would make re-splitting such a string ambiguous.</span>
 
 <span class="sd">    Args:</span>
@@ -549,16 +549,16 @@
 <span class="sd">            ``(source, target, sum_of_edge, spearman)`` tuples for negatively correlated edges.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: Nested result with keys ``&#39;unique&#39;`` and ``&#39;all&#39;``, each mapping cluster</span>
-<span class="sd">        label to a dict with keys ``&#39;positive&#39;`` and ``&#39;negative&#39;``, each of which</span>
+<span class="sd">        dict: Nested result with keys ``'unique'`` and ``'all'``, each mapping cluster</span>
+<span class="sd">        label to a dict with keys ``'positive'`` and ``'negative'``, each of which</span>
 <span class="sd">        contains:</span>
 
-<span class="sd">            - ``&#39;edges&#39;`` (pd.DataFrame): Columns ``source``, ``target``,</span>
+<span class="sd">            - ``'edges'`` (pd.DataFrame): Columns ``source``, ``target``,</span>
 <span class="sd">              ``sum_of_edge``, ``spearman``.</span>
-<span class="sd">            - ``&#39;summary&#39;`` (pd.DataFrame): Columns ``source``, ``count``,</span>
+<span class="sd">            - ``'summary'`` (pd.DataFrame): Columns ``source``, ``count``,</span>
 <span class="sd">              ``mean_spearman``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;unique&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+<span class="sd">    """</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'unique'</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">'all'</span><span class="p">:</span> <span class="p">{}}</span>
     <span class="n">all_cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">keep_edges_pos</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">build_df</span><span class="p">(</span><span class="n">key_set</span><span class="p">,</span> <span class="n">lookup_dict</span><span class="p">):</span>
@@ -566,16 +566,16 @@
         <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">key_set</span><span class="p">:</span>
             <span class="n">val</span><span class="p">,</span> <span class="n">sp</span> <span class="o">=</span> <span class="n">lookup_dict</span><span class="p">[(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)]</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">sp</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;sum_of_edge&#39;</span><span class="p">,</span> <span class="s1">&#39;spearman&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'source'</span><span class="p">,</span> <span class="s1">'target'</span><span class="p">,</span> <span class="s1">'sum_of_edge'</span><span class="p">,</span> <span class="s1">'spearman'</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_source_summary</span><span class="p">(</span><span class="n">edges_df</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">edges_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_spearman&#39;</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'source'</span><span class="p">,</span> <span class="s1">'count'</span><span class="p">,</span> <span class="s1">'mean_spearman'</span><span class="p">])</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="n">edges_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;spearman&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">),</span> <span class="n">mean_spearman</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;spearman&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">))</span>
+            <span class="n">edges_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'source'</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="p">(</span><span class="s1">'spearman'</span><span class="p">,</span> <span class="s1">'count'</span><span class="p">),</span> <span class="n">mean_spearman</span><span class="o">=</span><span class="p">(</span><span class="s1">'spearman'</span><span class="p">,</span> <span class="s1">'mean'</span><span class="p">))</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'count'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">all_cells</span><span class="p">:</span>
@@ -597,13 +597,13 @@
         <span class="n">pos_unique_df</span> <span class="o">=</span> <span class="n">build_df</span><span class="p">(</span><span class="n">unique_pos</span><span class="p">,</span> <span class="n">pos_dict</span><span class="p">)</span>
         <span class="n">neg_unique_df</span> <span class="o">=</span> <span class="n">build_df</span><span class="p">(</span><span class="n">unique_neg</span><span class="p">,</span> <span class="n">neg_dict</span><span class="p">)</span>
 
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;unique&#39;</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;positive&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">pos_unique_df</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">pos_unique_df</span><span class="p">)},</span>
-            <span class="s1">&#39;negative&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">neg_unique_df</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">neg_unique_df</span><span class="p">)},</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'unique'</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'positive'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'edges'</span><span class="p">:</span> <span class="n">pos_unique_df</span><span class="p">,</span> <span class="s1">'summary'</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">pos_unique_df</span><span class="p">)},</span>
+            <span class="s1">'negative'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'edges'</span><span class="p">:</span> <span class="n">neg_unique_df</span><span class="p">,</span> <span class="s1">'summary'</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">neg_unique_df</span><span class="p">)},</span>
         <span class="p">}</span>
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;positive&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">pos_all_df</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">pos_all_df</span><span class="p">)},</span>
-            <span class="s1">&#39;negative&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">neg_all_df</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">neg_all_df</span><span class="p">)},</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'all'</span><span class="p">][</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'positive'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'edges'</span><span class="p">:</span> <span class="n">pos_all_df</span><span class="p">,</span> <span class="s1">'summary'</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">pos_all_df</span><span class="p">)},</span>
+            <span class="s1">'negative'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'edges'</span><span class="p">:</span> <span class="n">neg_all_df</span><span class="p">,</span> <span class="s1">'summary'</span><span class="p">:</span> <span class="n">get_source_summary</span><span class="p">(</span><span class="n">neg_all_df</span><span class="p">)},</span>
         <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">results</span></div>
@@ -612,10 +612,10 @@
 
 <div class="viewcode-block" id="select_top_edges_signed">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.select_top_edges_signed.html#netmap.downstream.regulon.select_top_edges_signed">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">select_top_edges_signed</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="p">,</span> <span class="n">top_per_source</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">col_cluster</span><span class="o">=</span><span class="s1">&#39;leiden_remap&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_top_edges_signed</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="p">,</span> <span class="n">top_per_source</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">col_cluster</span><span class="o">=</span><span class="s1">'leiden_remap'</span><span class="p">,</span>
                              <span class="n">min_reg_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tf_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">min_edge_support</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">neutral_threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select top edges per source TF per cluster and split them into positive and</span>
+<span class="w">    </span><span class="sd">"""Select top edges per source TF per cluster and split them into positive and</span>
 <span class="sd">    negative regulons based on cluster-wise Spearman correlation.</span>
 
 <span class="sd">    Requires ``add_cluster_wise_spearman`` to have been called first so that</span>
@@ -628,7 +628,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        gene_inter_adata (anndata.AnnData): GRN AnnData with mask layer and</span>
-<span class="sd">            &#39;{cluster}_spearman&#39; columns in .var.</span>
+<span class="sd">            '{cluster}_spearman' columns in .var.</span>
 <span class="sd">        top_per_source (int): Maximum edges per source TF per sign group per cluster.</span>
 <span class="sd">        col_cluster (str): Cluster column in obs.</span>
 <span class="sd">        min_reg_size (int): Minimum edges a sign-group must have to be kept.</span>
@@ -638,46 +638,46 @@
 <span class="sd">        neutral_threshold (float): Edges with |spearman| &lt; this value are excluded.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: {&#39;unique&#39;: {cluster: {&#39;positive&#39;: ..., &#39;negative&#39;: ...}},</span>
-<span class="sd">               &#39;all&#39;:    {cluster: {&#39;positive&#39;: ..., &#39;negative&#39;: ...}}}</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        dict: {'unique': {cluster: {'positive': ..., 'negative': ...}},</span>
+<span class="sd">               'all':    {cluster: {'positive': ..., 'negative': ...}}}</span>
+<span class="sd">    """</span>
     <span class="n">clusters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_cluster</span><span class="p">]))</span>
     <span class="n">keep_edges_pos</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">keep_edges_neg</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selecting targets for cluster: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Selecting targets for cluster: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">cells_c</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">col_cluster</span><span class="p">]</span> <span class="o">==</span> <span class="n">c</span>
-        <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;edge_support_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">][</span><span class="n">cells_c</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'edge_support_c'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'mask'</span><span class="p">][</span><span class="n">cells_c</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">spearman_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">_spearman&#39;</span>
+        <span class="n">spearman_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">_spearman'</span>
 
         <span class="k">if</span> <span class="n">tf_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">tfs</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">tf_column</span><span class="p">]][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-            <span class="n">source_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tfs</span><span class="p">))</span>
+            <span class="n">tfs</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">tf_column</span><span class="p">]][</span><span class="s1">'source'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+            <span class="n">source_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">"source"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tfs</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">source_list</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+            <span class="n">source_list</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">"source"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 
         <span class="n">pos_edges</span><span class="p">,</span> <span class="n">neg_edges</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">source_list</span><span class="p">:</span>
             <span class="n">df_candidates</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span>
-                <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">source</span><span class="p">)</span> <span class="o">&amp;</span>
-                <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;edge_support_c&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_edge_support</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]</span> <span class="o">==</span> <span class="n">source</span><span class="p">)</span> <span class="o">&amp;</span>
+                <span class="p">(</span><span class="n">gene_inter_adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s1">'edge_support_c'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_edge_support</span><span class="p">)</span>
             <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">df_candidates</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="p">[</span><span class="n">cells_c</span><span class="p">,</span> <span class="n">df_candidates</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">df_candidates</span><span class="p">[</span><span class="s1">'sum_of_edge'</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_inter_adata</span><span class="p">[</span><span class="n">cells_c</span><span class="p">,</span> <span class="n">df_candidates</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
             <span class="n">df_pos</span> <span class="o">=</span> <span class="n">df_candidates</span><span class="p">[</span><span class="n">df_candidates</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">neutral_threshold</span><span class="p">]</span> \
-                         <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
+                         <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'sum_of_edge'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
             <span class="n">df_neg</span> <span class="o">=</span> <span class="n">df_candidates</span><span class="p">[</span><span class="n">df_candidates</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">neutral_threshold</span><span class="p">]</span> \
-                         <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
+                         <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'sum_of_edge'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_per_source</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_pos</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_reg_size</span><span class="p">:</span>
-                <span class="n">pos_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">source</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df_pos</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()])</span>
+                <span class="n">pos_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">source</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">'target'</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">'sum_of_edge'</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df_pos</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()])</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_neg</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_reg_size</span><span class="p">:</span>
-                <span class="n">neg_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">source</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;sum_of_edge&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df_neg</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()])</span>
+                <span class="n">neg_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">source</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">'target'</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">'sum_of_edge'</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">spearman_col</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df_neg</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()])</span>
 
         <span class="n">keep_edges_pos</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos_edges</span>
         <span class="n">keep_edges_neg</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg_edges</span>
@@ -688,38 +688,38 @@
 
 <div class="viewcode-block" id="compute_signatures_UCell_scores">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.compute_signatures_UCell_scores.html#netmap.downstream.regulon.compute_signatures_UCell_scores">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">compute_signatures_UCell_scores</span><span class="p">(</span><span class="n">selected_edges</span><span class="p">,</span> <span class="n">adata</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;unique&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute UCell gene set enrichment scores for regulon signatures.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_signatures_UCell_scores</span><span class="p">(</span><span class="n">selected_edges</span><span class="p">,</span> <span class="n">adata</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">'unique'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Compute UCell gene set enrichment scores for regulon signatures.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        selected_edges (dict): Nested edge dict from :func:`select_top_edges`.</span>
 <span class="sd">        adata (anndata.AnnData): Expression AnnData; UCell scores are added to</span>
 <span class="sd">            ``adata.obs``.</span>
-<span class="sd">        key (str): Top-level key of ``selected_edges`` to use ``&#39;unique&#39;`` or</span>
-<span class="sd">            ``&#39;all&#39;``. Defaults to ``&#39;unique&#39;``.</span>
+<span class="sd">        key (str): Top-level key of ``selected_edges`` to use ``'unique'`` or</span>
+<span class="sd">            ``'all'``. Defaults to ``'unique'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: UCell scores per cell per regulon, columns named</span>
 <span class="sd">        ``{cluster}_{TF}``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">all_signatures</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-        <span class="n">sign</span> <span class="o">=</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">ct</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">)[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-        <span class="n">sign</span>  <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sign</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">ct</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'source'</span><span class="p">)[</span><span class="s1">'target'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">sign</span>  <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sign</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="n">all_signatures</span> <span class="o">=</span> <span class="n">all_signatures</span> <span class="o">|</span> <span class="n">sign</span>
 
     <span class="n">ucell</span><span class="o">.</span><span class="n">compute_ucell_scores</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">signatures</span><span class="o">=</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">data_ucell</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;_UCell&#39;</span><span class="p">)</span>
-    <span class="n">data_ucell</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_UCell&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data_ucell</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="n">data_ucell</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">'_UCell'</span><span class="p">)</span>
+    <span class="n">data_ucell</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'_UCell'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data_ucell</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">data_ucell</span></div>
 
 
 <div class="viewcode-block" id="aggregate_edges">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.aggregate_edges.html#netmap.downstream.regulon.aggregate_edges">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">aggregate_edges</span><span class="p">(</span><span class="n">selected_edges</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;unique&#39;</span><span class="p">,</span> <span class="n">grouping</span><span class="o">=</span><span class="s1">&#39;source&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aggregate regulon attribution scores across edges.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">aggregate_edges</span><span class="p">(</span><span class="n">selected_edges</span><span class="p">,</span> <span class="n">grn_adata</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">'unique'</span><span class="p">,</span> <span class="n">grouping</span><span class="o">=</span><span class="s1">'source'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Aggregate regulon attribution scores across edges.</span>
 
 <span class="sd">    For each cluster and source gene, averages attribution values over all selected</span>
 <span class="sd">    edges to produce a single regulon activity score per cell.</span>
@@ -727,22 +727,22 @@
 <span class="sd">    Args:</span>
 <span class="sd">        selected_edges (dict): Nested edge dict from :func:`select_top_edges`.</span>
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with attribution values in ``X``.</span>
-<span class="sd">        key (str): Top-level key to use — ``&#39;unique&#39;`` or ``&#39;all&#39;``. Defaults to</span>
-<span class="sd">            ``&#39;unique&#39;``.</span>
-<span class="sd">        grouping (str): Column to group edges by — ``&#39;source&#39;`` or ``&#39;target&#39;``.</span>
-<span class="sd">            Defaults to ``&#39;source&#39;``.</span>
+<span class="sd">        key (str): Top-level key to use — ``'unique'`` or ``'all'``. Defaults to</span>
+<span class="sd">            ``'unique'``.</span>
+<span class="sd">        grouping (str): Column to group edges by — ``'source'`` or ``'target'``.</span>
+<span class="sd">            Defaults to ``'source'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: Regulon activity matrix, shape ``(n_cells, n_regulons)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">regulons</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-        <span class="n">edges</span> <span class="o">=</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">ct</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">edges</span><span class="p">[</span><span class="s1">&#39;edge_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">edges</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
-        <span class="n">sign</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">grouping</span><span class="p">)[</span><span class="s1">&#39;edge_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">selected_edges</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">ct</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">edges</span><span class="p">[</span><span class="s1">'edge_id'</span><span class="p">]</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_"</span> <span class="o">+</span> <span class="n">edges</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">grouping</span><span class="p">)[</span><span class="s1">'edge_id'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">sign</span><span class="p">:</span>
-            <span class="n">regulons</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="p">[:,</span> <span class="n">sign</span><span class="p">[</span><span class="n">g</span><span class="p">]]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;masked&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">regulons</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ct</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="p">[:,</span> <span class="n">sign</span><span class="p">[</span><span class="n">g</span><span class="p">]]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'masked'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">regulons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">regulons</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">regulons</span></div>
@@ -752,7 +752,7 @@
 <div class="viewcode-block" id="aggregate_edges_arbitrary">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.aggregate_edges_arbitrary.html#netmap.downstream.regulon.aggregate_edges_arbitrary">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">aggregate_edges_arbitrary</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">edge_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aggregate attribution scores for arbitrary named edge sets.</span>
+<span class="w">    </span><span class="sd">"""Aggregate attribution scores for arbitrary named edge sets.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with attribution values in ``X``.</span>
@@ -760,14 +760,14 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: Regulon activity matrix, shape ``(n_cells, n_regulons)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">regulons</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">edge_dict</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">scs</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
-            <span class="n">regulons</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">[:,</span> <span class="nb">list</span><span class="p">(</span><span class="n">edge_dict</span><span class="p">[</span><span class="n">name</span><span class="p">])]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;masked&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[:,</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">regulons</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">[:,</span> <span class="nb">list</span><span class="p">(</span><span class="n">edge_dict</span><span class="p">[</span><span class="n">name</span><span class="p">])]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'masked'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[:,</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">regulons</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="p">[:,</span> <span class="nb">list</span><span class="p">(</span><span class="n">edge_dict</span><span class="p">[</span><span class="n">name</span><span class="p">])]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;masked&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">regulons</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="p">[:,</span> <span class="nb">list</span><span class="p">(</span><span class="n">edge_dict</span><span class="p">[</span><span class="n">name</span><span class="p">])]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">'masked'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 
     <span class="n">regulons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">regulons</span><span class="p">)</span>
@@ -781,22 +781,22 @@
 <div class="viewcode-block" id="get_overlapping_signatures">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.get_overlapping_signatures.html#netmap.downstream.regulon.get_overlapping_signatures">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_overlapping_signatures</span><span class="p">(</span><span class="n">all_regulons</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute pairwise overlap status of target genes across clusters.</span>
+<span class="w">    </span><span class="sd">"""Compute pairwise overlap status of target genes across clusters.</span>
 
 <span class="sd">    For every pair of clusters, determines for each target gene in their union</span>
 <span class="sd">    whether it appears in both clusters, only in the first, or only in the second.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        all_regulons (pd.DataFrame): Flat regulon DataFrame with at least columns</span>
-<span class="sd">            ``&#39;cluster&#39;`` and ``&#39;target&#39;``, as produced by</span>
+<span class="sd">            ``'cluster'`` and ``'target'``, as produced by</span>
 <span class="sd">            :func:`make_cluster_regulon_dataframe`.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        pd.DataFrame: Long-form DataFrame with columns ``&#39;celltype_1&#39;``,</span>
-<span class="sd">        ``&#39;celltype_2&#39;``, ``&#39;status&#39;`` (``&#39;both&#39;``, ``&#39;only {ct1}&#39;``, or</span>
-<span class="sd">        ``&#39;only {ct2}&#39;``), and ``&#39;gene&#39;``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">genes_by_ct</span> <span class="o">=</span> <span class="n">all_regulons</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;cluster&#39;</span><span class="p">)[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="sd">        pd.DataFrame: Long-form DataFrame with columns ``'celltype_1'``,</span>
+<span class="sd">        ``'celltype_2'``, ``'status'`` (``'both'``, ``'only {ct1}'``, or</span>
+<span class="sd">        ``'only {ct2}'``), and ``'gene'``.</span>
+<span class="sd">    """</span>
+    <span class="n">genes_by_ct</span> <span class="o">=</span> <span class="n">all_regulons</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'cluster'</span><span class="p">)[</span><span class="s1">'target'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
     <span class="n">all_cts</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">genes_by_ct</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">pairwise_results</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -811,17 +811,17 @@
         <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">all_genes_in_pair</span><span class="p">:</span>
             <span class="c1"># Logic to determine status</span>
             <span class="k">if</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">genes1</span> <span class="ow">and</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">genes2</span><span class="p">:</span>
-                <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;both&#39;</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="s1">'both'</span>
             <span class="k">elif</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">genes1</span><span class="p">:</span>
-                <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;only </span><span class="si">{</span><span class="n">ct1</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'only </span><span class="si">{</span><span class="n">ct1</span><span class="si">}</span><span class="s1">'</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;only </span><span class="si">{</span><span class="n">ct2</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'only </span><span class="si">{</span><span class="n">ct2</span><span class="si">}</span><span class="s1">'</span>
 
             <span class="n">pairwise_results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-                <span class="s1">&#39;celltype_1&#39;</span><span class="p">:</span> <span class="n">ct1</span><span class="p">,</span>
-                <span class="s1">&#39;celltype_2&#39;</span><span class="p">:</span> <span class="n">ct2</span><span class="p">,</span>
-                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
-                <span class="s1">&#39;gene&#39;</span><span class="p">:</span> <span class="n">gene</span>
+                <span class="s1">'celltype_1'</span><span class="p">:</span> <span class="n">ct1</span><span class="p">,</span>
+                <span class="s1">'celltype_2'</span><span class="p">:</span> <span class="n">ct2</span><span class="p">,</span>
+                <span class="s1">'status'</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
+                <span class="s1">'gene'</span><span class="p">:</span> <span class="n">gene</span>
             <span class="p">})</span>
 
     <span class="c1"># 3. Create the final DataFrame</span>
@@ -834,30 +834,30 @@
 <div class="viewcode-block" id="make_cluster_regulon_dataframe">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.make_cluster_regulon_dataframe.html#netmap.downstream.regulon.make_cluster_regulon_dataframe">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_cluster_regulon_dataframe</span><span class="p">(</span><span class="n">keep_edges</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Concatenate all regulon edge DataFrames into a flat DataFrame.</span>
+<span class="w">    </span><span class="sd">"""Concatenate all regulon edge DataFrames into a flat DataFrame.</span>
 
 <span class="sd">    Iterates over the nested ``keep_edges`` structure (set_type -&gt; cluster -&gt;</span>
-<span class="sd">    ``{&#39;edges&#39;: DataFrame}``) and concatenates all non-empty edge DataFrames into</span>
-<span class="sd">    a single flat table, adding ``&#39;cluster&#39;`` and ``&#39;set_type&#39;`` columns to</span>
+<span class="sd">    ``{'edges': DataFrame}``) and concatenates all non-empty edge DataFrames into</span>
+<span class="sd">    a single flat table, adding ``'cluster'`` and ``'set_type'`` columns to</span>
 <span class="sd">    preserve provenance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        keep_edges (dict): Nested regulon dict as returned by :func:`select_top_edges`</span>
 <span class="sd">            or :func:`select_top_edges_signed`, with top-level keys such as</span>
-<span class="sd">            ``&#39;unique&#39;`` and ``&#39;all&#39;``, each mapping cluster labels to a dict</span>
-<span class="sd">            containing an ``&#39;edges&#39;`` DataFrame.</span>
+<span class="sd">            ``'unique'`` and ``'all'``, each mapping cluster labels to a dict</span>
+<span class="sd">            containing an ``'edges'`` DataFrame.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: Concatenated DataFrame with all columns from the individual</span>
-<span class="sd">        edge DataFrames plus ``&#39;cluster&#39;`` and ``&#39;set_type&#39;`` columns.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        edge DataFrames plus ``'cluster'`` and ``'set_type'`` columns.</span>
+<span class="sd">    """</span>
     <span class="n">all_regulons</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">un</span> <span class="ow">in</span> <span class="n">keep_edges</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">clu</span> <span class="ow">in</span> <span class="n">keep_edges</span><span class="p">[</span><span class="n">un</span><span class="p">]:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="n">un</span><span class="p">][</span><span class="n">clu</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="n">un</span><span class="p">][</span><span class="n">clu</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">df</span><span class="p">[</span><span class="s1">&#39;cluster&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clu</span>
-                <span class="n">df</span><span class="p">[</span><span class="s1">&#39;set_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">un</span>
+                <span class="n">df</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">=</span> <span class="n">clu</span>
+                <span class="n">df</span><span class="p">[</span><span class="s1">'set_type'</span><span class="p">]</span> <span class="o">=</span> <span class="n">un</span>
                 <span class="n">all_regulons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
     <span class="n">all_regulons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_regulons</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">all_regulons</span></div>
@@ -870,11 +870,11 @@
     <span class="k">for</span> <span class="n">un</span> <span class="ow">in</span> <span class="n">keep_edges</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">clu</span> <span class="ow">in</span> <span class="n">keep_edges</span><span class="p">[</span><span class="n">un</span><span class="p">]</span> <span class="p">:</span>
             <span class="k">for</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">keep_edges</span><span class="p">[</span><span class="n">un</span><span class="p">][</span><span class="n">clu</span><span class="p">]:</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="n">un</span><span class="p">][</span><span class="n">clu</span><span class="p">][</span><span class="n">direction</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="n">un</span><span class="p">][</span><span class="n">clu</span><span class="p">][</span><span class="n">direction</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;cluster&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clu</span>
-                    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;set_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">un</span> 
-                    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;direction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">direction</span>
+                    <span class="n">df</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">=</span> <span class="n">clu</span>
+                    <span class="n">df</span><span class="p">[</span><span class="s1">'set_type'</span><span class="p">]</span> <span class="o">=</span> <span class="n">un</span> 
+                    <span class="n">df</span><span class="p">[</span><span class="s1">'direction'</span><span class="p">]</span> <span class="o">=</span> <span class="n">direction</span>
                     <span class="n">all_regulons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
     <span class="n">all_regulons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_regulons</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">all_regulons</span></div>
@@ -884,38 +884,38 @@
 <div class="viewcode-block" id="load_edge_dict_from_dataframe">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.load_edge_dict_from_dataframe.html#netmap.downstream.regulon.load_edge_dict_from_dataframe">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_edge_dict_from_dataframe</span><span class="p">(</span><span class="n">all_regulons</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconstruct a nested edge dictionary from a flat regulon DataFrame.</span>
+<span class="w">    </span><span class="sd">"""Reconstruct a nested edge dictionary from a flat regulon DataFrame.</span>
 
 <span class="sd">    Reverses the transformation performed by :func:`make_cluster_regulon_dataframe`,</span>
-<span class="sd">    grouping rows back into the ``{set_type: {cluster: {&#39;edges&#39;: DataFrame}}}``</span>
-<span class="sd">    structure. The ``&#39;set_type&#39;`` and ``&#39;cluster&#39;`` columns are dropped from the</span>
+<span class="sd">    grouping rows back into the ``{set_type: {cluster: {'edges': DataFrame}}}``</span>
+<span class="sd">    structure. The ``'set_type'`` and ``'cluster'`` columns are dropped from the</span>
 <span class="sd">    reconstructed edge DataFrames.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        all_regulons (pd.DataFrame): Flat DataFrame with at least columns</span>
-<span class="sd">            ``&#39;set_type&#39;`` and ``&#39;cluster&#39;`` (as produced by</span>
+<span class="sd">            ``'set_type'`` and ``'cluster'`` (as produced by</span>
 <span class="sd">            :func:`make_cluster_regulon_dataframe`) plus whatever edge columns were</span>
 <span class="sd">            present in the original nested structure.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Nested dict of the form</span>
-<span class="sd">        ``{set_type: {cluster: {&#39;edges&#39;: pd.DataFrame}}}``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        ``{set_type: {cluster: {'edges': pd.DataFrame}}}``.</span>
+<span class="sd">    """</span>
     <span class="n">keep_edges</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="c1"># Group by the metadata columns we added in the forward function</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">set_type</span><span class="p">,</span> <span class="n">cluster</span><span class="p">),</span> <span class="n">group_df</span> <span class="ow">in</span> <span class="n">all_regulons</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;set_type&#39;</span><span class="p">,</span> <span class="s1">&#39;cluster&#39;</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">set_type</span><span class="p">,</span> <span class="n">cluster</span><span class="p">),</span> <span class="n">group_df</span> <span class="ow">in</span> <span class="n">all_regulons</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'set_type'</span><span class="p">,</span> <span class="s1">'cluster'</span><span class="p">]):</span>
 
-        <span class="c1"># Initialize the outer dictionary (set_type) if it doesn&#39;t exist</span>
+        <span class="c1"># Initialize the outer dictionary (set_type) if it doesn't exist</span>
         <span class="k">if</span> <span class="n">set_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keep_edges</span><span class="p">:</span>
             <span class="n">keep_edges</span><span class="p">[</span><span class="n">set_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># Clean the DataFrame: remove the metadata columns we added</span>
         <span class="c1"># and reset the index if necessary to match the original state</span>
-        <span class="n">clean_df</span> <span class="o">=</span> <span class="n">group_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;set_type&#39;</span><span class="p">,</span> <span class="s1">&#39;cluster&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">clean_df</span> <span class="o">=</span> <span class="n">group_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'set_type'</span><span class="p">,</span> <span class="s1">'cluster'</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="c1"># Reconstruct the internal &#39;edges&#39; dictionary</span>
-        <span class="n">keep_edges</span><span class="p">[</span><span class="n">set_type</span><span class="p">][</span><span class="n">cluster</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">clean_df</span><span class="p">}</span>
+        <span class="c1"># Reconstruct the internal 'edges' dictionary</span>
+        <span class="n">keep_edges</span><span class="p">[</span><span class="n">set_type</span><span class="p">][</span><span class="n">cluster</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'edges'</span><span class="p">:</span> <span class="n">clean_df</span><span class="p">}</span>
 
     <span class="k">return</span> <span class="n">keep_edges</span></div>
 
@@ -924,7 +924,7 @@
 <div class="viewcode-block" id="jaccard_similarity">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.jaccard_similarity.html#netmap.downstream.regulon.jaccard_similarity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">jaccard_similarity</span><span class="p">(</span><span class="n">set1</span><span class="p">,</span> <span class="n">set2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Jaccard similarity coefficient between two sets.</span>
+<span class="w">    </span><span class="sd">"""Compute the Jaccard similarity coefficient between two sets.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        set1 (set): First set.</span>
@@ -932,7 +932,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        float: Jaccard similarity in [0, 1]; returns 0 when both sets are empty.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">intersection</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">set1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">set2</span><span class="p">))</span>
     <span class="n">union</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">set1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">set2</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">intersection</span> <span class="o">/</span> <span class="n">union</span> <span class="k">if</span> <span class="n">union</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span></div>
@@ -942,7 +942,7 @@
 <div class="viewcode-block" id="get_sourcewise_jaccard_regulons">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.get_sourcewise_jaccard_regulons.html#netmap.downstream.regulon.get_sourcewise_jaccard_regulons">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_sourcewise_jaccard_regulons</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">keep_edges</span><span class="p">,</span> <span class="n">n_top</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute per-source-gene Jaccard similarity matrices across clusters.</span>
+<span class="w">    </span><span class="sd">"""Compute per-source-gene Jaccard similarity matrices across clusters.</span>
 
 <span class="sd">    For each cluster, retrieves the top ``n_top`` genes by Wilcoxon rank-sum</span>
 <span class="sd">    score from ``all_signatures``, then for each top source gene compares its</span>
@@ -955,11 +955,11 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        all_signatures (anndata.AnnData): AnnData object storing Wilcoxon</span>
-<span class="sd">            differential regulon results under the ``&#39;wilcoxon&#39;`` key in</span>
-<span class="sd">            ``.uns[&#39;rank_genes_groups&#39;]``. Cluster labels are read from</span>
+<span class="sd">            differential regulon results under the ``'wilcoxon'`` key in</span>
+<span class="sd">            ``.uns['rank_genes_groups']``. Cluster labels are read from</span>
 <span class="sd">            ``grn_adata3.obs.leiden_remap`` (module-level variable).</span>
 <span class="sd">        keep_edges (dict): Nested regulon dict as returned by :func:`select_top_edges`,</span>
-<span class="sd">            accessed via ``keep_edges[&#39;all&#39;][cluster][&#39;edges&#39;]``.</span>
+<span class="sd">            accessed via ``keep_edges['all'][cluster]['edges']``.</span>
 <span class="sd">        n_top (int): Number of top-ranked genes per cluster to consider.</span>
 <span class="sd">            Defaults to 50.</span>
 
@@ -968,18 +968,18 @@
 <span class="sd">        both index and columns are cluster labels and values are Jaccard</span>
 <span class="sd">        similarity scores. Only genes appearing in more than one cluster are</span>
 <span class="sd">        included.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">top_sources</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">top_counter</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">grn_adata3</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">leiden_remap</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">bcrank</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">ct</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;wilcoxon&#39;</span><span class="p">)</span>
-            <span class="n">bcrank</span><span class="p">[[</span><span class="s1">&#39;celltype&#39;</span><span class="p">,</span> <span class="s1">&#39;gene&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">bcrank</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">bcrank</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span><span class="n">all_signatures</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">ct</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">'wilcoxon'</span><span class="p">)</span>
+            <span class="n">bcrank</span><span class="p">[[</span><span class="s1">'celltype'</span><span class="p">,</span> <span class="s1">'gene'</span><span class="p">]]</span> <span class="o">=</span> <span class="n">bcrank</span><span class="p">[</span><span class="s1">'names'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">topg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bcrank</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n_top</span><span class="p">]</span><span class="o">.</span><span class="n">gene</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">topg</span><span class="p">:</span>
-                <span class="n">re</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">][</span><span class="n">ct</span><span class="p">][</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span>
+                <span class="n">re</span> <span class="o">=</span> <span class="n">keep_edges</span><span class="p">[</span><span class="s1">'all'</span><span class="p">][</span><span class="n">ct</span><span class="p">][</span><span class="s1">'edges'</span><span class="p">]</span>
                 <span class="n">targets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">top_sources</span><span class="p">:</span>
                     <span class="n">top_sources</span><span class="p">[</span><span class="n">g</span><span class="p">][</span><span class="n">ct</span><span class="p">]</span> <span class="o">=</span> <span class="n">targets</span>
@@ -1012,14 +1012,14 @@
                 <span class="n">sim</span> <span class="o">=</span> <span class="n">intersection</span> <span class="o">/</span> <span class="n">union</span> <span class="k">if</span> <span class="n">union</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
 
                 <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-                    <span class="s1">&#39;ct1&#39;</span><span class="p">:</span> <span class="n">s1</span><span class="p">,</span>
-                    <span class="s1">&#39;ct2&#39;</span><span class="p">:</span> <span class="n">s2</span><span class="p">,</span>
-                    <span class="s1">&#39;jaccard&#39;</span><span class="p">:</span> <span class="n">sim</span>
+                    <span class="s1">'ct1'</span><span class="p">:</span> <span class="n">s1</span><span class="p">,</span>
+                    <span class="s1">'ct2'</span><span class="p">:</span> <span class="n">s2</span><span class="p">,</span>
+                    <span class="s1">'jaccard'</span><span class="p">:</span> <span class="n">sim</span>
                 <span class="p">})</span>
 
         <span class="c1"># Convert to DataFrame and Pivot to Square Matrix</span>
         <span class="n">df_long</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-        <span class="n">matrix</span> <span class="o">=</span> <span class="n">df_long</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;ct1&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;ct2&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;jaccard&#39;</span><span class="p">)</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">df_long</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'ct1'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'ct2'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'jaccard'</span><span class="p">)</span>
 
         <span class="n">gene_matrices</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="n">matrix</span>
 
@@ -1030,7 +1030,7 @@
 <div class="viewcode-block" id="make_global_target_similarity_plot">
 <a class="viewcode-back" href="../../../generated/netmap.downstream.regulon.make_global_target_similarity_plot.html#netmap.downstream.regulon.make_global_target_similarity_plot">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_global_target_similarity_plot</span><span class="p">(</span><span class="n">gene_matrices</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot a heatmap of the mean pairwise Jaccard similarity across all source genes.</span>
+<span class="w">    </span><span class="sd">"""Plot a heatmap of the mean pairwise Jaccard similarity across all source genes.</span>
 
 <span class="sd">    Averages the per-source-gene Jaccard matrices from</span>
 <span class="sd">    :func:`get_sourcewise_jaccard_regulons` into a single global similarity matrix,</span>
@@ -1045,7 +1045,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        None: Displays the plot via ``plt.show()``. No value is returned.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># 1. Stack all matrices and calculate the mean</span>
     <span class="c1"># We use .values to ensure we are averaging the numbers,</span>
     <span class="c1"># but keep the index/columns from one of the matrices.</span>
@@ -1057,10 +1057,10 @@
         <span class="c1"># Ensure the columns are in the same order as the index for a perfect square</span>
         <span class="n">global_matrix</span> <span class="o">=</span> <span class="n">global_matrix</span><span class="p">[</span><span class="n">global_matrix</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No matrices found to average.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"No matrices found to average."</span><span class="p">)</span>
 
     <span class="c1"># Independent row and column clustering</span>
-    <span class="n">row_idx</span> <span class="o">=</span> <span class="n">hierarchy</span><span class="o">.</span><span class="n">leaves_list</span><span class="p">(</span><span class="n">hierarchy</span><span class="o">.</span><span class="n">linkage</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">global_matrix</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ward&#39;</span><span class="p">))</span>
+    <span class="n">row_idx</span> <span class="o">=</span> <span class="n">hierarchy</span><span class="o">.</span><span class="n">leaves_list</span><span class="p">(</span><span class="n">hierarchy</span><span class="o">.</span><span class="n">linkage</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">global_matrix</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">method</span><span class="o">=</span><span class="s1">'ward'</span><span class="p">))</span>
     <span class="n">ordered_global</span> <span class="o">=</span> <span class="n">global_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">]</span>
 
     <span class="c1"># 3. Plot</span>
@@ -1069,12 +1069,12 @@
     <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span>
         <span class="n">ordered_global</span><span class="p">,</span>
         <span class="n">mask</span><span class="o">=</span><span class="p">(</span><span class="n">ordered_global</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
-        <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;YlGnBu&#39;</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="s1">'YlGnBu'</span><span class="p">,</span>
         <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">linewidths</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span>
-        <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;#eeeeee&#39;</span><span class="p">,</span>
+        <span class="n">linecolor</span><span class="o">=</span><span class="s1">'#eeeeee'</span><span class="p">,</span>
         <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
-        <span class="n">cbar_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Mean Jaccard&quot;</span><span class="p">},</span>
+        <span class="n">cbar_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">"shrink"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">"orientation"</span><span class="p">:</span> <span class="s2">"horizontal"</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">:</span> <span class="s2">"Mean Jaccard"</span><span class="p">},</span>
         <span class="n">annot</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
 
@@ -1083,12 +1083,12 @@
     <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">])</span>
 
     <span class="c1"># Formatting</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'both'</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">'major'</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">'center'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Global Target Similarity (Average across all Source Genes)&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Global Target Similarity (Average across all Source Genes)'</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>

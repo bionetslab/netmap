@@ -373,12 +373,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.model.train_model</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Autoencoder ensemble training utilities.</span>
+<span></span><span class="sd">"""Autoencoder ensemble training utilities.</span>
 
 <span class="sd">This module provides functions to train a zoo of independent autoencoder</span>
 <span class="sd">models with early stopping, forming the ensemble used by the GRN inference</span>
 <span class="sd">stage. Training is hardcoded to CUDA GPU.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">netmap.model.nbautoencoder</span><span class="w"> </span><span class="kn">import</span> <span class="n">NegativeBinomialAutoencoder</span>
@@ -391,8 +391,8 @@
 
 <div class="viewcode-block" id="create_model_zoo">
 <a class="viewcode-back" href="../../../generated/netmap.model.train_model.create_model_zoo.html#netmap.model.train_model.create_model_zoo">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_model_zoo</span><span class="p">(</span><span class="n">data_tensor</span><span class="p">,</span> <span class="n">n_models</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">model_type</span> <span class="o">=</span> <span class="s1">&#39;ZINBAutoencoder&#39;</span><span class="p">,</span> <span class="n">dropout_rate</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">latent_dim</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an ensemble of autoencoders (model zoo) trained on the supplied data.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_model_zoo</span><span class="p">(</span><span class="n">data_tensor</span><span class="p">,</span> <span class="n">n_models</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">model_type</span> <span class="o">=</span> <span class="s1">'ZINBAutoencoder'</span><span class="p">,</span> <span class="n">dropout_rate</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">latent_dim</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Create an ensemble of autoencoders (model zoo) trained on the supplied data.</span>
 
 <span class="sd">    Each model is initialised with a fresh random seed, trained on an independent</span>
 <span class="sd">    80/20 train/validation split, and added to the zoo only if training converges.</span>
@@ -409,10 +409,10 @@
 <span class="sd">        n_epochs (int, optional): Maximum number of training epochs per model</span>
 <span class="sd">            before early stopping would have been triggered.  Defaults to 10000.</span>
 <span class="sd">        model_type (str, optional): Architecture to instantiate.  One of</span>
-<span class="sd">            ``&#39;ZINBAutoencoder&#39;`` (zero-inflated negative binomial) or</span>
-<span class="sd">            ``&#39;NegativeBinomialAutoencoder&#39;``.  Any unrecognised value falls</span>
+<span class="sd">            ``'ZINBAutoencoder'`` (zero-inflated negative binomial) or</span>
+<span class="sd">            ``'NegativeBinomialAutoencoder'``.  Any unrecognised value falls</span>
 <span class="sd">            back to ``NegativeBinomialAutoencoder``.  Defaults to</span>
-<span class="sd">            ``&#39;ZINBAutoencoder&#39;``.</span>
+<span class="sd">            ``'ZINBAutoencoder'``.</span>
 <span class="sd">        dropout_rate (float, optional): Dropout probability applied during</span>
 <span class="sd">            training in each encoder/decoder layer.  Defaults to 0.1.</span>
 <span class="sd">        latent_dim (int, optional): Dimensionality of the bottleneck latent</span>
@@ -426,7 +426,7 @@
 <span class="sd">        list: A list of trained autoencoder model instances.  Length is at most</span>
 <span class="sd">        ``n_models``; may be shorter if the 5-consecutive-failure limit is</span>
 <span class="sd">        reached before enough models converge.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">model_zoo</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">failures</span> <span class="o">=</span> <span class="mi">0</span>
@@ -434,9 +434,9 @@
     <span class="k">while</span> <span class="p">(</span><span class="n">counter</span> <span class="o">&lt;</span> <span class="n">n_models</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">failures</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">):</span>
         <span class="n">data_train2</span><span class="p">,</span> <span class="n">data_test2</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">data_tensor</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;ZINBAutoencoder&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s1">'ZINBAutoencoder'</span><span class="p">:</span>
             <span class="n">trained_model2</span> <span class="o">=</span> <span class="n">ZINBAutoencoder</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="n">data_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">latent_dim</span><span class="o">=</span><span class="n">latent_dim</span><span class="p">,</span> <span class="n">dropout_rate</span> <span class="o">=</span> <span class="n">dropout_rate</span><span class="p">,</span> <span class="n">hidden_dims</span> <span class="o">=</span> <span class="n">hidden_dim</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;NegativeBinomialAutoencoder&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s1">'NegativeBinomialAutoencoder'</span><span class="p">:</span>
             <span class="n">trained_model2</span> <span class="o">=</span> <span class="n">NegativeBinomialAutoencoder</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="n">data_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">latent_dim</span><span class="o">=</span><span class="n">latent_dim</span><span class="p">,</span> <span class="n">dropout_rate</span> <span class="o">=</span> <span class="n">dropout_rate</span><span class="p">,</span> <span class="n">hidden_dims</span> <span class="o">=</span> <span class="n">hidden_dim</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">trained_model2</span> <span class="o">=</span> <span class="n">NegativeBinomialAutoencoder</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="n">data_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">latent_dim</span><span class="o">=</span><span class="n">latent_dim</span><span class="p">,</span> <span class="n">dropout_rate</span> <span class="o">=</span> <span class="n">dropout_rate</span><span class="p">,</span> <span class="n">hidden_dims</span> <span class="o">=</span> <span class="n">hidden_dim</span><span class="p">)</span>
@@ -470,7 +470,7 @@
     <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>  <span class="c1"># Minibatch size</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Legacy training loop without early stopping.</span>
+<span class="w">    </span><span class="sd">"""Legacy training loop without early stopping.</span>
 
 <span class="sd">    Trains the model for a fixed number of epochs using minibatch gradient</span>
 <span class="sd">    descent.  Validation and early stopping are not performed.  Prefer</span>
@@ -491,7 +491,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.nn.Module: The trained model after ``num_epochs`` epochs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Prepare DataLoader for training</span>
     <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">data_train</span><span class="p">)</span>
     <span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -514,7 +514,7 @@
 
         <span class="c1"># Print progress</span>
         <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">, Loss: </span><span class="si">{</span><span class="n">epoch_loss</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">, Loss: </span><span class="si">{</span><span class="n">epoch_loss</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">model</span>
 
@@ -531,7 +531,7 @@
     <span class="n">min_delta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
     <span class="n">validation_freq</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Training loop with early stopping based on validation loss.</span>
+<span class="w">    </span><span class="sd">"""Training loop with early stopping based on validation loss.</span>
 
 <span class="sd">    Trains the model using minibatch gradient descent and evaluates on the</span>
 <span class="sd">    validation set every ``validation_freq`` epochs.  The best model state</span>
@@ -572,18 +572,18 @@
 <span class="sd">        torch.nn.Module or None: The trained model loaded with the best</span>
 <span class="sd">        observed ``state_dict``, or ``None`` if a ``TypeError`` is raised</span>
 <span class="sd">        during the early-stopping comparison (indicating a training failure).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Prepare DataLoaders</span>
     <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">data_train</span><span class="p">)</span>
     <span class="n">val_dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">data_val</span><span class="p">)</span>
     <span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">val_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="n">best_val_loss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="n">best_val_loss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">)</span>
     <span class="n">epochs_no_improve</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">best_model_state</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">epoch_iterator</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Training Autoencoder&quot;</span><span class="p">)</span>
+    <span class="n">epoch_iterator</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Training Autoencoder"</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">epoch_iterator</span><span class="p">:</span>
         <span class="c1"># --- Training loop ---</span>
@@ -616,14 +616,14 @@
 
             <span class="c1"># 1. Update the overall epoch progress bar description</span>
             <span class="n">epoch_iterator</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span>
-                <span class="n">train_loss</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">avg_train_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">val_loss</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">avg_val_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">best_val</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">best_val_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">train_loss</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">avg_train_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">val_loss</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">avg_val_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">best_val</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">best_val_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># If no validation was performed, update the epoch iterator with just train loss</span>
-            <span class="n">epoch_iterator</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="n">train_loss</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">avg_train_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">val_loss</span> <span class="o">=</span> <span class="s1">&#39;------&#39;</span><span class="p">,</span> <span class="n">best_val</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">best_val_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">epoch_iterator</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="n">train_loss</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">avg_train_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">val_loss</span> <span class="o">=</span> <span class="s1">'------'</span><span class="p">,</span> <span class="n">best_val</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">best_val_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
         <span class="k">if</span> <span class="n">avg_val_loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -636,7 +636,7 @@
                     <span class="n">epochs_no_improve</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">if</span> <span class="n">epochs_no_improve</span> <span class="o">&gt;=</span> <span class="n">patience</span><span class="p">:</span>
                         <span class="c1"># Use tqdm.write for clean printing of the stopping message</span>
-                        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Early stopping triggered after </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> epochs due to no improvement in validation loss (Best Loss: </span><span class="si">{</span><span class="n">best_val_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+                        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Early stopping triggered after </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> epochs due to no improvement in validation loss (Best Loss: </span><span class="si">{</span><span class="n">best_val_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)."</span><span class="p">)</span>
                         <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">best_model_state</span><span class="p">)</span>
                         <span class="k">return</span> <span class="n">model</span>
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>

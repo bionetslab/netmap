@@ -393,9 +393,9 @@ an exception are skipped with a printed warning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grn_adata</strong> (<a class="reference external" href="https://anndata.readthedocs.io/en/stable/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.13.2)"><em>anndata.AnnData</em></a>) – GRN AnnData object (obs = cells, var = edges)
+<li><p><strong>grn_adata</strong> (<a class="reference external" href="https://anndata.readthedocs.io/en/stable/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.13.3.post0)"><em>anndata.AnnData</em></a>) – GRN AnnData object (obs = cells, var = edges)
 whose <code class="docutils literal notranslate"><span class="pre">obs.leiden_remap</span></code> column lists the cluster label for every cell.</p></li>
-<li><p><strong>all_signatures</strong> (<a class="reference external" href="https://anndata.readthedocs.io/en/stable/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.13.2)"><em>anndata.AnnData</em></a>) – AnnData object containing a Wilcoxon
+<li><p><strong>all_signatures</strong> (<a class="reference external" href="https://anndata.readthedocs.io/en/stable/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.13.3.post0)"><em>anndata.AnnData</em></a>) – AnnData object containing a Wilcoxon
 rank_genes_groups result stored under the key <code class="docutils literal notranslate"><span class="pre">'wilcoxon'</span></code> (produced by
 <code class="docutils literal notranslate"><span class="pre">sc.tl.rank_genes_groups</span></code>). Gene names are expected in the format
 <code class="docutils literal notranslate"><span class="pre">&lt;celltype&gt;_&lt;gene&gt;</span></code> so they can be split on the last underscore.</p></li>

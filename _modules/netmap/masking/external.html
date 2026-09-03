@@ -373,7 +373,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.masking.external</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;External reference GRN integration and genome-proximity regulator annotation.</span>
+<span></span><span class="sd">"""External reference GRN integration and genome-proximity regulator annotation.</span>
 
 <span class="sd">Functions in this module annotate GRN edges with:</span>
 
@@ -381,7 +381,7 @@
 <span class="sd">  :func:`add_external_grn`.</span>
 <span class="sd">- TF→gene relationships derived from genomic proximity (GTF + BED files)</span>
 <span class="sd">  via :func:`get_regulators` and :func:`add_genome_information_to_anndata`.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -390,8 +390,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">DBSCAN</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_edge_mask_from_GRN</span><span class="p">(</span><span class="n">grn_df</span><span class="p">,</span> <span class="n">gene_list</span><span class="p">,</span> <span class="n">name_grn</span><span class="o">=</span><span class="s1">&#39;external_grn&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a flat vector mask for TF-target interactions based on a literature GRN and gene list.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_edge_mask_from_GRN</span><span class="p">(</span><span class="n">grn_df</span><span class="p">,</span> <span class="n">gene_list</span><span class="p">,</span> <span class="n">name_grn</span><span class="o">=</span><span class="s1">'external_grn'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Create a flat vector mask for TF-target interactions based on a literature GRN and gene list.</span>
 
 <span class="sd">    Builds a square gene-by-gene weight matrix from the reference GRN, flattens</span>
 <span class="sd">    it into a vector, and returns a DataFrame indexed by edge names</span>
@@ -403,13 +403,13 @@
 <span class="sd">        gene_list (list): A list of gene names to be included in the matrix.</span>
 <span class="sd">            Should correspond to the genes present in the study.</span>
 <span class="sd">        name_grn (str): Label used to name the output column</span>
-<span class="sd">            ``edge_in_{name_grn}``. Defaults to ``&#39;external_grn&#39;``.</span>
+<span class="sd">            ``edge_in_{name_grn}``. Defaults to ``'external_grn'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: Single-column DataFrame indexed by edge key</span>
 <span class="sd">        (``GeneA_GeneB``) with column ``edge_in_{name_grn}`` containing the</span>
 <span class="sd">        numeric edge weight from the reference GRN (0 where no edge exists).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Create a mapping from gene names to their matrix indices for efficient look-up.</span>
     <span class="n">gene_to_index</span> <span class="o">=</span> <span class="p">{</span><span class="n">gene</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gene</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gene_list</span><span class="p">)}</span>
@@ -419,9 +419,9 @@
 
     <span class="c1"># Iterate through each row of the GRN DataFrame and populate the matrix.</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">grn_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="n">tf</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
-        <span class="n">weight</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span>
+        <span class="n">tf</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">'weight'</span><span class="p">]</span>
 
         <span class="c1"># Check if both the TF and target are in our target gene list.</span>
         <span class="k">if</span> <span class="n">tf</span> <span class="ow">in</span> <span class="n">gene_to_index</span> <span class="ow">and</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">gene_to_index</span><span class="p">:</span>
@@ -435,18 +435,18 @@
     <span class="n">edge_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">gene_A</span> <span class="ow">in</span> <span class="n">gene_list</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">gene_B</span> <span class="ow">in</span> <span class="n">gene_list</span><span class="p">:</span>
-            <span class="n">edge_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">gene_A</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">gene_B</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">edge_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">gene_A</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">gene_B</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="n">edge_mask</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="n">edge_mask</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;edge_key&#39;</span><span class="p">:</span> <span class="n">edge_names</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;edge_in_</span><span class="si">{</span><span class="n">name_grn</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">edge_mask</span><span class="p">})</span>
-    <span class="n">edge_mask</span> <span class="o">=</span><span class="n">edge_mask</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;edge_key&#39;</span><span class="p">)</span>
+    <span class="n">edge_mask</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'edge_key'</span><span class="p">:</span> <span class="n">edge_names</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'edge_in_</span><span class="si">{</span><span class="n">name_grn</span><span class="si">}</span><span class="s1">'</span><span class="p">:</span> <span class="n">edge_mask</span><span class="p">})</span>
+    <span class="n">edge_mask</span> <span class="o">=</span><span class="n">edge_mask</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'edge_key'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">edge_mask</span>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_all_genes_in_grn_object</span><span class="p">(</span><span class="n">grnad</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the union of all source and target genes in the GRN AnnData.</span>
+<span class="w">    </span><span class="sd">"""Returns the union of all source and target genes in the GRN AnnData.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        grnad (anndata.AnnData): An AnnData object whose ``var`` DataFrame</span>
@@ -456,7 +456,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: Sorted array of unique gene names appearing as either a</span>
 <span class="sd">        source or a target across all edges in ``grnad.var``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">all_sources</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">grnad</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
     <span class="n">all_targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">grnad</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
     <span class="n">all_genes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">all_sources</span><span class="p">,</span> <span class="n">all_targets</span><span class="p">]))</span>
@@ -465,8 +465,8 @@
 
 <div class="viewcode-block" id="add_external_grn">
 <a class="viewcode-back" href="../../../generated/netmap.masking.external.add_external_grn.html#netmap.masking.external.add_external_grn">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_external_grn</span><span class="p">(</span><span class="n">grn_ad</span><span class="p">,</span> <span class="n">external_grn</span><span class="p">,</span> <span class="n">name_grn</span><span class="o">=</span><span class="s1">&#39;external_grn&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Annotate GRN edges with overlap against an external reference network.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_external_grn</span><span class="p">(</span><span class="n">grn_ad</span><span class="p">,</span> <span class="n">external_grn</span><span class="p">,</span> <span class="n">name_grn</span><span class="o">=</span><span class="s1">'external_grn'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Annotate GRN edges with overlap against an external reference network.</span>
 
 <span class="sd">    For each edge in ``grn_ad``, adds a weight column from the reference GRN and</span>
 <span class="sd">    boolean flags indicating whether the source or target gene appears in the</span>
@@ -479,16 +479,16 @@
 <span class="sd">            and ``weight`` columns.</span>
 <span class="sd">        name_grn (str): Suffix used to name the added ``.var`` columns:</span>
 <span class="sd">            ``edge_in_{name_grn}``, ``is_target_{name_grn}``,</span>
-<span class="sd">            ``is_source_{name_grn}``. Defaults to ``&#39;external_grn&#39;``.</span>
+<span class="sd">            ``is_source_{name_grn}``. Defaults to ``'external_grn'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: ``grn_ad`` with three new columns in ``.var``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">all_my_genes</span> <span class="o">=</span> <span class="n">_get_all_genes_in_grn_object</span><span class="p">(</span><span class="n">grn_ad</span><span class="p">)</span>
     <span class="n">edge_mask</span> <span class="o">=</span> <span class="n">_create_edge_mask_from_GRN</span><span class="p">(</span><span class="n">external_grn</span><span class="p">,</span> <span class="n">all_my_genes</span><span class="p">,</span> <span class="n">name_grn</span> <span class="o">=</span> <span class="n">name_grn</span><span class="p">)</span>
     <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">edge_mask</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;is_target_</span><span class="si">{</span><span class="n">name_grn</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">external_grn</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
-    <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;is_source_</span><span class="si">{</span><span class="n">name_grn</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">external_grn</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'is_target_</span><span class="si">{</span><span class="n">name_grn</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">external_grn</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="sa">f</span><span class="s1">'is_source_</span><span class="si">{</span><span class="n">name_grn</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">grn_ad</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">external_grn</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">grn_ad</span></div>
 
 
@@ -497,11 +497,11 @@
 <div class="viewcode-block" id="get_genome_annotation_from_gtf">
 <a class="viewcode-back" href="../../../generated/netmap.masking.external.get_genome_annotation_from_gtf.html#netmap.masking.external.get_genome_annotation_from_gtf">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_genome_annotation_from_gtf</span><span class="p">(</span><span class="n">gtf_df</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return gene-feature rows from a parsed GTF DataFrame.</span>
+<span class="w">    </span><span class="sd">"""Return gene-feature rows from a parsed GTF DataFrame.</span>
 
-<span class="sd">    Filters the GTF to rows where ``feature == &#39;gene&#39;``, selects a standard</span>
+<span class="sd">    Filters the GTF to rows where ``feature == 'gene'``, selects a standard</span>
 <span class="sd">    set of columns, removes entries with empty gene names, and prepends</span>
-<span class="sd">    ``&#39;chr&#39;`` to the chromosome identifier.</span>
+<span class="sd">    ``'chr'`` to the chromosome identifier.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        gtf_df (pd.DataFrame): Genome annotation loaded from a GTF file,</span>
@@ -512,15 +512,15 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: Filtered and reformatted DataFrame of gene features with</span>
 <span class="sd">        an additional ``chr`` column containing the prefixed chromosome name.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">genes</span> <span class="o">=</span> <span class="n">gtf_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">feature</span><span class="o">=</span><span class="s2">&quot;gene&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="n">gtf_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">feature</span><span class="o">=</span><span class="s2">"gene"</span><span class="p">)</span>
     <span class="n">genes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span>
     <span class="n">genes</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">gtf_df</span><span class="o">.</span><span class="n">columns</span>
-    <span class="n">genes</span> <span class="o">=</span> <span class="n">genes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">&#39;seqname&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;feature&#39;</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;strand&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_version&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_name&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_source&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;gene_biotype&#39;</span><span class="p">]]</span>
-    <span class="n">genes</span> <span class="o">=</span> <span class="n">genes</span><span class="p">[</span><span class="n">genes</span><span class="p">[</span><span class="s2">&quot;gene_name&quot;</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
-    <span class="n">genes</span><span class="p">[</span><span class="s1">&#39;chr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;chr&#39;</span><span class="o">+</span><span class="n">genes</span><span class="p">[</span><span class="s1">&#39;seqname&#39;</span><span class="p">]</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="n">genes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">'seqname'</span><span class="p">,</span> <span class="s1">'source'</span><span class="p">,</span> <span class="s1">'feature'</span><span class="p">,</span> <span class="s1">'start'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">,</span> <span class="s1">'score'</span><span class="p">,</span> <span class="s1">'strand'</span><span class="p">,</span>
+            <span class="s1">'frame'</span><span class="p">,</span> <span class="s1">'gene_id'</span><span class="p">,</span> <span class="s1">'gene_version'</span><span class="p">,</span> <span class="s1">'gene_name'</span><span class="p">,</span> <span class="s1">'gene_source'</span><span class="p">,</span>
+            <span class="s1">'gene_biotype'</span><span class="p">]]</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="n">genes</span><span class="p">[</span><span class="n">genes</span><span class="p">[</span><span class="s2">"gene_name"</span><span class="p">]</span><span class="o">!=</span><span class="s1">''</span><span class="p">]</span>
+    <span class="n">genes</span><span class="p">[</span><span class="s1">'chr'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'chr'</span><span class="o">+</span><span class="n">genes</span><span class="p">[</span><span class="s1">'seqname'</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">genes</span></div>
 
 
@@ -528,7 +528,7 @@
 <div class="viewcode-block" id="preprocess_bed_file">
 <a class="viewcode-back" href="../../../generated/netmap.masking.external.preprocess_bed_file.html#netmap.masking.external.preprocess_bed_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">preprocess_bed_file</span><span class="p">(</span><span class="n">bed_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a BED file and parse the TF motif list column.</span>
+<span class="w">    </span><span class="sd">"""Read a BED file and parse the TF motif list column.</span>
 
 <span class="sd">    Loads a tab-separated BED file describing cis-regulatory modules (CRMs)</span>
 <span class="sd">    and splits the comma-separated TF list into a Python list for downstream</span>
@@ -543,11 +543,11 @@
 <span class="sd">        pd.DataFrame: DataFrame with the original BED columns plus an</span>
 <span class="sd">        additional ``TF_list_list`` column containing each TF name as a</span>
 <span class="sd">        Python list element.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1">## ALL cis regulatory motifs</span>
-    <span class="n">crm_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">bed_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">crm_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chr&#39;</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="s1">&#39;TF_list&#39;</span><span class="p">,</span><span class="s1">&#39;TF_number&#39;</span><span class="p">,</span> <span class="s1">&#39;strand&#39;</span><span class="p">,</span> <span class="s1">&#39;number1&#39;</span><span class="p">,</span> <span class="s1">&#39;number2&#39;</span><span class="p">,</span> <span class="s1">&#39;large_number&#39;</span><span class="p">]</span>
-    <span class="n">crm_df</span><span class="p">[</span><span class="s1">&#39;TF_list_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">crm_df</span><span class="p">[</span><span class="s1">&#39;TF_list&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">crm_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">bed_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">crm_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'chr'</span><span class="p">,</span> <span class="s1">'start'</span><span class="p">,</span> <span class="s1">'end'</span><span class="p">,</span> <span class="s1">'TF_list'</span><span class="p">,</span><span class="s1">'TF_number'</span><span class="p">,</span> <span class="s1">'strand'</span><span class="p">,</span> <span class="s1">'number1'</span><span class="p">,</span> <span class="s1">'number2'</span><span class="p">,</span> <span class="s1">'large_number'</span><span class="p">]</span>
+    <span class="n">crm_df</span><span class="p">[</span><span class="s1">'TF_list_list'</span><span class="p">]</span> <span class="o">=</span> <span class="n">crm_df</span><span class="p">[</span><span class="s1">'TF_list'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">crm_df</span></div>
 
 
@@ -556,9 +556,9 @@
 <div class="viewcode-block" id="get_regulators">
 <a class="viewcode-back" href="../../../generated/netmap.masking.external.get_regulators.html#netmap.masking.external.get_regulators">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_regulators</span><span class="p">(</span><span class="n">crm_df</span><span class="p">,</span> <span class="n">genes</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify TF regulators of each gene by proximity to the TSS.</span>
+<span class="w">    </span><span class="sd">"""Identify TF regulators of each gene by proximity to the TSS.</span>
 
-<span class="sd">    Searches a window of ``±window`` bp around each gene&#39;s TSS in the CRM</span>
+<span class="sd">    Searches a window of ``±window`` bp around each gene's TSS in the CRM</span>
 <span class="sd">    (cis-regulatory motif) BED data and returns all TF→gene pairs found.</span>
 
 <span class="sd">    Args:</span>
@@ -574,44 +574,44 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: Table with columns ``gene``, ``TFs``, ``nTFs``,</span>
 <span class="sd">            ``edge`` (``TF_gene`` string), ``regulator`` (always ``True``).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">gene_to_tfs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
 
-    <span class="n">crm_by_chr</span> <span class="o">=</span> <span class="p">{</span><span class="n">chr_</span><span class="p">:</span> <span class="n">df</span> <span class="k">for</span> <span class="n">chr_</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">crm_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;chr&quot;</span><span class="p">)}</span>
+    <span class="n">crm_by_chr</span> <span class="o">=</span> <span class="p">{</span><span class="n">chr_</span><span class="p">:</span> <span class="n">df</span> <span class="k">for</span> <span class="n">chr_</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">crm_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"chr"</span><span class="p">)}</span>
 
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">genes</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="n">chrom</span> <span class="o">=</span> <span class="n">gene</span><span class="p">[</span><span class="s2">&quot;chr&quot;</span><span class="p">]</span>
-        <span class="n">tss</span> <span class="o">=</span> <span class="n">gene</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
-        <span class="n">gene_name</span> <span class="o">=</span> <span class="n">gene</span><span class="p">[</span><span class="s2">&quot;gene_name&quot;</span><span class="p">]</span>
+        <span class="n">chrom</span> <span class="o">=</span> <span class="n">gene</span><span class="p">[</span><span class="s2">"chr"</span><span class="p">]</span>
+        <span class="n">tss</span> <span class="o">=</span> <span class="n">gene</span><span class="p">[</span><span class="s2">"start"</span><span class="p">]</span>
+        <span class="n">gene_name</span> <span class="o">=</span> <span class="n">gene</span><span class="p">[</span><span class="s2">"gene_name"</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">chrom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">crm_by_chr</span><span class="p">:</span>
             <span class="k">continue</span>
 
         <span class="n">crms</span> <span class="o">=</span> <span class="n">crm_by_chr</span><span class="p">[</span><span class="n">chrom</span><span class="p">]</span>
-        <span class="n">nearby_crms</span> <span class="o">=</span> <span class="n">crms</span><span class="p">[(</span><span class="n">crms</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tss</span> <span class="o">-</span> <span class="n">window</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">crms</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tss</span> <span class="o">+</span> <span class="n">window</span><span class="p">)]</span>
+        <span class="n">nearby_crms</span> <span class="o">=</span> <span class="n">crms</span><span class="p">[(</span><span class="n">crms</span><span class="p">[</span><span class="s2">"end"</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tss</span> <span class="o">-</span> <span class="n">window</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">crms</span><span class="p">[</span><span class="s2">"start"</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tss</span> <span class="o">+</span> <span class="n">window</span><span class="p">)]</span>
 
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">crm</span> <span class="ow">in</span> <span class="n">nearby_crms</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-            <span class="n">gene_to_tfs</span><span class="p">[</span><span class="n">gene_name</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">crm</span><span class="p">[</span><span class="s2">&quot;TF_list_list&quot;</span><span class="p">])</span>
+            <span class="n">gene_to_tfs</span><span class="p">[</span><span class="n">gene_name</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">crm</span><span class="p">[</span><span class="s2">"TF_list_list"</span><span class="p">])</span>
 
 
 
     <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
-        <span class="p">{</span><span class="s2">&quot;gene&quot;</span><span class="p">:</span> <span class="n">gene</span><span class="p">,</span> <span class="s2">&quot;TFs&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tfs</span><span class="p">))}</span>
+        <span class="p">{</span><span class="s2">"gene"</span><span class="p">:</span> <span class="n">gene</span><span class="p">,</span> <span class="s2">"TFs"</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tfs</span><span class="p">))}</span>
         <span class="k">for</span> <span class="n">gene</span><span class="p">,</span> <span class="n">tfs</span> <span class="ow">in</span> <span class="n">gene_to_tfs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">])</span>
 
-    <span class="n">results</span><span class="p">[</span><span class="s1">&#39;nTFs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;TFs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="s1">&#39;TFs&#39;</span><span class="p">)</span>
-    <span class="n">results</span><span class="p">[</span><span class="s1">&#39;edge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;TFs&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">]</span>
+    <span class="n">results</span><span class="p">[</span><span class="s1">'nTFs'</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">'TFs'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="s1">'TFs'</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s1">'edge'</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">'TFs'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'_'</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="s1">'gene'</span><span class="p">]</span>
 
-    <span class="n">results</span><span class="p">[</span><span class="s1">&#39;regulator&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">results</span><span class="p">[</span><span class="s1">'regulator'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="n">results</span></div>
 
 
 <div class="viewcode-block" id="add_genome_information_to_anndata">
 <a class="viewcode-back" href="../../../generated/netmap.masking.external.add_genome_information_to_anndata.html#netmap.masking.external.add_genome_information_to_anndata">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_genome_information_to_anndata</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">tf_to_gene_df</span><span class="p">,</span> <span class="n">window_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge TF→gene regulatory relationships into GRN AnnData variable metadata.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_genome_information_to_anndata</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">,</span> <span class="n">tf_to_gene_df</span><span class="p">,</span> <span class="n">window_name</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Merge TF→gene regulatory relationships into GRN AnnData variable metadata.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        grn_adata (anndata.AnnData): GRN AnnData object whose var index contains</span>
@@ -619,16 +619,16 @@
 <span class="sd">        tf_to_gene_df (pd.DataFrame): Output of :func:`get_regulators` with at</span>
 <span class="sd">            least ``edge`` and ``regulator`` columns.</span>
 <span class="sd">        window_name (str): Suffix appended to the added boolean column name</span>
-<span class="sd">            ``regulator_{window_name}``. Defaults to ``&#39;&#39;``.</span>
+<span class="sd">            ``regulator_{window_name}``. Defaults to ``''``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: ``grn_adata`` with a new boolean column</span>
 <span class="sd">            ``regulator_{window_name}`` in ``.var``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">tf_to_gene_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">&#39;edge&#39;</span><span class="p">,</span> <span class="s1">&#39;regulator&#39;</span><span class="p">]],</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;edge_key&#39;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;edge&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;edge_key&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">tf_to_gene_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">'edge'</span><span class="p">,</span> <span class="s1">'regulator'</span><span class="p">]],</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">'edge_key'</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">'edge'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'edge_key'</span><span class="p">)</span>
     <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">regulator</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">regulator</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;edge&#39;</span><span class="p">])</span>
-    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;regulator&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;regulator_</span><span class="si">{</span><span class="n">window_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span>
+    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'edge'</span><span class="p">])</span>
+    <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span> <span class="p">{</span><span class="s1">'regulator'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'regulator_</span><span class="si">{</span><span class="n">window_name</span><span class="si">}</span><span class="s1">'</span><span class="p">})</span>
     <span class="k">return</span> <span class="n">grn_adata</span></div>
 
 </pre></div>

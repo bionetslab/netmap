@@ -373,7 +373,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.utils.netmap_config</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;YAML-serializable configuration dataclass for the NETMAP pipeline.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""YAML-serializable configuration dataclass for the NETMAP pipeline."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
@@ -385,7 +385,7 @@
 <a class="viewcode-back" href="../../../generated/netmap.utils.netmap_config.NetmapConfig.html#netmap.utils.netmap_config.NetmapConfig">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NetmapConfig</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration dataclass for the NETMAP pipeline.</span>
+<span class="w">    </span><span class="sd">"""Configuration dataclass for the NETMAP pipeline.</span>
 
 <span class="sd">    Holds all parameters required to run the NETMAP pipeline stages (model</span>
 <span class="sd">    training, GRN inference, masking, and downstream analysis).  Instances can</span>
@@ -395,57 +395,57 @@
 <span class="sd">    Fields (all keyword-argument constructors with defaults):</span>
 
 <span class="sd">    - ``input_data`` (str) — path to the input AnnData ``.h5ad`` file.</span>
-<span class="sd">      Default ``&quot;data.h5ad&quot;``.</span>
-<span class="sd">    - ``layer`` (str) — AnnData layer used as model input; ``&#39;X&#39;`` for the</span>
-<span class="sd">      main expression matrix. Default ``&#39;X&#39;``.</span>
+<span class="sd">      Default ``"data.h5ad"``.</span>
+<span class="sd">    - ``layer`` (str) — AnnData layer used as model input; ``'X'`` for the</span>
+<span class="sd">      main expression matrix. Default ``'X'``.</span>
 <span class="sd">    - ``output_directory`` (str) — root directory for pipeline outputs.</span>
-<span class="sd">      Default ``&quot;netmap&quot;``.</span>
+<span class="sd">      Default ``"netmap"``.</span>
 <span class="sd">    - ``transcription_factors`` (str) — path to a one-TF-per-line file.</span>
-<span class="sd">      Default ``&quot;&quot;``.</span>
+<span class="sd">      Default ``""``.</span>
 <span class="sd">    - ``tf_only`` (bool) — restrict sources to TFs when ``True``.</span>
 <span class="sd">      Default ``True``.</span>
 <span class="sd">    - ``penalize_error`` (bool) — include reconstruction-error penalty.</span>
 <span class="sd">      Default ``True``.</span>
 <span class="sd">    - ``adata_filename`` (str) — filename for the saved GRN AnnData inside</span>
-<span class="sd">      ``output_directory``. Default ``&quot;grn_lrp.h5ad&quot;``.</span>
-<span class="sd">    - ``grn`` (str) — filename for the exported GRN TSV. Default ``&quot;grn_lrp.tsv&quot;``.</span>
+<span class="sd">      ``output_directory``. Default ``"grn_lrp.h5ad"``.</span>
+<span class="sd">    - ``grn`` (str) — filename for the exported GRN TSV. Default ``"grn_lrp.tsv"``.</span>
 <span class="sd">    - ``masking_percentage`` (float) — fraction of cells for masking.</span>
 <span class="sd">      Default ``0.1``.</span>
 <span class="sd">    - ``print_every`` (int) — log training every N epochs. Default ``100``.</span>
-<span class="sd">    - ``optimizer`` (str) — PyTorch optimiser name. Default ``&#39;Adam&#39;``.</span>
+<span class="sd">    - ``optimizer`` (str) — PyTorch optimiser name. Default ``'Adam'``.</span>
 <span class="sd">    - ``learning_rate`` (float) — optimiser learning rate. Default ``0.005``.</span>
 <span class="sd">    - ``epochs`` (int) — maximum training epochs per model. Default ``10000``.</span>
 <span class="sd">    - ``n_models`` (int) — ensemble size. Default ``20``.</span>
 <span class="sd">    - ``validation_size`` (float) — early-stopping validation fraction.</span>
 <span class="sd">      Default ``0.2``.</span>
 <span class="sd">    - ``model`` (str) — autoencoder class name</span>
-<span class="sd">      (``&#39;NegativeBinomialAutoencoder&#39;`` or ``&#39;ZINBAutoencoder&#39;``).</span>
-<span class="sd">      Default ``&quot;NegativeBinomialAutoencoder&quot;``.</span>
+<span class="sd">      (``'NegativeBinomialAutoencoder'`` or ``'ZINBAutoencoder'``).</span>
+<span class="sd">      Default ``"NegativeBinomialAutoencoder"``.</span>
 <span class="sd">    - ``xai_method`` (str) — Captum attribution method</span>
-<span class="sd">      (``&#39;GradientShap&#39;``, ``&#39;GuidedBackprop&#39;``, ``&#39;Deconvolution&#39;``).</span>
-<span class="sd">      Default ``&quot;GradientShap&quot;``.</span>
+<span class="sd">      (``'GradientShap'``, ``'GuidedBackprop'``, ``'Deconvolution'``).</span>
+<span class="sd">      Default ``"GradientShap"``.</span>
 <span class="sd">    - ``aggregation_strategy`` (str) — attribution aggregation strategy.</span>
-<span class="sd">      Default ``&#39;mean&#39;``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">      Default ``'mean'``.</span>
+<span class="sd">    """</span>
 
-    <span class="n">input_data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span>  <span class="s2">&quot;data.h5ad&quot;</span>
-    <span class="n">layer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
-    <span class="n">output_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span>  <span class="s2">&quot;netmap&quot;</span>
-    <span class="n">transcription_factors</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span>  <span class="s2">&quot;&quot;</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span>  <span class="s2">"data.h5ad"</span>
+    <span class="n">layer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'X'</span>
+    <span class="n">output_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span>  <span class="s2">"netmap"</span>
+    <span class="n">transcription_factors</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span>  <span class="s2">""</span>
     <span class="n">tf_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">penalize_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">adata_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span>  <span class="s2">&quot;grn_lrp.h5ad&quot;</span>
-    <span class="n">grn</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;grn_lrp.tsv&quot;</span>
+    <span class="n">adata_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span>  <span class="s2">"grn_lrp.h5ad"</span>
+    <span class="n">grn</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"grn_lrp.tsv"</span>
     <span class="n">masking_percentage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
     <span class="n">print_every</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
-    <span class="n">optimizer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Adam&#39;</span>
+    <span class="n">optimizer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'Adam'</span>
     <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.005</span>
     <span class="n">epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span>
     <span class="n">n_models</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
     <span class="n">validation_size</span><span class="p">:</span> <span class="nb">float</span>  <span class="o">=</span> <span class="mf">0.2</span>
-    <span class="n">model</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span>  <span class="s2">&quot;NegativeBinomialAutoencoder&quot;</span>
-    <span class="n">xai_method</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span>  <span class="s2">&quot;GradientShap&quot;</span>
-    <span class="n">aggregation_strategy</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span>
+    <span class="n">model</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span>  <span class="s2">"NegativeBinomialAutoencoder"</span>
+    <span class="n">xai_method</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span>  <span class="s2">"GradientShap"</span>
+    <span class="n">aggregation_strategy</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">'mean'</span>
 
 
 
@@ -453,7 +453,7 @@
 <a class="viewcode-back" href="../../../generated/netmap.utils.netmap_config.NetmapConfig.html#netmap.utils.netmap_config.NetmapConfig.read_yaml">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a :class:`NetmapConfig` from a YAML file.</span>
+<span class="w">        </span><span class="sd">"""Construct a :class:`NetmapConfig` from a YAML file.</span>
 
 <span class="sd">        Reads the YAML file at ``yaml_file``, prints the parsed dictionary for</span>
 <span class="sd">        debugging, and returns a new :class:`NetmapConfig` instance populated</span>
@@ -465,8 +465,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            NetmapConfig: A new instance initialised from the YAML contents.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span></div>
@@ -475,7 +475,7 @@
 <div class="viewcode-block" id="NetmapConfig.write_yaml">
 <a class="viewcode-back" href="../../../generated/netmap.utils.netmap_config.NetmapConfig.html#netmap.utils.netmap_config.NetmapConfig.write_yaml">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialise this configuration to a YAML file.</span>
+<span class="w">        </span><span class="sd">"""Serialise this configuration to a YAML file.</span>
 
 <span class="sd">        Writes all fields of the current instance to ``yaml_file`` in YAML</span>
 <span class="sd">        format, preserving field order (``sort_keys=False``).  The resulting</span>
@@ -487,8 +487,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 </div>
 

@@ -373,7 +373,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for netmap.grn.inferrence</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;GRN inference via Captum attributions over an autoencoder ensemble.</span>
+<span></span><span class="sd">"""GRN inference via Captum attributions over an autoencoder ensemble.</span>
 
 <span class="sd">The main entry point :func:`inferrence` iterates over all target genes,</span>
 <span class="sd">applies the XAI method across all models in the zoo, aggregates attributions,</span>
@@ -382,7 +382,7 @@
 <span class="sd">directed edges (``SourceGene_TargetGene``) as variables; ``X`` is an empty</span>
 <span class="sd">placeholder backed by those Parquet files until loaded with</span>
 <span class="sd">:func:`~netmap.utils.data_utils.retrieve_top_edges`.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">captum.attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">GuidedBackprop</span><span class="p">,</span> <span class="n">GradientShap</span><span class="p">,</span> <span class="n">Deconvolution</span>
@@ -408,10 +408,10 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_quantile_partitioning</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Performs quantile partitioning on a 1D NumPy array.</span>
 
-<span class="sd">    The method orders the data and divides it into &#39;q&#39; equal-sized partitions.</span>
+<span class="sd">    The method orders the data and divides it into 'q' equal-sized partitions.</span>
 <span class="sd">    A new array (mask) is created where each element is assigned a value</span>
 <span class="sd">    of k/q, where k is the quantile that the element belongs to.</span>
 
@@ -427,11 +427,11 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If q is not a positive integer or if the input data is not</span>
 <span class="sd">                    a 1D NumPy array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data must be a 1D NumPy array.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input data must be a 1D NumPy array."</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">q</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The number of quantiles &#39;q&#39; must be a positive integer.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The number of quantiles 'q' must be a positive integer."</span><span class="p">)</span>
 
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -461,7 +461,7 @@
     <span class="k">return</span> <span class="n">mask</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_quantile_partitioning_2d</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Performs quantile partitioning row-wise on a 2D NumPy array using</span>
 <span class="sd">    np.apply_along_axis for efficiency.</span>
 
@@ -475,23 +475,23 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If the input data is not a 2D NumPy array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data must be a 2D NumPy array.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input data must be a 2D NumPy array."</span><span class="p">)</span>
 
     <span class="c1"># Use np.apply_along_axis to apply the 1D function to each row (axis=1).</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">_quantile_partitioning</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
 
 <span class="c1"># def compute_correlation_metric(data, cor_type):</span>
 <span class="c1">#     # Compute gene correlation measure</span>
-<span class="c1">#     #  &#39;pingouin.pcorr&#39;, &#39;np.cov&#39;, &#39;np.corcoeff&#39;</span>
-<span class="c1">#     if cor_type ==  &#39;pingouin.pcorr&#39;:</span>
+<span class="c1">#     #  'pingouin.pcorr', 'np.cov', 'np.corcoeff'</span>
+<span class="c1">#     if cor_type ==  'pingouin.pcorr':</span>
 <span class="c1">#         cov = pingu.pcorr(pd.DataFrame(data))</span>
-<span class="c1">#     elif cor_type == &#39;np.cov&#39;:</span>
+<span class="c1">#     elif cor_type == 'np.cov':</span>
 <span class="c1">#         cov = np.cov(data.T)</span>
-<span class="c1">#     elif cor_type == &#39;np.corrcoeff&#39;:</span>
+<span class="c1">#     elif cor_type == 'np.corrcoeff':</span>
 <span class="c1">#         cov = np.corrcoef(data.T)</span>
-<span class="c1">#     elif cor_type == &#39;None&#39;:</span>
+<span class="c1">#     elif cor_type == 'None':</span>
 <span class="c1">#         cov = 1</span>
 <span class="c1">#     else:</span>
 <span class="c1">#         cov = 1</span>
@@ -499,24 +499,24 @@
 
 <div class="viewcode-block" id="aggregate_attributions">
 <a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.aggregate_attributions.html#netmap.grn.inferrence.aggregate_attributions">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">aggregate_attributions</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aggregate a list of per-model attribution arrays into a single array.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">aggregate_attributions</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Aggregate a list of per-model attribution arrays into a single array.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        attributions (list of numpy.ndarray): List of attribution matrices,</span>
 <span class="sd">            each of shape ``(n_cells, n_genes)``.</span>
-<span class="sd">        strategy (str): Aggregation method — ``&#39;mean&#39;`` (default), ``&#39;sum&#39;``,</span>
-<span class="sd">            or ``&#39;median&#39;``.</span>
+<span class="sd">        strategy (str): Aggregation method — ``'mean'`` (default), ``'sum'``,</span>
+<span class="sd">            or ``'median'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        numpy.ndarray: Aggregated attribution matrix of shape</span>
 <span class="sd">            ``(n_cells, n_genes)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">'mean'</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">'sum'</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">'median'</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Default to mean aggregation</span>
@@ -525,42 +525,42 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_explainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">explainer_type</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap a model in the requested Captum explainer.</span>
+<span class="w">    </span><span class="sd">"""Wrap a model in the requested Captum explainer.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (torch.nn.Module): Trained autoencoder with a single-tensor</span>
 <span class="sd">            forward pass (mode flag already set).</span>
-<span class="sd">        explainer_type (str): One of ``&#39;GradientShap&#39;``, ``&#39;GuidedBackprop&#39;``,</span>
-<span class="sd">            ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">        explainer_type (str): One of ``'GradientShap'``, ``'GuidedBackprop'``,</span>
+<span class="sd">            ``'Deconvolution'``.</span>
 <span class="sd">        raw (bool): For ``GradientShap`` only — if ``True``, sets</span>
 <span class="sd">            ``multiply_by_inputs=False``. Defaults to ``False``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: ``(explainer, explainer_mode)`` where ``explainer_mode`` is</span>
-<span class="sd">            ``&#39;shap-like&#39;`` for GradientShap or ``&#39;lrp-like&#39;`` for the others.</span>
+<span class="sd">            ``'shap-like'`` for GradientShap or ``'lrp-like'`` for the others.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If ``explainer_type`` is not recognised.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="n">explainer_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;GuidedBackprop&#39;</span><span class="p">,</span> <span class="s1">&#39;Deconvolution&#39;</span><span class="p">]:</span>
-        <span class="n">explainer_mode</span> <span class="o">=</span> <span class="s1">&#39;lrp-like&#39;</span>
+    <span class="k">if</span> <span class="n">explainer_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'GuidedBackprop'</span><span class="p">,</span> <span class="s1">'Deconvolution'</span><span class="p">]:</span>
+        <span class="n">explainer_mode</span> <span class="o">=</span> <span class="s1">'lrp-like'</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">explainer_mode</span> <span class="o">=</span> <span class="s1">&#39;shap-like&#39;</span>
+        <span class="n">explainer_mode</span> <span class="o">=</span> <span class="s1">'shap-like'</span>
 
 
-    <span class="k">if</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">&#39;GuidedBackprop&#39;</span><span class="p">:</span> <span class="c1">#fast</span>
+    <span class="k">if</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">'GuidedBackprop'</span><span class="p">:</span> <span class="c1">#fast</span>
         <span class="n">explainer</span> <span class="o">=</span> <span class="n">GuidedBackprop</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">&#39;GradientShap&#39;</span><span class="p">:</span> <span class="c1">#fast</span>
+    <span class="k">elif</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">'GradientShap'</span><span class="p">:</span> <span class="c1">#fast</span>
         <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
             <span class="n">explainer</span> <span class="o">=</span> <span class="n">GradientShap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">multiply_by_inputs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">explainer</span> <span class="o">=</span> <span class="n">GradientShap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">multiply_by_inputs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">&#39;Deconvolution&#39;</span><span class="p">:</span> <span class="c1">#fast</span>
+    <span class="k">elif</span> <span class="n">explainer_type</span> <span class="o">==</span> <span class="s1">'Deconvolution'</span><span class="p">:</span> <span class="c1">#fast</span>
         <span class="n">explainer</span> <span class="o">=</span> <span class="n">Deconvolution</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;no such method&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'no such method'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">explainer</span><span class="p">,</span> <span class="n">explainer_mode</span>
 
@@ -569,7 +569,7 @@
 <div class="viewcode-block" id="shuffle_each_column_independently">
 <a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.shuffle_each_column_independently.html#netmap.grn.inferrence.shuffle_each_column_independently">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">shuffle_each_column_independently</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Shuffles each column of a 2D PyTorch tensor independently.</span>
 
 <span class="sd">    Args:</span>
@@ -577,9 +577,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: A new tensor with each of its columns independently shuffled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input tensor must be 2-dimensional to shuffle columns.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input tensor must be 2-dimensional to shuffle columns."</span><span class="p">)</span>
 
     <span class="c1"># Create an empty tensor of the same size to store the shuffled columns</span>
     <span class="n">shuffled_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
@@ -600,10 +600,10 @@
         <span class="n">target_gene</span><span class="p">,</span>
         <span class="n">lrp_model</span><span class="p">,</span>
         <span class="n">input_data</span><span class="p">,</span>
-        <span class="n">xai_type</span><span class="o">=</span><span class="s1">&#39;lrp-like&#39;</span><span class="p">,</span>
-        <span class="n">background_type</span> <span class="o">=</span> <span class="s1">&#39;zeros&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">xai_type</span><span class="o">=</span><span class="s1">'lrp-like'</span><span class="p">,</span>
+        <span class="n">background_type</span> <span class="o">=</span> <span class="s1">'zeros'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Captum attributions for a single target gene across all models.</span>
+<span class="w">    </span><span class="sd">"""Compute Captum attributions for a single target gene across all models.</span>
 
 <span class="sd">    Iterates over every explainer in ``lrp_model`` and calls ``.attribute()``</span>
 <span class="sd">    with the appropriate signature depending on ``xai_type``. The background</span>
@@ -615,22 +615,22 @@
 <span class="sd">        lrp_model (list): List of Captum explainer objects (one per model in zoo).</span>
 <span class="sd">        input_data (torch.Tensor): Input data tensor on CUDA, shape</span>
 <span class="sd">            ``(n_cells, n_genes)``.</span>
-<span class="sd">        xai_type (str): ``&#39;lrp-like&#39;`` or ``&#39;shap-like&#39;``.</span>
+<span class="sd">        xai_type (str): ``'lrp-like'`` or ``'shap-like'``.</span>
 <span class="sd">        background_type (str): Background for SHAP-like methods —</span>
-<span class="sd">            ``&#39;zeros&#39;`` (default), ``&#39;randomize&#39;`` (shuffle columns), or</span>
-<span class="sd">            ``&#39;data&#39;`` (use input as its own baseline).</span>
+<span class="sd">            ``'zeros'`` (default), ``'randomize'`` (shuffle columns), or</span>
+<span class="sd">            ``'data'`` (use input as its own baseline).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list of numpy.ndarray: One attribution matrix per model, each of shape</span>
 <span class="sd">            ``(n_cells, n_genes)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;randomize&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">'randomize'</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">shuffle_each_column_independently</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">'zeros'</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">'data'</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">input_data</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
@@ -642,10 +642,10 @@
         <span class="c1"># Randomize backgorund for each round</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">lrp_model</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
         <span class="c1">#for _ in range(num_iterations):</span>
-        <span class="k">if</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">&#39;lrp-like&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">'lrp-like'</span><span class="p">:</span>
             <span class="n">attribution</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_gene</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">&#39;shap-like&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">'shap-like'</span><span class="p">:</span>
             <span class="n">attribution</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">baselines</span> <span class="o">=</span> <span class="n">background</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">target_gene</span><span class="p">)</span>
 
         <span class="n">attributions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribution</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
@@ -656,8 +656,8 @@
 
 <div class="viewcode-block" id="inferrence">
 <a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.inferrence.html#netmap.grn.inferrence.inferrence">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">inferrence</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">&#39;GradientShap&#39;</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">backing_file</span><span class="o">=</span><span class="s1">&#39;grn_adata.h5&#39;</span><span class="p">,</span> <span class="n">return_in_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the full GRN for all target genes using an autoencoder ensemble.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inferrence</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">'GradientShap'</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">'zeros'</span><span class="p">,</span> <span class="n">backing_file</span><span class="o">=</span><span class="s1">'grn_adata.h5'</span><span class="p">,</span> <span class="n">return_in_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the full GRN for all target genes using an autoencoder ensemble.</span>
 
 <span class="sd">    For each gene acting as an attribution target, attribution scores are</span>
 <span class="sd">    computed across all models in the ensemble, aggregated by mean, and either</span>
@@ -674,10 +674,10 @@
 <span class="sd">        models (list): List of trained autoencoder model instances.</span>
 <span class="sd">        data_train_full_tensor (torch.Tensor): Input expression data on CUDA.</span>
 <span class="sd">        gene_names (numpy.ndarray): Gene name array; order must match tensor columns.</span>
-<span class="sd">        xai_method (str): XAI method — ``&#39;GradientShap&#39;`` (default),</span>
-<span class="sd">            ``&#39;GuidedBackprop&#39;``, or ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">        xai_method (str): XAI method — ``'GradientShap'`` (default),</span>
+<span class="sd">            ``'GuidedBackprop'``, or ``'Deconvolution'``.</span>
 <span class="sd">        background_type (str): Background for SHAP-like attributions.</span>
-<span class="sd">            Defaults to ``&#39;zeros&#39;``.</span>
+<span class="sd">            Defaults to ``'zeros'``.</span>
 <span class="sd">        backing_file (str or None): Path prefix for output. Parquet shards are</span>
 <span class="sd">            written to ``&lt;dirname(backing_file)&gt;/grn/&lt;gene&gt;.parquet``.</span>
 <span class="sd">            Set to ``None`` to keep the full matrix in memory (high RAM usage).</span>
@@ -688,7 +688,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: GRN object with cells as obs and edges as var; ``X`` is</span>
 <span class="sd">            an empty placeholder when backed by Parquet.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">tms</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">name_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -715,18 +715,18 @@
 
         <span class="c1"># Configuration</span>
         <span class="n">output_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">backing_file</span><span class="p">)</span>
-        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s1">&#39;grn&#39;</span><span class="p">)</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s1">'grn'</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">name_list</span> <span class="o">=</span>  <span class="p">[]</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;attr&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">'attr'</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
             <span class="c1">## Create name vector</span>
             <span class="n">name_list</span> <span class="o">=</span> <span class="n">name_list</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
             <span class="n">target_names</span> <span class="o">=</span> <span class="n">target_names</span><span class="o">+</span><span class="p">[</span><span class="n">gene_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
 
-        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
 
         <span class="n">schema</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">schema</span><span class="p">([(</span><span class="n">name</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">float32</span><span class="p">())</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">])</span>
 
@@ -738,13 +738,13 @@
                 <span class="n">xai_type</span><span class="o">=</span><span class="n">xai_type</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="n">background_type</span>
             <span class="p">)</span>
 
-            <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+            <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">)</span>
 
             <span class="n">collect_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
             <span class="n">collect_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 
             <span class="c1"># 2. Convert the column-chunk to a PyArrow Table</span>
-            <span class="c1"># Map the numpy chunk to the specific column names for this group &#39;g&#39;</span>
+            <span class="c1"># Map the numpy chunk to the specific column names for this group 'g'</span>
             <span class="n">current_col_names</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">[</span><span class="n">g</span><span class="o">*</span><span class="n">cols</span> <span class="p">:</span> <span class="p">(</span><span class="n">g</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">cols</span><span class="p">]</span>
 
             <span class="c1"># We create a table where each slice of the numpy array is a column</span>
@@ -754,8 +754,8 @@
             <span class="p">)</span>
 
             <span class="c1"># 3. Write this specific column-group to a Parquet file</span>
-            <span class="c1"># In a dataset, these will be &quot;sharded&quot; columns</span>
-            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gene_names</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
+            <span class="c1"># In a dataset, these will be "sharded" columns</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene_names</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
             <span class="n">pq</span><span class="o">.</span><span class="n">write_table</span><span class="p">(</span><span class="n">chunk_table</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
 
 
@@ -771,7 +771,7 @@
 
 
 
-                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">)</span>
                 <span class="n">collect_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
                 <span class="n">collect_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
 
@@ -787,21 +787,21 @@
         <span class="n">target_names</span> <span class="o">=</span> <span class="n">target_names</span><span class="o">+</span><span class="p">[</span><span class="n">gene_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
 
 
-    <span class="n">index_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
-    <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">index_list</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">:</span><span class="n">name_list</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span><span class="n">target_names</span><span class="p">})</span>
-    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
-    <span class="n">cou</span><span class="p">[</span><span class="s1">&#39;edge_sums&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_sums</span><span class="p">)</span>
-    <span class="n">cou</span><span class="p">[</span><span class="s1">&#39;edge_means&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_means</span><span class="p">)</span>
+    <span class="n">index_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'index'</span><span class="p">:</span> <span class="n">index_list</span><span class="p">,</span> <span class="s1">'source'</span><span class="p">:</span><span class="n">name_list</span><span class="p">,</span> <span class="s1">'target'</span><span class="p">:</span><span class="n">target_names</span><span class="p">})</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'index'</span><span class="p">)</span>
+    <span class="n">cou</span><span class="p">[</span><span class="s1">'edge_sums'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_sums</span><span class="p">)</span>
+    <span class="n">cou</span><span class="p">[</span><span class="s1">'edge_means'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_means</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">backing_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">return_in_memory</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
-                <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">dset</span><span class="p">,</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backing_file&#39;</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">'r+'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span>
+                <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">dset</span><span class="p">,</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'backing_file'</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
                 <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">to_memory</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols_grn</span><span class="p">),</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backing_file&#39;</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
+            <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols_grn</span><span class="p">),</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'backing_file'</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">attribution_to_anndata</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">cou</span><span class="p">)</span>
 
@@ -811,11 +811,11 @@
 
 <div class="viewcode-block" id="inferrence_h5py">
 <a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.inferrence_h5py.html#netmap.grn.inferrence.inferrence_h5py">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_h5py</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">&#39;GradientShap&#39;</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">backing_file</span><span class="o">=</span><span class="s1">&#39;grn_adata.h5&#39;</span><span class="p">,</span> <span class="n">return_in_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the full GRN and back it with an HDF5 file instead of Parquet.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_h5py</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">'GradientShap'</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">'zeros'</span><span class="p">,</span> <span class="n">backing_file</span><span class="o">=</span><span class="s1">'grn_adata.h5'</span><span class="p">,</span> <span class="n">return_in_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the full GRN and back it with an HDF5 file instead of Parquet.</span>
 
 <span class="sd">    Functionally equivalent to ``inferrence()``, but attribution data is</span>
-<span class="sd">    written into a single HDF5 dataset (key ``&#39;data&#39;``, shape</span>
+<span class="sd">    written into a single HDF5 dataset (key ``'data'``, shape</span>
 <span class="sd">    ``(cells, genes^2)``, chunked by ``(cells, genes)``) rather than</span>
 <span class="sd">    per-gene Parquet shards.</span>
 
@@ -828,14 +828,14 @@
 <span class="sd">        gene_names (array-like): Ordered gene names corresponding to columns</span>
 <span class="sd">            of ``data_train_full_tensor``.</span>
 <span class="sd">        xai_method (str): Captum XAI method to use. One of</span>
-<span class="sd">            ``&#39;GradientShap&#39;`` (default), ``&#39;GuidedBackprop&#39;``,</span>
-<span class="sd">            ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">            ``'GradientShap'`` (default), ``'GuidedBackprop'``,</span>
+<span class="sd">            ``'Deconvolution'``.</span>
 <span class="sd">        background_type (str): Baseline strategy for SHAP-style attribution.</span>
-<span class="sd">            One of ``&#39;zeros&#39;`` (default), ``&#39;randomize&#39;``, ``&#39;data&#39;``.</span>
+<span class="sd">            One of ``'zeros'`` (default), ``'randomize'``, ``'data'``.</span>
 <span class="sd">        backing_file (str or None): Path to the HDF5 output file. If not</span>
 <span class="sd">            ``None``, the file is created (overwriting any existing file) and</span>
 <span class="sd">            attribution data is streamed into it column-block by column-block.</span>
-<span class="sd">            The path is stored in ``grn_adata.uns[&#39;backing_file&#39;]`` so that</span>
+<span class="sd">            The path is stored in ``grn_adata.uns['backing_file']`` so that</span>
 <span class="sd">            ``return_grn_adata_to_memory()`` can reload it. If ``None``, all</span>
 <span class="sd">            attributions are accumulated in memory.</span>
 <span class="sd">        return_in_memory (bool): Only relevant when ``backing_file`` is not</span>
@@ -849,7 +849,7 @@
 <span class="sd">            metadata with columns ``source``, ``target``, ``edge_sums``, and</span>
 <span class="sd">            ``edge_means``. When backed by HDF5 and ``return_in_memory=False``,</span>
 <span class="sd">            ``X`` is a zero-shape placeholder.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">tms</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">name_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -871,12 +871,12 @@
     <span class="n">collect_means</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">if</span> <span class="n">backing_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 
             <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
-                <span class="s1">&#39;data&#39;</span><span class="p">,</span>
+                <span class="s1">'data'</span><span class="p">,</span>
                 <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols_grn</span><span class="p">),</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="s1">'float32'</span><span class="p">,</span>
                 <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
             <span class="p">)</span>
 
@@ -890,7 +890,7 @@
 
 
 
-                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">)</span>
                 <span class="n">collect_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
                 <span class="n">collect_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
                 <span class="n">dset</span><span class="p">[:,</span> <span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">cols</span><span class="p">):</span> <span class="p">((</span><span class="n">g</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">cols</span><span class="p">)]</span> <span class="o">=</span> <span class="n">attributions_list</span>
@@ -906,7 +906,7 @@
 
 
 
-                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+                <span class="n">attributions_list</span> <span class="o">=</span> <span class="n">aggregate_attributions</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">)</span>
                 <span class="n">collect_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
                 <span class="n">collect_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">attributions_list</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
 
@@ -920,21 +920,21 @@
         <span class="n">target_names</span> <span class="o">=</span> <span class="n">target_names</span><span class="o">+</span><span class="p">[</span><span class="n">gene_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)</span>
 
 
-    <span class="n">index_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
-    <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">index_list</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">:</span><span class="n">name_list</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span><span class="n">target_names</span><span class="p">})</span>
-    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
-    <span class="n">cou</span><span class="p">[</span><span class="s1">&#39;edge_sums&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_sums</span><span class="p">)</span>
-    <span class="n">cou</span><span class="p">[</span><span class="s1">&#39;edge_means&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_means</span><span class="p">)</span>
+    <span class="n">index_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name_list</span><span class="p">,</span> <span class="n">target_names</span><span class="p">)]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'index'</span><span class="p">:</span> <span class="n">index_list</span><span class="p">,</span> <span class="s1">'source'</span><span class="p">:</span><span class="n">name_list</span><span class="p">,</span> <span class="s1">'target'</span><span class="p">:</span><span class="n">target_names</span><span class="p">})</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'index'</span><span class="p">)</span>
+    <span class="n">cou</span><span class="p">[</span><span class="s1">'edge_sums'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_sums</span><span class="p">)</span>
+    <span class="n">cou</span><span class="p">[</span><span class="s1">'edge_means'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">collect_means</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">backing_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">return_in_memory</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
-                <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">dset</span><span class="p">,</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backing_file&#39;</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">backing_file</span><span class="p">,</span> <span class="s1">'r+'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span>
+                <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">dset</span><span class="p">,</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'backing_file'</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
                 <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">to_memory</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols_grn</span><span class="p">),</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;backing_file&#39;</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
+            <span class="n">grn_adata</span>  <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols_grn</span><span class="p">),</span> <span class="n">uns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'backing_file'</span><span class="p">:</span> <span class="n">backing_file</span><span class="p">},</span> <span class="n">var</span> <span class="o">=</span> <span class="n">cou</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">attribution_to_anndata</span><span class="p">(</span><span class="n">attributions</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">cou</span><span class="p">)</span>
 
@@ -945,17 +945,17 @@
 <div class="viewcode-block" id="return_grn_adata_to_memory">
 <a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.return_grn_adata_to_memory.html#netmap.grn.inferrence.return_grn_adata_to_memory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">return_grn_adata_to_memory</span><span class="p">(</span><span class="n">grn_adata</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the full attribution matrix from the HDF5 backing file into memory.</span>
+<span class="w">    </span><span class="sd">"""Load the full attribution matrix from the HDF5 backing file into memory.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with ``uns[&#39;backing_file&#39;]``</span>
+<span class="sd">        grn_adata (anndata.AnnData): GRN AnnData with ``uns['backing_file']``</span>
 <span class="sd">            pointing to an HDF5 file written by :func:`inferrence_h5py`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: The same object with ``X`` populated in memory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">uns</span><span class="p">[</span><span class="s1">&#39;backing_file&#39;</span><span class="p">],</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">grn_adata</span><span class="o">.</span><span class="n">uns</span><span class="p">[</span><span class="s1">'backing_file'</span><span class="p">],</span> <span class="s1">'r+'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span>
         <span class="n">grn_adata</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">dset</span>
         <span class="n">grn_adata</span> <span class="o">=</span> <span class="n">grn_adata</span><span class="o">.</span><span class="n">to_memory</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">grn_adata</span></div>
@@ -967,11 +967,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">attribution_one_model</span><span class="p">(</span>
         <span class="n">lrp_model</span><span class="p">,</span>
         <span class="n">input_data</span><span class="p">,</span>
-        <span class="n">xai_type</span><span class="o">=</span><span class="s1">&#39;lrp-like&#39;</span><span class="p">,</span>
-        <span class="n">background_type</span> <span class="o">=</span> <span class="s1">&#39;randomize&#39;</span><span class="p">):</span>
+        <span class="n">xai_type</span><span class="o">=</span><span class="s1">'lrp-like'</span><span class="p">,</span>
+        <span class="n">background_type</span> <span class="o">=</span> <span class="s1">'randomize'</span><span class="p">):</span>
 
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute attributions for all target genes using a single model.</span>
+<span class="w">    </span><span class="sd">"""Compute attributions for all target genes using a single model.</span>
 
 <span class="sd">    Iterates over every gene index as an attribution target and calls</span>
 <span class="sd">    ``lrp_model.attribute()`` with the appropriate signature, then</span>
@@ -983,34 +983,34 @@
 <span class="sd">            GuidedBackprop) wrapping one trained autoencoder.</span>
 <span class="sd">        input_data (torch.Tensor): Expression tensor of shape</span>
 <span class="sd">            ``(cells, genes)`` on CUDA.</span>
-<span class="sd">        xai_type (str): Explainer mode. One of ``&#39;lrp-like&#39;`` (no baseline</span>
-<span class="sd">            needed) or ``&#39;shap-like&#39;`` (baseline required). Default</span>
-<span class="sd">            ``&#39;lrp-like&#39;``.</span>
+<span class="sd">        xai_type (str): Explainer mode. One of ``'lrp-like'`` (no baseline</span>
+<span class="sd">            needed) or ``'shap-like'`` (baseline required). Default</span>
+<span class="sd">            ``'lrp-like'``.</span>
 <span class="sd">        background_type (str): Strategy for constructing the baseline tensor</span>
 <span class="sd">            used by SHAP-style methods. One of:</span>
 
-<span class="sd">            - ``&#39;randomize&#39;``: ``input_data`` with each column independently</span>
+<span class="sd">            - ``'randomize'``: ``input_data`` with each column independently</span>
 <span class="sd">              shuffled (default).</span>
-<span class="sd">            - ``&#39;zeros&#39;``: a single all-zero row on CUDA.</span>
-<span class="sd">            - ``&#39;data&#39;``: use ``input_data`` itself as the baseline.</span>
+<span class="sd">            - ``'zeros'``: a single all-zero row on CUDA.</span>
+<span class="sd">            - ``'data'``: use ``input_data`` itself as the baseline.</span>
 
-<span class="sd">            Any unrecognised value falls back to ``&#39;zeros&#39;``.</span>
+<span class="sd">            Any unrecognised value falls back to ``'zeros'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: Attribution matrix of shape ``(cells, genes^2)`` where</span>
 <span class="sd">        columns are ordered by target gene (outer) then source gene (inner),</span>
 <span class="sd">        matching the edge ordering used in ``grn_adata.var``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">attributions_list</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Randomize backgorund for each round</span>
-    <span class="k">if</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;randomize&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">'randomize'</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">shuffle_each_column_independently</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">'zeros'</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">background_type</span> <span class="o">==</span> <span class="s1">'data'</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">input_data</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
@@ -1020,11 +1020,11 @@
     <span class="k">for</span> <span class="n">target_gene</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
 
         <span class="c1">#for _ in range(num_iterations):</span>
-        <span class="k">if</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">&#39;lrp-like&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">'lrp-like'</span><span class="p">:</span>
             <span class="n">attribution</span> <span class="o">=</span> <span class="n">lrp_model</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_gene</span><span class="p">)</span>
 
 
-        <span class="k">elif</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">&#39;shap-like&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">xai_type</span> <span class="o">==</span> <span class="s1">'shap-like'</span><span class="p">:</span>
             <span class="n">attribution</span> <span class="o">=</span> <span class="n">lrp_model</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">baselines</span> <span class="o">=</span> <span class="n">background</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">target_gene</span><span class="p">)</span>
 
         <span class="n">attributions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribution</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
@@ -1036,8 +1036,8 @@
 
 <div class="viewcode-block" id="inferrence_model_wise">
 <a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.inferrence_model_wise.html#netmap.grn.inferrence.inferrence_model_wise">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_model_wise</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">&#39;GradientShap&#39;</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the full GRN by processing one complete model at a time.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_model_wise</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">'GradientShap'</span><span class="p">,</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">'zeros'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the full GRN by processing one complete model at a time.</span>
 
 <span class="sd">    Unlike ``inferrence()``, which iterates over target genes across all</span>
 <span class="sd">    models, this function processes each model in full (all target genes) and</span>
@@ -1055,23 +1055,23 @@
 <span class="sd">        gene_names (array-like): Ordered gene names corresponding to columns</span>
 <span class="sd">            of ``data_train_full_tensor``.</span>
 <span class="sd">        xai_method (str): Captum XAI method to use. One of</span>
-<span class="sd">            ``&#39;GradientShap&#39;`` (default), ``&#39;GuidedBackprop&#39;``,</span>
-<span class="sd">            ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">            ``'GradientShap'`` (default), ``'GuidedBackprop'``,</span>
+<span class="sd">            ``'Deconvolution'``.</span>
 <span class="sd">        background_type (str): Baseline strategy for SHAP-style attribution.</span>
-<span class="sd">            One of ``&#39;zeros&#39;`` (default), ``&#39;randomize&#39;``, ``&#39;data&#39;``.</span>
+<span class="sd">            One of ``'zeros'`` (default), ``'randomize'``, ``'data'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData: In-memory GRN object with shape</span>
 <span class="sd">        ``(cells, genes^2)``. ``var`` contains directed edge metadata with</span>
 <span class="sd">        columns ``source`` and ``target``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">tms</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="n">cou</span>  <span class="o">=</span> <span class="p">[[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">gene_names</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">)]</span>
+    <span class="n">cou</span>  <span class="o">=</span> <span class="p">[[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">gene_names</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">)]</span>
     <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cou</span><span class="p">)</span>
-    <span class="n">cou</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">]</span>
-    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+    <span class="n">cou</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'index'</span><span class="p">,</span> <span class="s1">'source'</span><span class="p">,</span> <span class="s1">'target'</span><span class="p">]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'index'</span><span class="p">)</span>
 
 
     <span class="k">for</span> <span class="n">trained_model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
@@ -1096,7 +1096,7 @@
 
         <span class="k">if</span> <span class="n">attribution_collector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># add current attribution to the collector</span>
-            <span class="n">attribution_collector</span> <span class="o">=</span>  <span class="n">aggregate_attributions</span><span class="p">([</span><span class="n">attribution_collector</span><span class="p">,</span> <span class="n">current_attribution</span><span class="p">],</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+            <span class="n">attribution_collector</span> <span class="o">=</span>  <span class="n">aggregate_attributions</span><span class="p">([</span><span class="n">attribution_collector</span><span class="p">,</span> <span class="n">current_attribution</span><span class="p">],</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'sum'</span><span class="p">)</span>
 
 
         <span class="k">else</span><span class="p">:</span>
@@ -1113,8 +1113,8 @@
 
 <div class="viewcode-block" id="inferrence_model_wise_level">
 <a class="viewcode-back" href="../../../generated/netmap.grn.inferrence.inferrence_model_wise_level.html#netmap.grn.inferrence.inferrence_model_wise_level">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_model_wise_level</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">&#39;GradientShap&#39;</span><span class="p">,</span> <span class="n">n_models</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the GRN model-wise and save intermediate aggregates as layers.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inferrence_model_wise_level</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data_train_full_tensor</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">xai_method</span><span class="o">=</span><span class="s1">'GradientShap'</span><span class="p">,</span> <span class="n">n_models</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span> <span class="n">background_type</span><span class="o">=</span><span class="s1">'zeros'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the GRN model-wise and save intermediate aggregates as layers.</span>
 
 <span class="sd">    Processes one complete model at a time (same order as</span>
 <span class="sd">    ``inferrence_model_wise()``), but additionally saves a snapshot of the</span>
@@ -1132,16 +1132,16 @@
 <span class="sd">        gene_names (array-like): Ordered gene names corresponding to columns</span>
 <span class="sd">            of ``data_train_full_tensor``.</span>
 <span class="sd">        xai_method (str): Captum XAI method to use. One of</span>
-<span class="sd">            ``&#39;GradientShap&#39;`` (default), ``&#39;GuidedBackprop&#39;``,</span>
-<span class="sd">            ``&#39;Deconvolution&#39;``.</span>
+<span class="sd">            ``'GradientShap'`` (default), ``'GuidedBackprop'``,</span>
+<span class="sd">            ``'Deconvolution'``.</span>
 <span class="sd">        n_models (list of int): Checkpoints (1-based model counts) at which</span>
 <span class="sd">            the current running mean attribution matrix is saved as a layer.</span>
 <span class="sd">            For example, ``[10, 25, 50]`` saves snapshots after models 10,</span>
 <span class="sd">            25, and 50 have been processed. The first checkpoint becomes</span>
 <span class="sd">            ``grn_adata.X``; subsequent checkpoints are stored as</span>
-<span class="sd">            ``grn_adata.layers[&#39;aggregated_&lt;n&gt;&#39;]``. Default ``[10, 25, 50]``.</span>
+<span class="sd">            ``grn_adata.layers['aggregated_&lt;n&gt;']``. Default ``[10, 25, 50]``.</span>
 <span class="sd">        background_type (str): Baseline strategy for SHAP-style attribution.</span>
-<span class="sd">            One of ``&#39;zeros&#39;`` (default), ``&#39;randomize&#39;``, ``&#39;data&#39;``.</span>
+<span class="sd">            One of ``'zeros'`` (default), ``'randomize'``, ``'data'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        anndata.AnnData or None: GRN object with shape ``(cells, genes^2)``</span>
@@ -1149,14 +1149,14 @@
 <span class="sd">        each additional checkpoint is stored as a named layer. Returns</span>
 <span class="sd">        ``None`` if no checkpoint in ``n_models`` was reached (e.g. fewer</span>
 <span class="sd">        models were provided than the smallest value in ``n_models``).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">tms</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="n">cou</span>  <span class="o">=</span> <span class="p">[[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">gene_names</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">)]</span>
+    <span class="n">cou</span>  <span class="o">=</span> <span class="p">[[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">gene_names</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">)]</span>
     <span class="n">cou</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cou</span><span class="p">)</span>
-    <span class="n">cou</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">]</span>
-    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+    <span class="n">cou</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'index'</span><span class="p">,</span> <span class="s1">'source'</span><span class="p">,</span> <span class="s1">'target'</span><span class="p">]</span>
+    <span class="n">cou</span> <span class="o">=</span> <span class="n">cou</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'index'</span><span class="p">)</span>
 
 
     <span class="k">for</span> <span class="n">trained_model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
@@ -1181,7 +1181,7 @@
 
         <span class="k">if</span> <span class="n">attribution_collector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># add current attribution to the collector</span>
-            <span class="n">attribution_collector</span> <span class="o">=</span>  <span class="n">aggregate_attributions</span><span class="p">([</span><span class="n">attribution_collector</span><span class="p">,</span> <span class="n">current_attribution</span><span class="p">],</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+            <span class="n">attribution_collector</span> <span class="o">=</span>  <span class="n">aggregate_attributions</span><span class="p">([</span><span class="n">attribution_collector</span><span class="p">,</span> <span class="n">current_attribution</span><span class="p">],</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'sum'</span><span class="p">)</span>
 
 
         <span class="k">else</span><span class="p">:</span>
@@ -1191,18 +1191,18 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">n_models</span><span class="p">:</span>
                 <span class="c1"># dont reset, just save the correct matrix</span>
-                <span class="n">attributions</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;aggregated_</span><span class="si">{</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attribution_collector</span><span class="o">/</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">keynames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;aggregated_</span><span class="si">{</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">attributions</span><span class="p">[</span><span class="sa">f</span><span class="s1">'aggregated_</span><span class="si">{</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">attribution_collector</span><span class="o">/</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">keynames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'aggregated_</span><span class="si">{</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span>
 
 
     <span class="c1"># top_egde_collector = pd.DataFrame(top_egde_collector)</span>
-    <span class="c1"># top_egde_collector[&#39;variance_area&#39;] = top_egde_collector.iloc[:, 0:10].var(axis=1)</span>
-    <span class="c1"># top_egde_collector[&#39;mean_area&#39;] = top_egde_collector.iloc[:, 0:10].mean(axis=1)</span>
-    <span class="c1"># top_egde_collector[&#39;zscore&#39;] = scipy.stats.zscore(top_egde_collector[&#39;mean_area&#39;])</span>
+    <span class="c1"># top_egde_collector['variance_area'] = top_egde_collector.iloc[:, 0:10].var(axis=1)</span>
+    <span class="c1"># top_egde_collector['mean_area'] = top_egde_collector.iloc[:, 0:10].mean(axis=1)</span>
+    <span class="c1"># top_egde_collector['zscore'] = scipy.stats.zscore(top_egde_collector['mean_area'])</span>
 
-    <span class="c1"># cou = cou.merge(top_egde_collector, left_index = True, right_on=&#39;edge_key&#39;)</span>
+    <span class="c1"># cou = cou.merge(top_egde_collector, left_index = True, right_on='edge_key')</span>
 
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keynames</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
